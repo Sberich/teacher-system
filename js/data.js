@@ -138,8 +138,8 @@ const DataManager = (() => {
     }
 
     function login(pin) {
-        // คุณครูสามารถเปลี่ยนรหัสผ่าน (PIN) ในเครื่องหมายคำพูดด้านล่างนี้ได้เลยครับ
-        const correctPin = '1234'; 
+        const settings = getSettings();
+        const correctPin = settings.adminPin ? String(settings.adminPin) : '1234';
         
         if (String(pin) === correctPin) {
             sessionStorage.setItem('tla_is_admin', 'true');
