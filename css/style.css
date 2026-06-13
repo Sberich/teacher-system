@@ -1681,7 +1681,11 @@ th.type-days { color: var(--color-total); font-weight: 700; padding: 4px 2px !im
     }
 
     .sticky-left.col-name {
-        min-width: 120px;
+        min-width: unset;
+        max-width: 130px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .leave-cell {
