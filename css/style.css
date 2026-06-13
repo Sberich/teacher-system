@@ -1681,15 +1681,17 @@ th.type-days { color: var(--color-total); font-weight: 700; padding: 4px 2px !im
 
     .dashboard-cards {
         grid-template-columns: 1fr 1fr;
+        gap: 12px;
     }
 
     .stat-card {
-        padding: 14px;
+        padding: 14px 12px;
+        gap: 10px;
     }
 
     .stat-icon {
-        width: 44px;
-        height: 44px;
+        width: 42px;
+        height: 42px;
     }
 
     .stat-icon .material-icons-round {
@@ -1760,11 +1762,30 @@ th.type-days { color: var(--color-total); font-weight: 700; padding: 4px 2px !im
 /* Small Mobile (< 480px) */
 @media (max-width: 480px) {
     .dashboard-cards {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
     }
 
     .stat-card {
-        padding: 16px;
+        padding: 12px 8px;
+        gap: 6px;
+    }
+
+    .stat-icon {
+        width: 36px;
+        height: 36px;
+    }
+
+    .stat-icon .material-icons-round {
+        font-size: 18px;
+    }
+
+    .stat-value {
+        font-size: 1.05rem;
+    }
+
+    .stat-label {
+        font-size: 0.6rem;
     }
 
     .cal-day-name {

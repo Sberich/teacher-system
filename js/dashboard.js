@@ -60,6 +60,13 @@ const Dashboard = (() => {
                     <div class="stat-label">จำนวนครูทั้งหมด</div>
                 </div>
             </div>
+            <div class="stat-card card-all">
+                <div class="stat-icon"><span class="material-icons-round">summarize</span></div>
+                <div class="stat-info">
+                    <div class="stat-value">${timesAll}<small style="font-size:0.55em;color:var(--text-secondary);"> ครั้ง</small> / ${totalAll}<small style="font-size:0.55em;color:var(--text-secondary);"> วัน</small></div>
+                    <div class="stat-label">รวมทุกประเภท</div>
+                </div>
+            </div>
             <div class="stat-card card-sick">
                 <div class="stat-icon"><span class="material-icons-round">local_hospital</span></div>
                 <div class="stat-info">
@@ -72,13 +79,6 @@ const Dashboard = (() => {
                 <div class="stat-info">
                     <div class="stat-value">${timesPersonal}<small style="font-size:0.55em;color:var(--text-secondary);"> ครั้ง</small> / ${totalPersonal}<small style="font-size:0.55em;color:var(--text-secondary);"> วัน</small></div>
                     <div class="stat-label">ลากิจส่วนตัว</div>
-                </div>
-            </div>
-            <div class="stat-card card-all">
-                <div class="stat-icon"><span class="material-icons-round">summarize</span></div>
-                <div class="stat-info">
-                    <div class="stat-value">${timesAll}<small style="font-size:0.55em;color:var(--text-secondary);"> ครั้ง</small> / ${totalAll}<small style="font-size:0.55em;color:var(--text-secondary);"> วัน</small></div>
-                    <div class="stat-label">รวมทุกประเภท</div>
                 </div>
             </div>
         `;
