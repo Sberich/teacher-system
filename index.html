@@ -10,6 +10,10 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+    <!-- Flatpickr for Date Picker -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/airbnb.css">
+    
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -252,28 +256,51 @@
                     <label>ประเภทการลา</label>
                     <p id="leave-type-label" class="form-static"></p>
                 </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="leave-times">จำนวนครั้ง</label>
-                        <input type="number" id="leave-times" min="0" value="0">
-                    </div>
-                    <div class="form-group">
-                        <label for="leave-days">จำนวนวัน</label>
-                        <input type="number" id="leave-days" min="0" step="0.5" value="0">
+                <div class="form-group" style="margin-bottom: 10px;">
+                    <label>ประวัติการลาในเดือนนี้</label>
+                    <div id="leave-history-list" style="border: 1px solid var(--border); border-radius: var(--radius-sm); max-height: 150px; overflow-y: auto; background: var(--bg-card); padding: 5px;">
+                        <!-- History items rendered here -->
                     </div>
                 </div>
-                <div class="form-group">
-                    <label for="leave-notes">โน้ต (วันที่ลา)</label>
-                    <textarea id="leave-notes" rows="3" placeholder="เช่น ลาวันที่ 10-12 พ.ค."></textarea>
+
+                <div style="border-top: 1px dashed var(--border); margin: 10px 0; padding-top: 10px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <label id="leave-form-title" style="color: var(--primary); font-weight: 600; display: flex; align-items: center; gap: 5px; margin: 0;">
+                            <span class="material-icons-round" id="leave-form-icon" style="font-size: 18px;">add_circle</span> 
+                            <span id="leave-form-text">เพิ่มรายการลาใหม่</span>
+                        </label>
+                        <button type="button" id="btn-cancel-edit" class="btn-secondary" style="display: none; padding: 2px 8px; font-size: 0.75rem;">ยกเลิกการแก้ไข</button>
+                    </div>
+                    <input type="hidden" id="leave-edit-id" value="">
+                    
+                    <div class="form-row" style="margin-bottom: 5px;">
+                        <div class="form-group">
+                            <label for="leave-times">จำนวนครั้ง</label>
+                            <input type="number" id="leave-times" min="0" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="leave-days">จำนวนวัน</label>
+                            <input type="number" id="leave-days" min="0" step="0.5" value="0">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                            <label for="leave-notes" style="margin-bottom: 0;">โน้ต (วันที่ลา)</label>
+                            <button type="button" id="btn-pick-dates" class="btn-secondary" style="padding: 4px 8px; font-size: 0.75rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--bg-card); display: flex; align-items: center; gap: 4px;">
+                                <span class="material-icons-round" style="font-size: 14px; color: var(--primary);">calendar_month</span>
+                                เลือกจากปฏิทิน
+                            </button>
+                        </div>
+                        <textarea id="leave-notes" rows="2" placeholder="เช่น ลาวันที่ 10-12 พ.ค."></textarea>
+                        <!-- Hidden input for Flatpickr binding -->
+                        <input type="text" id="leave-notes-picker" style="opacity: 0; position: absolute; width: 1px; height: 1px;">
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn-secondary" data-close="leave-modal">ยกเลิก</button>
-                <button class="btn-danger" id="btn-delete-leave" style="display:none;">
-                    <span class="material-icons-round">delete</span> ลบ
-                </button>
+                <button class="btn-secondary" data-close="leave-modal">ปิด</button>
                 <button class="btn-primary" id="btn-save-leave">
-                    <span class="material-icons-round">save</span> บันทึก
+                    <span class="material-icons-round" id="btn-save-icon">add</span> <span id="btn-save-text">เพิ่มรายการ</span>
                 </button>
             </div>
         </div>
@@ -459,6 +486,8 @@
     </div>
 
     <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/th.js"></script>
     <script src="js/data.js?v=1.1"></script>
     <script src="js/app.js?v=1.1"></script>
     <script src="js/table.js?v=1.1"></script>

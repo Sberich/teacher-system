@@ -286,30 +286,49 @@ const DataManager = (() => {
     //  LEAVE RECORDS CRUD
     // =====================
     function getLeaveRecords() {
-        return load(KEYS.leaveRecords, []);
+        let records = load(KEYS.leaveRecords, []);
+        let needsSave = false;
+        // Migration for legacy records that don't have an ID
+        records.forEach(r => {
+            if (!r.id) {
+                r.id = generateId();
+                needsSave = true;
+            }
+        });
+        if (needsSave) save(KEYS.leaveRecords, records);
+        return records;
     }
 
-    function setLeaveRecord(teacherId, month, year, type, times, days, notes) {
-        let records = load(KEYS.leaveRecords, []);
-        const idx = records.findIndex(r =>
-            r.teacherId === teacherId && r.month === month && r.year === year && r.type === type
-        );
+    function addLeaveEvent(teacherId, month, year, type, times, days, notes) {
+        let records = getLeaveRecords();
+        const id = generateId();
+        records.push({ id, teacherId, month, year, type, times, days, notes });
+        save(KEYS.leaveRecords, records);
+        return id;
+    }
 
-        if (times === 0 && days === 0) {
-            if (idx >= 0) records.splice(idx, 1);
-        } else if (idx >= 0) {
-            records[idx] = { teacherId, month, year, type, times, days, notes };
-        } else {
-            records.push({ teacherId, month, year, type, times, days, notes });
+    function updateLeaveEvent(id, times, days, notes) {
+        let records = getLeaveRecords();
+        const idx = records.findIndex(r => r.id === id);
+        if (idx >= 0) {
+            records[idx].times = times;
+            records[idx].days = days;
+            records[idx].notes = notes;
+            save(KEYS.leaveRecords, records);
         }
+    }
 
+    function deleteLeaveEvent(id) {
+        let records = getLeaveRecords();
+        records = records.filter(r => r.id !== id);
         save(KEYS.leaveRecords, records);
     }
 
+    // Get all events for a specific cell (for the modal)
     function getLeaveRecord(teacherId, month, year, type) {
-        return getLeaveRecords().find(r =>
+        return getLeaveRecords().filter(r =>
             r.teacherId === teacherId && r.month === month && r.year === year && r.type === type
-        ) || null;
+        );
     }
 
     function getTeacherLeaveForPeriod(teacherId) {
@@ -319,21 +338,30 @@ const DataManager = (() => {
 
         for (const { month, year } of months) {
             const key = `${month}-${year}`;
+            
+            // Helper to aggregate records of a specific type
+            const aggregate = (type) => {
+                const typeRecords = records.filter(r => r.month === month && r.year === year && r.type === type);
+                if (typeRecords.length === 0) return null;
+                
+                return typeRecords.reduce((acc, curr) => {
+                    acc.times += curr.times;
+                    acc.days += curr.days;
+                    if (curr.notes) {
+                        if (acc.notes) acc.notes += ', ' + curr.notes;
+                        else acc.notes = curr.notes;
+                    }
+                    return acc;
+                }, { times: 0, days: 0, notes: '' });
+            };
+
             result[key] = {
-                sick: records.find(r => r.month === month && r.year === year && r.type === 'sick') || null,
-                personal: records.find(r => r.month === month && r.year === year && r.type === 'personal') || null
+                sick: aggregate('sick'),
+                personal: aggregate('personal')
             };
         }
 
         return result;
-    }
-
-    function deleteLeaveRecord(teacherId, month, year, type) {
-        let records = load(KEYS.leaveRecords, []);
-        records = records.filter(r =>
-            !(r.teacherId === teacherId && r.month === month && r.year === year && r.type === type)
-        );
-        save(KEYS.leaveRecords, records);
     }
 
     // =====================
@@ -474,7 +502,7 @@ const DataManager = (() => {
         isAdmin, login, logout,
         getCloudUrl, setCloudUrl, pullFromCloud, forceSyncToCloud,
         getTeachers, getSections, addTeacher, addTeachersBulk, updateTeacher, deleteTeacher, getNextOrder,
-        getLeaveRecords, setLeaveRecord, getLeaveRecord, getTeacherLeaveForPeriod, deleteLeaveRecord,
+        getLeaveRecords, addLeaveEvent, updateLeaveEvent, getLeaveRecord, getTeacherLeaveForPeriod, deleteLeaveEvent,
         getRemarks, getRemark, setRemark,
         getSettings, updateSettings, getPeriodMonths,
         getThaiMonth, getThaiMonthFull, THAI_MONTHS, THAI_MONTHS_FULL,

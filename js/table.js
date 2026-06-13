@@ -19,10 +19,140 @@ const LeaveTable = (() => {
         });
 
         document.getElementById('btn-save-leave').addEventListener('click', saveLeave);
-        document.getElementById('btn-delete-leave').addEventListener('click', deleteLeave);
         document.getElementById('btn-save-remarks').addEventListener('click', saveRemarks);
         document.getElementById('btn-print-table').addEventListener('click', printTable);
         document.getElementById('btn-export-csv').addEventListener('click', exportCSV);
+
+        // Event delegation for edit/delete buttons in history list
+        document.getElementById('leave-history-list').addEventListener('click', (e) => {
+            const btnDelete = e.target.closest('.btn-delete-event');
+            const btnEdit = e.target.closest('.btn-edit-event');
+            const btnUndo = e.target.closest('.btn-undo-event');
+
+            if (btnDelete) {
+                // Delete without confirm, so it's faster. They can Undo.
+                const id = btnDelete.dataset.id;
+                const times = parseFloat(btnDelete.dataset.times) || 0;
+                const days = parseFloat(btnDelete.dataset.days) || 0;
+                const notes = btnDelete.dataset.notes || '';
+                
+                deletedRecordsStack.push({
+                    teacherId: currentEdit.teacherId,
+                    month: currentEdit.month,
+                    year: currentEdit.year,
+                    type: currentEdit.type,
+                    times, days, notes
+                });
+
+                DataManager.deleteLeaveEvent(id);
+                App.showToast('ลบรายการแล้ว (สามารถกดย้อนกลับได้)', 'info');
+                
+                const mockCell = {
+                    dataset: {
+                        teacher: currentEdit.teacherId,
+                        month: currentEdit.month,
+                        year: currentEdit.year,
+                        type: currentEdit.type
+                    }
+                };
+                openLeaveModal(mockCell);
+                render(); // update background table
+            } else if (btnUndo) {
+                const rec = deletedRecordsStack.pop();
+                if (rec) {
+                    DataManager.addLeaveEvent(rec.teacherId, rec.month, rec.year, rec.type, rec.times, rec.days, rec.notes);
+                    App.showToast('กู้คืนรายการเรียบร้อย', 'success');
+                    const mockCell = {
+                        dataset: {
+                            teacher: currentEdit.teacherId,
+                            month: currentEdit.month,
+                            year: currentEdit.year,
+                            type: currentEdit.type
+                        }
+                    };
+                    openLeaveModal(mockCell);
+                    render();
+                }
+            } else if (btnEdit) {
+                const id = btnEdit.dataset.id;
+                const times = btnEdit.dataset.times;
+                const days = btnEdit.dataset.days;
+                const notes = btnEdit.dataset.notes;
+
+                document.getElementById('leave-edit-id').value = id;
+                document.getElementById('leave-times').value = times;
+                document.getElementById('leave-days').value = days;
+                document.getElementById('leave-notes').value = notes;
+
+                // Update UI to edit mode
+                document.getElementById('leave-form-title').style.color = 'var(--warning)';
+                document.getElementById('leave-form-icon').textContent = 'edit';
+                document.getElementById('leave-form-text').textContent = 'แก้ไขรายการลา';
+                document.getElementById('btn-cancel-edit').style.display = 'inline-block';
+                document.getElementById('btn-save-icon').textContent = 'save';
+                document.getElementById('btn-save-text').textContent = 'บันทึกการแก้ไข';
+            }
+        });
+
+        document.getElementById('btn-cancel-edit').addEventListener('click', () => {
+            resetLeaveForm();
+        });
+
+        initDatePicker();
+    }
+
+    let noteDatePicker = null;
+
+    function initDatePicker() {
+        const pickerInput = document.getElementById('leave-notes-picker');
+        const btnPick = document.getElementById('btn-pick-dates');
+        const notesArea = document.getElementById('leave-notes');
+
+        if (!pickerInput || !btnPick || typeof flatpickr === 'undefined') return;
+
+        noteDatePicker = flatpickr(pickerInput, {
+            mode: "multiple",
+            locale: "th",
+            dateFormat: "Y-m-d",
+            positionElement: btnPick,
+            onClose: function(selectedDates, dateStr, instance) {
+                if (selectedDates.length === 0) return;
+
+                // Sort dates
+                selectedDates.sort((a, b) => a - b);
+
+                // Format nicely using Thai locale (e.g. 10 มิ.ย.)
+                const formattedDates = selectedDates.map(date => {
+                    const d = date.getDate();
+                    const m = DataManager.getThaiMonth(date.getMonth() + 1);
+                    return `${d} ${m}`;
+                }).join(', ');
+
+                // Append to textarea
+                const currentVal = notesArea.value.trim();
+                if (currentVal) {
+                    notesArea.value = currentVal + ', ' + formattedDates;
+                } else {
+                    notesArea.value = formattedDates;
+                }
+
+                // Clear flatpickr so it's empty next time
+                instance.clear();
+            }
+        });
+
+        btnPick.addEventListener('click', () => {
+            if (noteDatePicker) {
+                if (currentEdit) {
+                    // Try to jump to the month we are editing
+                    const year = currentEdit.year - 543;
+                    const month = currentEdit.month - 1;
+                    const d = new Date(year, month, 1);
+                    noteDatePicker.jumpToDate(d);
+                }
+                noteDatePicker.open();
+            }
+        });
     }
 
     function render() {
@@ -139,7 +269,12 @@ const LeaveTable = (() => {
                     const record = data[lt.key];
                     const hasData = record && (record.times > 0 || record.days > 0);
                     const cellValue = hasData ? `${record.times}/${record.days}` : '-';
-                    const tooltip = record && record.notes ? record.notes : '';
+                    
+                    // Show tooltip only for Admins
+                    let tooltip = '';
+                    if (App.isAdmin() && record && record.notes) {
+                        tooltip = record.notes;
+                    }
 
                     if (hasData) {
                         tTotals[lt.key].times += record.times;
@@ -240,7 +375,7 @@ const LeaveTable = (() => {
         const type = cell.dataset.type;
 
         const teacher = DataManager.getTeachers().find(t => t.id === teacherId);
-        const record = DataManager.getLeaveRecord(teacherId, month, year, type);
+        const records = DataManager.getLeaveRecord(teacherId, month, year, type);
 
         const typeLabels = { sick: 'ลาป่วย', personal: 'ลากิจส่วนตัว' };
 
@@ -248,34 +383,102 @@ const LeaveTable = (() => {
         document.getElementById('leave-month-label').textContent = `${DataManager.getThaiMonthFull(month)} ${year}`;
         document.getElementById('leave-type-label').textContent = typeLabels[type] || type;
 
-        document.getElementById('leave-times').value = record ? record.times : 0;
-        document.getElementById('leave-days').value = record ? record.days : 0;
-        document.getElementById('leave-notes').value = record ? (record.notes || '') : '';
+        const historyList = document.getElementById('leave-history-list');
 
-        document.getElementById('btn-delete-leave').style.display = record ? '' : 'none';
+        // Clear stack if opening a different cell
+        if (!currentEdit || currentEdit.teacherId !== teacherId || currentEdit.month !== month || currentEdit.type !== type) {
+            deletedRecordsStack = [];
+        }
+        
+        let html = '';
+        // Show Undo banner if something was deleted
+        if (deletedRecordsStack.length > 0) {
+            html += `
+                <div style="background: rgba(239, 68, 68, 0.1); padding: 8px; border-bottom: 1px solid rgba(239, 68, 68, 0.2); font-size: 0.8rem; display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: var(--danger);">ลบรายการล่าสุดแล้ว</span>
+                    <button type="button" class="btn-undo-event" style="background: white; border: 1px solid var(--danger); color: var(--danger); border-radius: 4px; padding: 2px 8px; cursor: pointer; transition: all 0.2s;">ย้อนกลับ (Undo)</button>
+                </div>
+            `;
+        }
+
+        // Render history
+        if (records.length > 0) {
+            records.forEach((r, idx) => {
+                html += `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid var(--border); font-size: 0.85rem;">
+                        <div>
+                            <span style="font-weight: bold; color: var(--primary);">ครั้งที่ ${idx + 1}:</span> 
+                            ${r.times} ครั้ง / ${r.days} วัน 
+                            <span style="color: var(--text-secondary); margin-left: 5px;">${r.notes ? `(${r.notes})` : ''}</span>
+                        </div>
+                        <div style="display: flex; gap: 5px;">
+                            <button type="button" class="btn-icon-sm btn-edit-event" data-id="${r.id}" data-times="${r.times}" data-days="${r.days}" data-notes="${escapeHtml(r.notes || '')}" style="color: var(--primary); border: none; background: transparent; cursor: pointer;" title="แก้ไขรายการนี้">
+                                <span class="material-icons-round" style="font-size: 16px;">edit</span>
+                            </button>
+                            <button type="button" class="btn-icon-sm btn-delete-event" data-id="${r.id}" data-times="${r.times}" data-days="${r.days}" data-notes="${escapeHtml(r.notes || '')}" style="color: var(--danger); border: none; background: transparent; cursor: pointer;" title="ลบรายการนี้">
+                                <span class="material-icons-round" style="font-size: 16px;">delete</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            historyList.innerHTML = html;
+        } else {
+            if (html === '') {
+                historyList.innerHTML = '<div style="padding: 10px; text-align: center; color: var(--text-muted); font-size: 0.85rem;">ยังไม่มีประวัติการลาในเดือนนี้</div>';
+            } else {
+                historyList.innerHTML = html + '<div style="padding: 10px; text-align: center; color: var(--text-muted); font-size: 0.85rem;">ลบรายการทั้งหมดแล้ว</div>';
+            }
+        }
+
+        resetLeaveForm();
 
         currentEdit = { teacherId, month, year, type };
         App.showModal('leave-modal');
         setTimeout(() => document.getElementById('leave-times').focus(), 200);
+
+        if (noteDatePicker) {
+            const ceYear = year > 2500 ? year - 543 : year;
+            noteDatePicker.jumpToDate(new Date(ceYear, month - 1, 1));
+        }
+    }
+
+    function resetLeaveForm() {
+        document.getElementById('leave-edit-id').value = '';
+        document.getElementById('leave-times').value = 0;
+        document.getElementById('leave-days').value = 0;
+        document.getElementById('leave-notes').value = '';
+
+        document.getElementById('leave-form-title').style.color = 'var(--primary)';
+        document.getElementById('leave-form-icon').textContent = 'add_circle';
+        document.getElementById('leave-form-text').textContent = 'เพิ่มรายการลาใหม่';
+        document.getElementById('btn-cancel-edit').style.display = 'none';
+        document.getElementById('btn-save-icon').textContent = 'add';
+        document.getElementById('btn-save-text').textContent = 'เพิ่มรายการ';
     }
 
     function saveLeave() {
         if (!currentEdit) return;
-        const times = parseInt(document.getElementById('leave-times').value) || 0;
-        const days = parseFloat(document.getElementById('leave-days').value) || 0;
-        const notes = document.getElementById('leave-notes').value.trim();
-        DataManager.setLeaveRecord(currentEdit.teacherId, currentEdit.month, currentEdit.year, currentEdit.type, times, days, notes);
-        App.hideModal('leave-modal');
-        App.showToast('บันทึกข้อมูลการลาเรียบร้อย');
-        render();
-        currentEdit = null;
-    }
+        
+        const editId = document.getElementById('leave-edit-id').value;
+        const inputTimes = parseInt(document.getElementById('leave-times').value) || 0;
+        const inputDays = parseFloat(document.getElementById('leave-days').value) || 0;
+        const inputNotes = document.getElementById('leave-notes').value.trim();
+        
+        if (inputTimes === 0 && inputDays === 0) {
+            App.showToast('กรุณาระบุจำนวนครั้ง หรือ วันที่ลา', 'warning');
+            return;
+        }
 
-    function deleteLeave() {
-        if (!currentEdit) return;
-        DataManager.deleteLeaveRecord(currentEdit.teacherId, currentEdit.month, currentEdit.year, currentEdit.type);
+        if (editId) {
+            DataManager.updateLeaveEvent(editId, inputTimes, inputDays, inputNotes);
+            App.showToast('อัปเดตข้อมูลการลาเรียบร้อย');
+        } else {
+            DataManager.addLeaveEvent(currentEdit.teacherId, currentEdit.month, currentEdit.year, currentEdit.type, inputTimes, inputDays, inputNotes);
+            App.showToast('บันทึกข้อมูลการลาเรียบร้อย');
+        }
+        
         App.hideModal('leave-modal');
-        App.showToast('ลบข้อมูลการลาเรียบร้อย', 'info');
         render();
         currentEdit = null;
     }
