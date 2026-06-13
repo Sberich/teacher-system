@@ -11,6 +11,7 @@ const App = (() => {
         setupHamburger();
         setupAuth();
         setupDropdowns();
+        setupAntiCopy();
 
         // Refresh Data Event
         const refreshBtn = document.getElementById('btn-refresh-data');
@@ -358,6 +359,23 @@ const App = (() => {
             });
         }
     });
+
+    function setupAntiCopy() {
+        // Prevent right click
+        document.addEventListener('contextmenu', function(e) {
+            if (!isAdmin()) {
+                e.preventDefault();
+            }
+        });
+
+        // Prevent copy shortcut
+        document.addEventListener('copy', function(e) {
+            if (!isAdmin()) {
+                e.preventDefault();
+                showToast('ไม่อนุญาตให้คัดลอกข้อมูลในโหมดผู้ชม', 'warning');
+            }
+        });
+    }
 
     return { navigate, showModal, hideModal, showToast, confirm, isAdmin, showSyncIndicator, hideSyncIndicator, updateLastUpdatedText };
 })();

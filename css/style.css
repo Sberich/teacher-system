@@ -273,6 +273,15 @@ body.is-admin .admin-only-inline {
     color: #10b981;
 }
 
+/* --- Copy Protection for Non-Admins --- */
+body:not(.is-admin) {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+
 /* --- Sync & Loaders --- */
 .global-loader {
     position: fixed;
