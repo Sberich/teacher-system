@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ระบบจัดการวันลาข้าราชการครู</title>
+    <meta name="description" content="ระบบบันทึกและจัดการวันลาข้าราชการครู สำหรับสถานศึกษา">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%233b82f6'%3E%3Cpath d='M12 3L1 9L12 15L21 10.09V17H23V9M5 13.18V17.18C5 17.18 8.13 21 12 21C15.87 21 19 17.18 19 17.18V13.18C19 13.18 15.87 17 12 17C8.13 17 5 13.18 5 13.18Z'/%3E%3C/svg%3E">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Global Loader (For Initial Cloud Pull) -->
+    <div id="global-loader" class="global-loader" style="display:none;">
+        <div class="loader-spinner"></div>
+        <p>กำลังเชื่อมต่อฐานข้อมูล...</p>
+    </div>
+
+    <!-- Background Sync Indicator -->
+    <div id="sync-indicator" class="sync-indicator" style="display:none;">
+        <span class="material-icons-round spinning">sync</span>
+        <span>กำลังซิงค์ข้อมูล...</span>
+    </div>
+
+    <!-- Header / Navigation -->
+    <header id="app-header">
+        <div class="header-left">
+            <button id="hamburger-btn" class="hamburger" aria-label="เมนู">
+                <span class="material-icons-round">menu</span>
+            </button>
+            <div class="logo" style="cursor:pointer;" onclick="openAbout()" title="เกี่ยวกับระบบ">
+                <span class="material-icons-round logo-icon">school</span>
+                <h1>ระบบจัดการวันลา</h1>
+            </div>
+        </div>
+        <nav id="main-nav">
+            <a href="#" class="nav-item active" data-page="table">
+                <span class="material-icons-round">table_chart</span>
+                <span class="nav-label">ตารางวันลา</span>
+            </a>
+            <a href="#" class="nav-item" data-page="dashboard">
+                <span class="material-icons-round">dashboard</span>
+                <span class="nav-label">แดชบอร์ด</span>
+            </a>
+            <a href="#" class="nav-item" data-page="calendar">
+                <span class="material-icons-round">calendar_month</span>
+                <span class="nav-label">ปฏิทิน</span>
+            </a>
+            <a href="#" class="nav-item admin-only" data-page="teachers">
+                <span class="material-icons-round">people</span>
+                <span class="nav-label">รายชื่อครู</span>
+            </a>
+            <a href="#" class="nav-item admin-only" data-page="settings">
+                <span class="material-icons-round">settings</span>
+                <span class="nav-label">ตั้งค่า</span>
+            </a>
+        </nav>
+        <div class="header-right">
+            <button id="btn-refresh-data" class="btn-icon" aria-label="รีเฟรชข้อมูล" title="ดึงข้อมูลล่าสุด">
+                <span class="material-icons-round">sync</span>
+            </button>
+            <button id="auth-toggle" class="btn-icon" aria-label="เข้าสู่ระบบ" title="เข้าสู่ระบบผู้ดูแล">
+                <span class="material-icons-round">lock</span>
+            </button>
+            <button id="theme-toggle" class="btn-icon" aria-label="สลับธีม">
+                <span class="material-icons-round">dark_mode</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Mobile Nav Overlay -->
+    <div id="nav-overlay" class="nav-overlay"></div>
+
+    <!-- Main Content -->
+    <main id="app-content">
+        <!-- Page: Table -->
+        <section id="page-table" class="page active">
+            <div class="page-header">
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <div style="width:40px;height:40px;background:rgba(59, 130, 246, 0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;">
+                        <span class="material-icons-round" style="color:var(--primary);font-size:24px;">date_range</span>
+                    </div>
+                    <h2 style="font-size:1.4rem;font-weight:700;margin:0;">ตารางบันทึกวันลา</h2>
+                </div>
+                <div class="page-actions">
+                    <div class="form-group" style="margin-bottom:0;">
+                        <select id="table-section-filter" style="padding: 8px 12px; min-width: 140px;">
+                            <option value="">ทุกหมวดหมู่/กลุ่ม</option>
+                            <!-- Sections rendered by table.js -->
+                        </select>
+                    </div>
+                    <div class="search-box">
+                        <span class="material-icons-round">search</span>
+                        <input type="text" id="table-search" placeholder="ค้นหาชื่อครู...">
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn-secondary dropdown-toggle" id="btn-export-menu" title="ส่งออกข้อมูล">
+                            <span class="material-icons-round">ios_share</span>
+                        </button>
+                        <div class="dropdown-menu">
+                            <button class="dropdown-item" id="btn-print-table">
+                                <span class="material-icons-round">print</span> พิมพ์ตาราง
+                            </button>
+                            <button class="dropdown-item" id="btn-export-csv">
+                                <span class="material-icons-round">download</span> ดาวน์โหลด CSV
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="width: max-content; max-width: 100%; margin: 0 auto; display: flex; flex-direction: column;">
+                <div class="table-wrapper" style="width: 100%; margin: 0;">
+                    <div class="table-container" id="leave-table-container">
+                        <!-- Table rendered by table.js -->
+                    </div>
+                </div>
+                <div id="last-updated-text" style="text-align: right; margin-top: 8px; font-size: 0.85rem; color: var(--text-muted);">
+                    ข้อมูลอัปเดตล่าสุด: ยังไม่ระบุ
+                </div>
+            </div>
+        </section>
+
+        <!-- Page: Dashboard -->
+        <section id="page-dashboard" class="page">
+            <div class="page-header">
+                <h2>📈 แดชบอร์ดสรุปสถิติ</h2>
+            </div>
+            <div class="dashboard-cards" id="dashboard-cards">
+                <!-- Cards rendered by dashboard.js -->
+            </div>
+            <div class="dashboard-charts">
+                <div class="chart-card">
+                    <h3>สถิติการลารายเดือน</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="chart-monthly"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <h3>สถิติการลารายกลุ่ม</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="chart-section"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <h3>สัดส่วนประเภทการลา</h3>
+                    <div class="chart-wrapper chart-wrapper-pie">
+                        <canvas id="chart-pie"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <h3>จำนวนบุคลากร (ตำแหน่ง)</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="chart-position"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <h3>จำนวนบุคลากร (วิทยฐานะ)</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="chart-title"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <h3>สัดส่วนบุคลากร (เพศ)</h3>
+                    <div class="chart-wrapper chart-wrapper-pie">
+                        <canvas id="chart-gender"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Page: Calendar -->
+        <section id="page-calendar" class="page">
+            <div class="page-header">
+                <h2>📅 ปฏิทินวันลา</h2>
+                <div class="page-actions cal-nav">
+                    <button id="cal-prev" class="btn-icon">
+                        <span class="material-icons-round">chevron_left</span>
+                    </button>
+                    <span id="cal-month-label" class="cal-month-label"></span>
+                    <button id="cal-next" class="btn-icon">
+                        <span class="material-icons-round">chevron_right</span>
+                    </button>
+                </div>
+            </div>
+            <div class="calendar-container">
+                <div class="calendar-grid" id="calendar-grid"></div>
+                <div class="calendar-detail" id="calendar-detail"></div>
+            </div>
+        </section>
+
+        <!-- Page: Teachers -->
+        <section id="page-teachers" class="page">
+            <div class="page-header">
+                <h2>👥 จัดการรายชื่อครู</h2>
+                <div class="page-actions">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-right: auto; background: var(--bg-input); padding: 4px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                        <span class="material-icons-round" style="font-size: 1.1rem; color: var(--text-muted);">sort</span>
+                        <select id="teacher-sort" style="border: none; background: transparent; color: var(--text); font-family: inherit; font-size: 0.9rem; outline: none; cursor: pointer;">
+                            <option value="order">เรียงตาม ลำดับ</option>
+                            <option value="section">เรียงตาม กลุ่ม/หมวด</option>
+                            <option value="title">เรียงตาม วิทยฐานะ</option>
+                        </select>
+                    </div>
+                    <button id="btn-import-teachers" class="btn-secondary">
+                        <span class="material-icons-round">upload_file</span>
+                        <span>นำเข้ารายชื่อ</span>
+                    </button>
+                    <button id="btn-add-teacher" class="btn-primary">
+                        <span class="material-icons-round">person_add</span>
+                        <span>เพิ่มครู</span>
+                    </button>
+                </div>
+            </div>
+            <div class="teacher-list" id="teacher-list">
+                <!-- Teacher list rendered by teachers.js -->
+            </div>
+        </section>
+
+        <!-- Page: Settings -->
+        <section id="page-settings" class="page">
+            <div class="page-header">
+                <h2>⚙️ ตั้งค่า</h2>
+            </div>
+            <div class="settings-container" id="settings-container">
+                <!-- Settings rendered by settings.js -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal: Leave Entry -->
+    <div id="leave-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="leave-modal-title">บันทึกการลา</h3>
+                <button class="modal-close" data-close="leave-modal">
+                    <span class="material-icons-round">close</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>ครู</label>
+                    <p id="leave-teacher-name" class="form-static"></p>
+                </div>
+                <div class="form-group">
+                    <label>เดือน</label>
+                    <p id="leave-month-label" class="form-static"></p>
+                </div>
+                <div class="form-group">
+                    <label>ประเภทการลา</label>
+                    <p id="leave-type-label" class="form-static"></p>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="leave-times">จำนวนครั้ง</label>
+                        <input type="number" id="leave-times" min="0" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="leave-days">จำนวนวัน</label>
+                        <input type="number" id="leave-days" min="0" step="0.5" value="0">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="leave-notes">โน้ต (วันที่ลา)</label>
+                    <textarea id="leave-notes" rows="3" placeholder="เช่น ลาวันที่ 10-12 พ.ค."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" data-close="leave-modal">ยกเลิก</button>
+                <button class="btn-danger" id="btn-delete-leave" style="display:none;">
+                    <span class="material-icons-round">delete</span> ลบ
+                </button>
+                <button class="btn-primary" id="btn-save-leave">
+                    <span class="material-icons-round">save</span> บันทึก
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Teacher Add/Edit -->
+    <div id="teacher-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="teacher-modal-title">เพิ่มครู</h3>
+                <button class="modal-close" data-close="teacher-modal">
+                    <span class="material-icons-round">close</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="teacher-name">ชื่อ-นามสกุล</label>
+                    <input type="text" id="teacher-name" placeholder="เช่น นายสมชาย ใจดี">
+                </div>
+                <div class="form-group">
+                    <label for="teacher-section">หมวดหมู่ / กลุ่ม (Section)</label>
+                    <input type="text" id="teacher-section" placeholder="เช่น สายชั้น ป.1-3, หมวดวิทย์" list="section-suggestions">
+                    <datalist id="section-suggestions"></datalist>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="teacher-gender">เพศ</label>
+                        <select id="teacher-gender">
+                            <option value="">-- ไม่ระบุ --</option>
+                            <option value="ชาย">ชาย</option>
+                            <option value="หญิง">หญิง</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="teacher-title">วิทยฐานะ</label>
+                        <select id="teacher-title">
+                            <option value="">(ไม่ระบุ)</option>
+                            <option value="ลูกจ้างฯ">ลูกจ้างฯ</option>
+                            <option value="ครูอัตราจ้าง">ครูอัตราจ้าง</option>
+                            <option value="พนักงานฯ">พนักงานฯ</option>
+                            <option value="ครูผู้ช่วย">ครูผู้ช่วย</option>
+                            <option value="คศ.1">คศ.1</option>
+                            <option value="คศ.2">คศ.2</option>
+                            <option value="คศ.3">คศ.3</option>
+                            <option value="คศ.4">คศ.4</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="teacher-order">ลำดับที่</label>
+                    <input type="number" id="teacher-order" min="1" value="1">
+                    <small class="form-hint">ถ้าลำดับซ้ำ ลำดับเดิมจะเลื่อนไปถัดไปอัตโนมัติ</small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" data-close="teacher-modal">ยกเลิก</button>
+                <button class="btn-primary" id="btn-save-teacher">
+                    <span class="material-icons-round">save</span> บันทึก
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Confirm -->
+    <div id="confirm-modal" class="modal">
+        <div class="modal-content modal-sm">
+            <div class="modal-header">
+                <h3>ยืนยันการดำเนินการ</h3>
+                <button class="modal-close" data-close="confirm-modal">
+                    <span class="material-icons-round">close</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="confirm-message">คุณต้องการดำเนินการนี้หรือไม่?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" data-close="confirm-modal">ยกเลิก</button>
+                <button class="btn-danger" id="btn-confirm-yes">
+                    <span class="material-icons-round">check</span> ยืนยัน
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Remarks -->
+    <div id="remarks-modal" class="modal">
+        <div class="modal-content modal-sm">
+            <div class="modal-header">
+                <h3>หมายเหตุ</h3>
+                <button class="modal-close" data-close="remarks-modal">
+                    <span class="material-icons-round">close</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>ครู</label>
+                    <p id="remarks-teacher-name" class="form-static"></p>
+                </div>
+                <div class="form-group">
+                    <label for="remarks-text">หมายเหตุ</label>
+                    <textarea id="remarks-text" rows="4" placeholder="พิมพ์หมายเหตุ..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" data-close="remarks-modal">ยกเลิก</button>
+                <button class="btn-primary" id="btn-save-remarks">
+                    <span class="material-icons-round">save</span> บันทึก
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Import Teachers -->
+    <div id="import-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>นำเข้ารายชื่อครู</h3>
+                <button class="modal-close" data-close="import-modal">
+                    <span class="material-icons-round">close</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>เลือกไฟล์ (.txt หรือ .csv)</label>
+                    <input type="file" id="import-teachers-file" accept=".txt,.csv" class="file-input">
+                </div>
+                <div class="form-group">
+                    <label for="import-teachers-text">หรือพิมพ์/วางรายชื่อ (รูปแบบ: ชื่อ-สกุล, หมวดหมู่)</label>
+                    <textarea id="import-teachers-text" rows="8" placeholder="นายสมชาย ใจดี, สายชั้น ป.1&#10;นางสาวสมหญิง รักเรียน, หมวดวิทย์&#10;นายวิชัย พัฒนา&#10;..."></textarea>
+                </div>
+                <div id="import-preview" style="display:none;">
+                    <div id="import-preview-list"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" data-close="import-modal">ยกเลิก</button>
+                <button class="btn-primary" id="btn-confirm-import">
+                    <span class="material-icons-round">upload</span> นำเข้า
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Auth / Login -->
+    <div id="auth-modal" class="modal">
+        <div class="modal-content modal-sm">
+            <div class="modal-header">
+                <h3>เข้าสู่ระบบผู้ดูแล</h3>
+                <button class="modal-close" data-close="auth-modal">
+                    <span class="material-icons-round">close</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="auth-pin">รหัสผ่าน (PIN)</label>
+                    <input type="password" id="auth-pin" placeholder="****" inputmode="numeric" style="letter-spacing:4px;font-size:1.2rem;text-align:center;">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" data-close="auth-modal">ยกเลิก</button>
+                <button class="btn-primary" id="btn-login-submit">
+                    <span class="material-icons-round">login</span> เข้าสู่ระบบ
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+    <!-- About Modal -->
+    <div class="about-overlay" id="about-modal">
+        <div class="about-box">
+            <button class="about-close-abs" onclick="closeAbout()"><span class="material-icons-round">close</span></button>
+            <div class="about-logo"><span class="material-icons-round" style="font-size: 28px;">school</span></div>
+            <h2 class="about-title">ระบบจัดการวันลา</h2>
+            <div class="about-version" id="global-visit-count">v1.0001</div>
+            <div class="about-dev">
+                Developed by
+                <span class="premium-gold">KⓇU M00 ¥EO</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/table.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/calendar.js"></script>
+    <script src="js/teachers.js"></script>
+    <script src="js/settings.js"></script>
+</body>
+</html>
