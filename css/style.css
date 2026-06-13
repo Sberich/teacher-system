@@ -940,6 +940,7 @@ th.type-days { color: var(--color-total); font-weight: 700; padding: 4px 2px !im
     line-height: 1;
     color: var(--text);
     letter-spacing: -0.5px;
+    white-space: nowrap;
 }
 
 .stat-label {
@@ -963,6 +964,10 @@ th.type-days { color: var(--color-total); font-weight: 700; padding: 4px 2px !im
     padding: 28px;
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
     border: 1px solid rgba(0, 0, 0, 0.02);
+}
+
+.chart-card.wide {
+    grid-column: span 2;
 }
 
 .chart-card h3 {
@@ -1594,6 +1599,10 @@ th.type-days { color: var(--color-total); font-weight: 700; padding: 4px 2px !im
 @media (max-width: 1024px) {
     .dashboard-charts {
         grid-template-columns: 1fr;
+    }
+
+    .chart-card.wide {
+        grid-column: span 1;
     }
 
     .calendar-container {
