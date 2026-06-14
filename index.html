@@ -53,6 +53,9 @@
                     <span class="material-icons-round">close</span>
                 </button>
             </div>
+            <a href="#" class="nav-item" data-page="leave-request" style="flex: 1.2; padding: 12px 0;">
+                <span class="nav-label" style="font-size: 1.3rem; font-weight: 800; color: var(--primary); letter-spacing: 0.5px;">ยื่นใบลา</span>
+            </a>
             <a href="#" class="nav-item active" data-page="table">
                 <span class="material-icons-round">table_chart</span>
                 <span class="nav-label">ตารางวันลา</span>
@@ -64,6 +67,10 @@
             <a href="#" class="nav-item" data-page="calendar">
                 <span class="material-icons-round">calendar_month</span>
                 <span class="nav-label">ปฏิทิน</span>
+            </a>
+            <a href="#" class="nav-item admin-only" data-page="manage-requests">
+                <span class="material-icons-round">fact_check</span>
+                <span class="nav-label">จัดการคำขอลา</span>
             </a>
             <a href="#" class="nav-item admin-only" data-page="teachers">
                 <span class="material-icons-round">people</span>
@@ -238,6 +245,83 @@
                 <!-- Settings rendered by settings.js -->
             </div>
         </section>
+    <!-- Page: Leave Request -->
+    <section id="page-leave-request" class="page">
+        <div class="page-header" style="max-width: 600px; margin: 0 auto; margin-bottom: 24px; text-align: center;">
+            <h1 style="font-size: 2.2rem; font-weight: 800; letter-spacing: 1px; color: var(--text); margin-bottom: 8px;">ยื่นใบลา</h1>
+            <p style="color: var(--text-secondary); font-size: 0.95rem;">กรอกข้อมูลเพื่อสร้างแบบฟอร์มใบลา</p>
+        </div>
+        <div class="form-card" style="max-width: 600px; margin: 0 auto; background: var(--bg-card); padding: 24px; border-radius: var(--radius); box-shadow: var(--shadow-md);">
+            <div class="form-group" style="margin-bottom: 16px;">
+                <label for="lr-teacher">ผู้ขอลา</label>
+                <select id="lr-teacher" class="form-control">
+                    <option value="">-- เลือกชื่อผู้ลา --</option>
+                </select>
+            </div>
+            <div class="form-group" style="margin-bottom: 16px;">
+                <label for="lr-type">ประเภทการลา</label>
+                <select id="lr-type" class="form-control">
+                    <option value="ป่วย">ลาป่วย</option>
+                    <option value="กิจส่วนตัว">ลากิจส่วนตัว</option>
+                    <option value="คลอดบุตร">ลาคลอดบุตร</option>
+                </select>
+            </div>
+            <div class="form-group" style="margin-bottom: 16px;">
+                <label for="lr-reason">เนื่องจาก (สาเหตุ)</label>
+                <input type="text" id="lr-reason" placeholder="เช่น ป่วยเป็นไข้สูง" class="form-control">
+            </div>
+            <div class="form-row" style="margin-bottom: 16px;">
+                <div class="form-group">
+                    <label for="lr-start-date">ตั้งแต่วันที่</label>
+                    <input type="text" id="lr-start-date" class="form-control flatpickr-date" placeholder="เลือกวันที่">
+                </div>
+                <div class="form-group">
+                    <label for="lr-end-date">ถึงวันที่</label>
+                    <input type="text" id="lr-end-date" class="form-control flatpickr-date" placeholder="เลือกวันที่">
+                </div>
+            </div>
+            <div class="form-group" style="margin-bottom: 16px;">
+                <label for="lr-contact">ในระหว่างลาจะติดต่อข้าพเจ้าได้ที่</label>
+                <textarea id="lr-contact" rows="2" placeholder="เช่น 123 ม.1 ต.ธาตุพนม อ.ธาตุพนม จ.นครพนม 48110 เบอร์โทร..." class="form-control"></textarea>
+            </div>
+            <div style="display: flex; gap: 12px; margin-top: 24px;">
+                <button id="btn-submit-leave-request" class="btn-primary" style="flex: 1; padding: 12px; font-size: 1rem; justify-content: center;">
+                    <span class="material-icons-round">send</span> บันทึกและขอพิมพ์ใบลา
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Page: Manage Requests -->
+    <section id="page-manage-requests" class="page">
+        <div class="page-header">
+            <h2>ตรวจสอบคำขอลา</h2>
+            <div class="page-actions">
+                <button id="btn-clear-requests" class="btn-danger">
+                    <span class="material-icons-round">delete_sweep</span>
+                    <span>ล้างรายการที่เสร็จแล้ว</span>
+                </button>
+            </div>
+        </div>
+        <div class="table-container">
+            <table class="leave-table" style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th style="width: 50px;">ลำดับ</th>
+                        <th>ผู้ขอลา</th>
+                        <th>ประเภท</th>
+                        <th>วันที่ลา</th>
+                        <th>สถานะ</th>
+                        <th style="width: 150px; text-align: right;">จัดการ</th>
+                    </tr>
+                </thead>
+                <tbody id="manage-requests-tbody">
+                    <!-- Rows populated by JS -->
+                </tbody>
+            </table>
+        </div>
+    </section>
+
     </main>
 
     <!-- Modal: Leave Entry -->
@@ -491,11 +575,141 @@
         </div>
     </div>
 
+    <!-- A4 Print Form Template (Hidden by default, shown on print) -->
+    <div id="print-leave-form" class="print-only" style="font-size: 14pt; line-height: 1.5;">
+        <h3 style="text-align: center; margin-bottom: 15px;">แบบใบลาป่วย ลากิจส่วนตัว ลาคลอดบุตร</h3>
+        <div style="text-align: right; margin-bottom: 5px;">เขียนที่ <span id="print-location">โรงเรียน....................................</span></div>
+        <div style="text-align: right; margin-bottom: 10px;">วันที่ <span id="print-date">......</span> เดือน <span id="print-month">......................</span> พ.ศ. <span id="print-year">............</span></div>
+        
+        <div style="margin-bottom: 5px;">เรื่อง <span id="print-subject">ขอลา..........................................</span></div>
+        <div style="margin-bottom: 10px;">เรียน <span id="print-director">ผู้อำนวยการโรงเรียน..........................................</span></div>
+        
+        <div style="display: flex; align-items: flex-end; margin-bottom: 5px;">
+            <span style="margin-left: 50px; margin-right: 10px;">ข้าพเจ้า</span>
+            <span id="print-name" style="flex: 1; text-align: center; margin-right: 10px;"></span>
+            <span style="margin-right: 10px;">ตำแหน่ง</span>
+            <span id="print-position" style="flex: 0.5; text-align: center; margin-right: 10px;"></span>
+            <span>สังกัด <span id="print-dept">สำนักงานเขตพื้นที่การศึกษามัธยมศึกษานครพนม</span></span>
+        </div>
+        
+        <div style="margin-bottom: 5px; line-height: 1.6;">
+            <span style="margin-right: 20px;">ขอลา</span>
+            <span style="margin-right: 15px; font-size: 1.2em;"><span id="print-cb-sick">☐</span> ป่วย</span>
+            <span style="margin-right: 15px; font-size: 1.2em;"><span id="print-cb-personal">☐</span> กิจส่วนตัว</span>
+            <span style="margin-right: 15px; font-size: 1.2em;"><span id="print-cb-maternity">☐</span> คลอดบุตร</span>
+            <span>เนื่องจาก</span><span id="print-reason" style="margin-left: 10px;"></span>
+        </div>
+        
+        <div style="display: flex; align-items: flex-end; margin-bottom: 5px;">
+            <span style="margin-right: 10px;">ตั้งแต่วันที่</span>
+            <span style="flex: 1; text-align: center; margin-right: 10px;"><span id="print-start-d"></span> <span id="print-start-m"></span> <span id="print-start-y"></span></span>
+            <span style="margin-right: 10px;">ถึงวันที่</span>
+            <span style="flex: 1; text-align: center; margin-right: 10px;"><span id="print-end-d"></span> <span id="print-end-m"></span> <span id="print-end-y"></span></span>
+            <span style="margin-right: 10px;">มีกำหนด</span>
+            <span id="print-days" style="width: 60px; text-align: center; margin-right: 10px;"></span>
+            <span>วัน</span>
+        </div>
+        
+        <div style="margin-bottom: 10px; line-height: 1.6;">
+            <span style="margin-right: 20px;">ข้าพเจ้าได้ลา</span>
+            <span style="margin-right: 15px; font-size: 1.2em;"><span id="print-last-cb-sick">☐</span> ป่วย</span>
+            <span style="margin-right: 15px; font-size: 1.2em;"><span id="print-last-cb-personal">☐</span> กิจส่วนตัว</span>
+            <span style="margin-right: 15px; font-size: 1.2em;"><span id="print-last-cb-maternity">☐</span> คลอดบุตร</span>
+            <span>ครั้งสุดท้ายตั้งแต่วันที่</span><span id="print-last-start" style="margin-left: 10px; margin-right: 10px;"></span>
+            <span>มีกำหนด</span><span id="print-last-days" style="margin-left: 10px; margin-right: 10px;"></span><span>วัน</span>
+            <span style="margin-left: 10px;">ในระหว่างลาจะติดต่อข้าพเจ้าได้ที่</span><span id="print-contact" style="margin-left: 10px;"></span>
+        </div>
+        
+        <div style="display: flex; margin-top: 10px;">
+            <div style="width: 50%;">
+                <table class="print-stats-table">
+                    <thead>
+                        <tr>
+                            <th>ประเภทลา</th>
+                            <th>ลามาแล้ว<br>(วันทำการ)</th>
+                            <th>ลาครั้งนี้<br>(วันทำการ)</th>
+                            <th>รวมเป็น<br>(วันทำการ)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="text-align:center;">ป่วย</td>
+                            <td style="text-align:center;" id="print-stat-sick-past"></td>
+                            <td style="text-align:center;" id="print-stat-sick-now"></td>
+                            <td style="text-align:center;" id="print-stat-sick-total"></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:center;">กิจส่วนตัว</td>
+                            <td style="text-align:center;" id="print-stat-pers-past"></td>
+                            <td style="text-align:center;" id="print-stat-pers-now"></td>
+                            <td style="text-align:center;" id="print-stat-pers-total"></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:center;">คลอดบุตร</td>
+                            <td style="text-align:center;" id="print-stat-mat-past"></td>
+                            <td style="text-align:center;" id="print-stat-mat-now"></td>
+                            <td style="text-align:center;" id="print-stat-mat-total"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div style="margin-top: 15px; text-align: center;">
+                    <div>(ลงชื่อ).......................................................ผู้ตรวจสอบ</div>
+                    <div style="margin-top: 5px;">ตำแหน่ง.......................................................</div>
+                    <div style="margin-top: 5px;">วันที่.........../.........../...........</div>
+                </div>
+                
+                <div style="margin-top: 15px; text-align: center;">
+                    <div style="margin-bottom: 5px;">(ลงชื่อ).......................................................</div>
+                    <div>( <span id="print-hr-name">.......................................................</span> )</div>
+                    <div style="margin-top: 2px;">ตำแหน่ง หัวหน้ากลุ่มบริหารงานบุคคล</div>
+                    <div style="margin-top: 2px;">วันที่.........../.........../...........</div>
+                </div>
+                
+                <div style="margin-top: 15px; text-align: center;">
+                    <div>ความเห็นผู้อำนวยการกลุ่มบริหารงานบุคคล</div>
+                    <div style="margin-top: 10px;">(ลงชื่อ).......................................................</div>
+                    <div style="margin-top: 2px;">( <span id="print-deputy-name">.......................................................</span> )</div>
+                    <div style="margin-top: 2px;">ตำแหน่ง รองผู้อำนวยการกลุ่มบริหารงานบุคคล</div>
+                    <div style="margin-top: 2px;">วันที่.........../.........../...........</div>
+                </div>
+            </div>
+            
+            <div style="width: 50%; padding-left: 40px; text-align: center;">
+                <div style="margin-bottom: 15px;">ขอแสดงความนับถือ</div>
+                <div style="margin-bottom: 5px;">(ลงชื่อ).......................................................</div>
+                <div style="margin-bottom: 15px;">( <span id="print-sign-name">.......................................................</span> )</div>
+                
+                <div style="margin-top: 15px;">
+                    <div>ความเห็นหัวหน้ากลุ่มสาระการเรียนรู้</div>
+                    <div style="margin-top: 10px;">(ลงชื่อ).......................................................</div>
+                    <div style="margin-top: 2px;">( ....................................................... )</div>
+                    <div style="margin-top: 2px;">ตำแหน่ง.......................................................</div>
+                    <div style="margin-top: 2px;">วันที่.........../.........../...........</div>
+                </div>
+                
+                <div style="margin-top: 15px;">
+                    <div>ความเห็นผู้บังคับบัญชา</div>
+                    <div style="text-align: left; padding-left: 20px; margin-top: 5px;"><u>คำสั่ง</u></div>
+                    <div style="margin-top: 5px;">
+                        <span style="margin-right: 20px;">☐ อนุญาต</span>
+                        <span>☐ ไม่อนุญาต</span>
+                    </div>
+                    <div style="margin-top: 10px;">(ลงชื่อ).......................................................</div>
+                    <div style="margin-top: 2px;">( <span id="print-director-name">.......................................................</span> )</div>
+                    <div style="margin-top: 2px;" id="print-director-pos">ผู้อำนวยการโรงเรียน....................................</div>
+                    <div style="margin-top: 2px;">วันที่.........../.........../...........</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://npmcdn.com/flatpickr/dist/l10n/th.js"></script>
-    <script src="js/data.js?v=1.6"></script>
+    <script src="js/data.js?v=2"></script>
     <script src="js/app.js?v=1.6"></script>
+    <script src="js/leave-request.js?v=2"></script>
     <script src="js/table.js?v=1.6"></script>
     <script src="js/dashboard.js?v=1.6"></script>
     <script src="js/calendar.js?v=1.6"></script>

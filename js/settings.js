@@ -38,6 +38,28 @@ const Settings = (() => {
             </div>
 
             <div class="settings-card">
+                <h3><span class="material-icons-round">domain</span> ข้อมูลโรงเรียนและผู้บริหาร</h3>
+                <div class="settings-form">
+                    <div class="form-group admin-only">
+                        <label for="setting-school-name">ชื่อโรงเรียน</label>
+                        <input type="text" id="setting-school-name" value="${settings.schoolName || ''}" placeholder="เช่น โรงเรียนตัวอย่างวิทยา">
+                    </div>
+                    <div class="form-group admin-only" style="margin-top: 12px;">
+                        <label for="setting-director-name">ชื่อผู้อำนวยการ</label>
+                        <input type="text" id="setting-director-name" value="${settings.directorName || ''}" placeholder="เช่น นายสมมติ ใจดี">
+                    </div>
+                    <div class="form-group admin-only" style="margin-top: 12px;">
+                        <label for="setting-deputy-name">ชื่อรองผู้อำนวยการ</label>
+                        <input type="text" id="setting-deputy-name" value="${settings.deputyName || ''}" placeholder="เช่น นางสาวรองบริหาร ใจสู้">
+                    </div>
+                    <div class="form-group admin-only" style="margin-top: 12px;">
+                        <label for="setting-hr-name">ชื่อหัวหน้ากลุ่มบริหารงานบุคคล</label>
+                        <input type="text" id="setting-hr-name" value="${settings.hrName || ''}" placeholder="เช่น นายบุคคล รักงาน">
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-card">
                 <h3><span class="material-icons-round">date_range</span> รอบปีงบประมาณ</h3>
                 <div class="settings-form">
                     <div class="form-row" style="grid-template-columns: 1fr 1fr 1fr;">
@@ -172,6 +194,10 @@ const Settings = (() => {
         const fiscalYear = parseInt(document.getElementById('setting-year').value);
         const adminPinEl = document.getElementById('setting-admin-pin');
         const adminPin = adminPinEl ? adminPinEl.value.trim() : DataManager.getSettings().adminPin;
+        const schoolName = document.getElementById('setting-school-name').value.trim();
+        const directorName = document.getElementById('setting-director-name').value.trim();
+        const deputyName = document.getElementById('setting-deputy-name').value.trim();
+        const hrName = document.getElementById('setting-hr-name').value.trim();
         const cloudUrlEl = document.getElementById('setting-cloud-url');
         const cloudUrl = cloudUrlEl ? cloudUrlEl.value.trim() : DataManager.getCloudUrl();
 
@@ -192,7 +218,7 @@ const Settings = (() => {
         }
 
         DataManager.setCloudUrl(cloudUrl);
-        DataManager.updateSettings({ startMonth, endMonth, fiscalYear, adminPin });
+        DataManager.updateSettings({ startMonth, endMonth, fiscalYear, adminPin, schoolName, directorName, deputyName, hrName });
         App.showToast('บันทึกการตั้งค่าเรียบร้อย');
         render(); // Refresh preview
     }

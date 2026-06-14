@@ -46,6 +46,7 @@ const App = (() => {
         Calendar.init();
         TeacherManager.init();
         Settings.init();
+        LeaveRequest.init();
 
         // Default page
         navigate('table');
@@ -126,6 +127,8 @@ const App = (() => {
             case 'calendar': Calendar.render(); break;
             case 'teachers': TeacherManager.render(); break;
             case 'settings': Settings.render(); break;
+            case 'leave-request': LeaveRequest.render(); break;
+            case 'manage-requests': LeaveRequest.render(); break;
         }
     }
 

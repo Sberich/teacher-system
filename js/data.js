@@ -7,6 +7,7 @@ const DataManager = (() => {
         leaveRecords: 'tla_leaveRecords',
         settings: 'tla_settings',
         remarks: 'tla_remarks',
+        leaveRequests: 'tla_leaveRequests',
         cloudUrl: 'tla_cloudUrl' // Store Cloud URL separately
     };
 
@@ -66,6 +67,12 @@ const DataManager = (() => {
                 localStorage.setItem(KEYS.teachers, JSON.stringify(data.teachers));
                 localStorage.setItem(KEYS.leaveRecords, JSON.stringify(data.leaveRecords || []));
                 localStorage.setItem(KEYS.remarks, JSON.stringify(data.remarks || {}));
+                
+                // Preserve local leave requests if cloud doesn't send them (for backward compatibility)
+                if (data.leaveRequests !== undefined) {
+                    localStorage.setItem(KEYS.leaveRequests, JSON.stringify(data.leaveRequests));
+                }
+                
                 localStorage.setItem(KEYS.settings, JSON.stringify(data.settings));
                 return true;
             }
@@ -93,6 +100,7 @@ const DataManager = (() => {
                 teachers: load(KEYS.teachers, []),
                 leaveRecords: load(KEYS.leaveRecords, []),
                 remarks: load(KEYS.remarks, {}),
+                leaveRequests: load(KEYS.leaveRequests, []),
                 settings: currentSettings
             }
         };
@@ -294,12 +302,22 @@ const DataManager = (() => {
     function getLeaveRecords() {
         let records = load(KEYS.leaveRecords, []);
         let needsSave = false;
-        // Migration for legacy records that don't have an ID
-        records.forEach(r => {
+        // Migration & Cleanup for corrupted or legacy records
+        records = records.filter(r => {
+            // Remove corrupted records from the bug
+            if (typeof r.teacherId === 'object') {
+                needsSave = true;
+                return false; 
+            }
+            if (r.month === null || r.month === undefined) {
+                needsSave = true;
+                return false;
+            }
             if (!r.id) {
                 r.id = generateId();
                 needsSave = true;
             }
+            return true;
         });
         if (needsSave) save(KEYS.leaveRecords, records);
         return records;
@@ -448,6 +466,49 @@ const DataManager = (() => {
     }
 
     // =====================
+    //  LEAVE REQUESTS (HYBRID)
+    // =====================
+    function getLeaveRequests() {
+        return load(KEYS.leaveRequests, []);
+    }
+
+    function addLeaveRequest(requestData) {
+        const requests = getLeaveRequests();
+        const newReq = {
+            id: generateId(),
+            ...requestData,
+            status: 'pending', // pending, approved, rejected
+            timestamp: new Date().toISOString()
+        };
+        requests.push(newReq);
+        save(KEYS.leaveRequests, requests);
+        return newReq;
+    }
+
+    function updateLeaveRequestStatus(reqId, newStatus) {
+        const requests = getLeaveRequests();
+        const req = requests.find(r => r.id === reqId);
+        if (req) {
+            req.status = newStatus;
+            save(KEYS.leaveRequests, requests);
+            return true;
+        }
+        return false;
+    }
+
+    function deleteLeaveRequest(reqId) {
+        let requests = getLeaveRequests();
+        requests = requests.filter(r => r.id !== reqId);
+        save(KEYS.leaveRequests, requests);
+    }
+
+    function clearCompletedLeaveRequests() {
+        let requests = getLeaveRequests();
+        requests = requests.filter(r => r.status === 'pending');
+        save(KEYS.leaveRequests, requests);
+    }
+
+    // =====================
     //  DEMO DATA
     // =====================
     function loadDemoData() {
@@ -496,6 +557,7 @@ const DataManager = (() => {
         localStorage.removeItem(KEYS.leaveRecords);
         localStorage.removeItem(KEYS.settings);
         localStorage.removeItem(KEYS.remarks);
+        localStorage.removeItem(KEYS.leaveRequests);
         triggerCloudSync(); // sync empty state to cloud
     }
 
@@ -509,6 +571,7 @@ const DataManager = (() => {
         getCloudUrl, setCloudUrl, pullFromCloud, forceSyncToCloud,
         getTeachers, getSections, addTeacher, addTeachersBulk, updateTeacher, deleteTeacher, getNextOrder,
         getLeaveRecords, addLeaveEvent, updateLeaveEvent, getLeaveRecord, getTeacherLeaveForPeriod, deleteLeaveEvent,
+        getLeaveRequests, addLeaveRequest, updateLeaveRequestStatus, deleteLeaveRequest, clearCompletedLeaveRequests,
         getRemarks, getRemark, setRemark,
         getSettings, updateSettings, getPeriodMonths,
         getThaiMonth, getThaiMonthFull, THAI_MONTHS, THAI_MONTHS_FULL,
