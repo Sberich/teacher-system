@@ -305,7 +305,7 @@ const DataManager = (() => {
         // Migration & Cleanup for corrupted or legacy records
         records = records.filter(r => {
             // Remove corrupted records from the bug
-            if (typeof r.teacherId === 'object') {
+            if (typeof r.teacherId === 'object' || (typeof r.teacherId === 'string' && r.teacherId.includes('{'))) {
                 needsSave = true;
                 return false; 
             }
