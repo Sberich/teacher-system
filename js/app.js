@@ -329,14 +329,13 @@ const App = (() => {
         const el = document.getElementById('last-updated-text');
         if (el) {
             const settings = DataManager.getSettings();
-            let dateObj;
             if (settings && settings.lastUpdatedTimestamp) {
-                dateObj = new Date(settings.lastUpdatedTimestamp);
+                const dateObj = new Date(settings.lastUpdatedTimestamp);
+                const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+                el.textContent = 'ข้อมูล ณ วันที่ ' + dateObj.toLocaleDateString('th-TH', options) + ' น.';
             } else {
-                dateObj = new Date(); // fallback
+                el.textContent = 'ข้อมูล ณ วันที่ - (ยังไม่มีการบันทึกล่าสุด)';
             }
-            const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-            el.textContent = 'ข้อมูล ณ วันที่ ' + dateObj.toLocaleDateString('th-TH', options) + ' น.';
         }
     }
 
