@@ -145,12 +145,28 @@ const Dashboard = (() => {
                     tooltip: {
                         titleFont: { family: "'Noto Sans Thai', sans-serif" },
                         bodyFont: { family: "'Noto Sans Thai', sans-serif" }
+                    },
+                    datalabels: {
+                        display: true,
+                        color: 'white',
+                        font: { family: "'Noto Sans Thai', sans-serif", size: 11, weight: 'bold' },
+                        formatter: (val) => val > 0 ? val : ''
                     }
                 },
                 scales: {
                     x: {
-                        ticks: { color: textColor, font: { family: "'Noto Sans Thai', sans-serif" } },
-                        grid: { display: false }
+                        ticks: { 
+                            color: textColor, 
+                            font: { family: "'Noto Sans Thai', sans-serif" },
+                            maxRotation: 45,
+                            minRotation: 45
+                        },
+                        grid: { 
+                            display: true,
+                            drawOnChartArea: false,
+                            drawTicks: true,
+                            color: gridColor
+                        }
                     },
                     y: {
                         beginAtZero: true,
@@ -232,12 +248,28 @@ const Dashboard = (() => {
                     tooltip: {
                         titleFont: { family: "'Noto Sans Thai', sans-serif" },
                         bodyFont: { family: "'Noto Sans Thai', sans-serif" }
+                    },
+                    datalabels: {
+                        display: true,
+                        color: 'white',
+                        font: { family: "'Noto Sans Thai', sans-serif", size: 11, weight: 'bold' },
+                        formatter: (val) => val > 0 ? val : ''
                     }
                 },
                 scales: {
                     x: {
-                        ticks: { color: textColor, font: { family: "'Noto Sans Thai', sans-serif" } },
-                        grid: { display: false }
+                        ticks: { 
+                            color: textColor, 
+                            font: { family: "'Noto Sans Thai', sans-serif" },
+                            maxRotation: 45,
+                            minRotation: 45
+                        },
+                        grid: { 
+                            display: true,
+                            drawOnChartArea: false,
+                            drawTicks: true,
+                            color: gridColor
+                        }
                     },
                     y: {
                         beginAtZero: true,

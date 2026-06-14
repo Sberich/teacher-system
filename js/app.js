@@ -328,10 +328,15 @@ const App = (() => {
     function updateLastUpdatedText() {
         const el = document.getElementById('last-updated-text');
         if (el) {
-            const now = new Date();
+            const settings = DataManager.getSettings();
+            let dateObj;
+            if (settings && settings.lastUpdatedTimestamp) {
+                dateObj = new Date(settings.lastUpdatedTimestamp);
+            } else {
+                dateObj = new Date(); // fallback
+            }
             const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-            // .toLocaleDateString('th-TH') automatically uses Buddhist era year.
-            el.textContent = 'ข้อมูล ณ วันที่ ' + now.toLocaleDateString('th-TH', options) + ' น.';
+            el.textContent = 'ข้อมูล ณ วันที่ ' + dateObj.toLocaleDateString('th-TH', options) + ' น.';
         }
     }
 

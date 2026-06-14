@@ -81,13 +81,17 @@ const DataManager = (() => {
         if (!url) return;
 
         isSyncing = true;
+        const currentSettings = getSettings();
+        currentSettings.lastUpdatedTimestamp = new Date().toISOString();
+        save(KEYS.settings, currentSettings);
+
         const payload = {
             action: 'sync',
             payload: {
                 teachers: load(KEYS.teachers, []),
                 leaveRecords: load(KEYS.leaveRecords, []),
                 remarks: load(KEYS.remarks, {}),
-                settings: getSettings()
+                settings: currentSettings
             }
         };
 
