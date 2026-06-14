@@ -85,7 +85,7 @@ const DataManager = (() => {
         isSyncing = true;
         const currentSettings = getSettings();
         currentSettings.lastUpdatedTimestamp = new Date().toISOString();
-        save(KEYS.settings, currentSettings);
+        localStorage.setItem(KEYS.settings, JSON.stringify(currentSettings));
 
         const payload = {
             action: 'sync',
