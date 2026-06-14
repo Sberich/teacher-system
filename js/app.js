@@ -160,6 +160,14 @@ const App = (() => {
             overlay.classList.toggle('open');
         });
 
+        const closeBtn = document.getElementById('mobile-nav-close');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+                nav.classList.remove('open');
+                overlay.classList.remove('open');
+            });
+        }
+
         overlay.addEventListener('click', () => {
             nav.classList.remove('open');
             overlay.classList.remove('open');

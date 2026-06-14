@@ -273,6 +273,7 @@ const Dashboard = (() => {
                     },
                     y: {
                         beginAtZero: true,
+                        grace: '15%',
                         ticks: { color: textColor, stepSize: 1, font: { family: "'Noto Sans Thai', sans-serif" } },
                         grid: { display: false },
                         border: { display: false }
@@ -490,6 +491,7 @@ const Dashboard = (() => {
                     },
                     y: {
                         beginAtZero: true,
+                        grace: '15%',
                         ticks: { color: textColor, stepSize: 1, font: { family: "'Noto Sans Thai', sans-serif" } },
                         grid: { display: false },
                         border: { display: false }
@@ -602,6 +604,7 @@ const Dashboard = (() => {
                     },
                     y: {
                         beginAtZero: true,
+                        grace: '15%',
                         ticks: { color: textColor, stepSize: 1, font: { family: "'Noto Sans Thai', sans-serif" } },
                         grid: { display: false },
                         border: { display: false }
