@@ -77,6 +77,8 @@ const DataManager = (() => {
 
     // Push all local data to Cloud
     async function pushToCloud() {
+        if (!isAdmin()) return; // Only admin can modify and push data
+        
         const url = getCloudUrl();
         if (!url) return;
 
