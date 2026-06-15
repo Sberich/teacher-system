@@ -135,7 +135,7 @@ const App = (() => {
     // --- Theme ---
     function setupTheme() {
         const toggle = document.getElementById('theme-toggle');
-        const saved = localStorage.getItem('tla_theme') || 'light';
+        const saved = localStorage.getItem('tla_theme') || 'dark';
         applyTheme(saved);
 
         toggle.addEventListener('click', () => {

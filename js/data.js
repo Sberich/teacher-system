@@ -58,7 +58,12 @@ const DataManager = (() => {
         if (!url) return false; // No URL set, work offline
         
         try {
-            const response = await fetch(url + '?t=' + Date.now()); // cache buster
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 12000); // 12 วินาที Timeout
+            
+            const response = await fetch(url + '?t=' + Date.now(), { signal: controller.signal });
+            clearTimeout(timeoutId);
+
             if (!response.ok) throw new Error('Network error');
             const data = await response.json();
             
@@ -106,13 +111,20 @@ const DataManager = (() => {
         };
 
         try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 12000); // 12 วินาที Timeout
+
             const response = await fetch(url, {
                 method: 'POST',
-                body: JSON.stringify(payload),
                 headers: {
-                    'Content-Type': 'text/plain;charset=utf-8', // Apps Script handles plain text post better for CORS
-                }
+                    'Content-Type': 'text/plain;charset=utf-8'
+                },
+                body: JSON.stringify(payload),
+                signal: controller.signal
             });
+            clearTimeout(timeoutId);
+
+            if (!response.ok) throw new Error('Network error');
             const result = await response.json();
             if (result.status !== 'success') {
                 console.error('Cloud push error:', result.message);

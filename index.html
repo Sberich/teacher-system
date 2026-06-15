@@ -13,8 +13,15 @@
     <!-- Flatpickr for Date Picker -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/airbnb.css">
-    
     <link rel="stylesheet" href="css/style.css">
+
+    <!-- Web App Manifest (Android & iOS) -->
+    <meta name="theme-color" content="#0f172a">
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="ระบบวันลา">
+    <link rel="apple-touch-icon" href="icon-app.png">
 </head>
 <body>
     <!-- Global Loader (For Initial Cloud Pull) -->
@@ -53,8 +60,8 @@
                     <span class="material-icons-round">close</span>
                 </button>
             </div>
-            <a href="#" class="nav-item" data-page="leave-request" style="flex: 1.2; padding: 12px 0;">
-                <span class="nav-label" style="font-size: 1.3rem; font-weight: 800; color: var(--primary); letter-spacing: 0.5px;">ยื่นใบลา</span>
+            <a href="#" class="nav-item" data-page="leave-request" style="padding: 0 16px;">
+                <span class="nav-label" style="font-size: 1.15rem; font-weight: 800; color: var(--primary); letter-spacing: 0.5px;">ยื่นใบลา</span>
             </a>
             <a href="#" class="nav-item active" data-page="table">
                 <span class="material-icons-round">table_chart</span>
