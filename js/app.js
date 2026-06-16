@@ -19,6 +19,28 @@ const App = (() => {
             refreshBtn.addEventListener('click', handleManualRefresh);
         }
 
+        // Force Save Event (Admin Only)
+        const forceSaveBtn = document.getElementById('btn-force-save');
+        if (forceSaveBtn) {
+            forceSaveBtn.addEventListener('click', async () => {
+                if (!DataManager.getCloudUrl()) {
+                    showToast('ยังไม่ได้ตั้งค่าการเชื่อมต่อคลาวด์', 'warning');
+                    return;
+                }
+                const icon = forceSaveBtn.querySelector('.material-icons-round');
+                if (icon) icon.classList.add('spinning');
+                
+                const success = await DataManager.forceSyncToCloud();
+                
+                if (icon) icon.classList.remove('spinning');
+                if (success) {
+                    showToast('บังคับบันทึกข้อมูลขึ้นคลาวด์สำเร็จ!', 'success');
+                } else {
+                    showToast('บันทึกข้อมูลไม่สำเร็จ โปรดตรวจสอบการเชื่อมต่อ', 'error');
+                }
+            });
+        }
+
         // Check cloud sync on startup
         if (DataManager.getCloudUrl()) {
             const loader = document.getElementById('global-loader');
