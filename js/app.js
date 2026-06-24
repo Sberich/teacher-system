@@ -213,6 +213,13 @@ const App = (() => {
                 confirm('ต้องการออกจากโหมดผู้ดูแลระบบหรือไม่?', () => {
                     DataManager.logout();
                     updateAuthUI();
+
+                    // Reset filters so regular users see everyone
+                    const tableFilter = document.getElementById('table-section-filter');
+                    if (tableFilter) tableFilter.value = '';
+                    const tableSearch = document.getElementById('table-search');
+                    if (tableSearch) tableSearch.value = '';
+
                     showToast('ออกจากโหมดผู้ดูแลระบบแล้ว', 'info');
                     navigate(currentPage); // Refresh page
                 });

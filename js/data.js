@@ -101,6 +101,7 @@ const DataManager = (() => {
 
         const payload = {
             action: 'sync',
+            adminPin: currentSettings.adminPin,
             payload: {
                 teachers: load(KEYS.teachers, []),
                 leaveRecords: load(KEYS.leaveRecords, []),
@@ -494,6 +495,20 @@ const DataManager = (() => {
         };
         requests.push(newReq);
         save(KEYS.leaveRequests, requests);
+
+        // [BUGFIX] ส่งใบลาขึ้น Google Sheets ทันทีแม้จะไม่ใช่ Admin
+        const url = getCloudUrl();
+        if (url) {
+            fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({
+                    action: 'submitRequest',
+                    payload: newReq
+                })
+            }).catch(err => console.error("Cloud submit failed:", err));
+        }
+
         return newReq;
     }
 
