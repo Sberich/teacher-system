@@ -718,5 +718,10 @@ const LeaveTable = (() => {
         document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('show'));
     }
 
-    return { init, render };
+        function resetFilters() {
+        searchQuery = '';
+        sectionFilter = '';
+    }
+
+    return { init, render, resetFilters };
 })();

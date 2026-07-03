@@ -1,4 +1,4 @@
-/* ============================================
+﻿/* ============================================
    Leave Request (Hybrid Form) Manager
    ============================================ */
 const LeaveRequest = (() => {
@@ -92,8 +92,8 @@ const LeaveRequest = (() => {
 
             const startDate = new Date(req.startDate);
             const endDate = new Date(req.endDate);
-            const startStr = startDate.getDate() + ' ' + DataManager.THAI_MONTHS[startDate.getMonth() - 1 + 1] + ' ' + (startDate.getFullYear() + 543).toString().slice(2);
-            const endStr = endDate.getDate() + ' ' + DataManager.THAI_MONTHS[endDate.getMonth() - 1 + 1] + ' ' + (endDate.getFullYear() + 543).toString().slice(2);
+            const startStr = startDate.getDate() + ' ' + DataManager.THAI_MONTHS[startDate.getMonth() + 1] + ' ' + (startDate.getFullYear() + 543).toString().slice(2);
+            const endStr = endDate.getDate() + ' ' + DataManager.THAI_MONTHS[endDate.getMonth() + 1] + ' ' + (endDate.getFullYear() + 543).toString().slice(2);
             
             const dateStr = startDate.getTime() === endDate.getTime() ? startStr : startStr + ' - ' + endStr;
 
@@ -118,14 +118,18 @@ const LeaveRequest = (() => {
     }
 
     function submitRequest() {
+        const btnSubmit = document.getElementById('btn-submit-leave-request');
+        if (btnSubmit) { btnSubmit.disabled = true; btnSubmit.innerHTML = '<span class="material-icons-round">hourglass_empty</span> กำลังบันทึก...'; }
+        
         const teacherId = document.getElementById('lr-teacher').value;
         const type = document.getElementById('lr-type').value;
-        const reason = document.getElementById('lr-reason').value;
+        const reason = document.getElementById('lr-reason').value.trim();
         const startDate = document.getElementById('lr-start-date').value;
         const endDate = document.getElementById('lr-end-date').value;
-        const contact = document.getElementById('lr-contact').value;
+        const contact = document.getElementById('lr-contact').value.trim();
 
         if (!teacherId || !reason || !startDate || !endDate || !contact) {
+            if (btnSubmit) { btnSubmit.disabled = false; btnSubmit.innerHTML = '<span class="material-icons-round">send</span> ยื่นใบลาและบันทึก'; }
             App.showToast('กรุณากรอกข้อมูลให้ครบถ้วน', 'warning');
             return;
         }
@@ -133,6 +137,7 @@ const LeaveRequest = (() => {
         const sDate = new Date(startDate);
         const eDate = new Date(endDate);
         if (eDate < sDate) {
+            if (btnSubmit) { btnSubmit.disabled = false; btnSubmit.innerHTML = '<span class="material-icons-round">send</span> ยื่นใบลาและบันทึก'; }
             App.showToast('วันที่สิ้นสุดต้องไม่ก่อนวันที่เริ่มต้น', 'warning');
             return;
         }
@@ -160,6 +165,7 @@ const LeaveRequest = (() => {
 
         // Open Print view automatically
         printForm(newReq.id);
+        if (btnSubmit) { btnSubmit.disabled = false; btnSubmit.innerHTML = '<span class="material-icons-round">send</span> ยื่นใบลาและบันทึก'; }
 
         render();
     }
@@ -171,13 +177,13 @@ const LeaveRequest = (() => {
 
         const teachers = DataManager.getTeachers();
         const t = teachers.find(t => t.id === req.teacherId);
-        if (!t) return;
+        if (!t) { App.showToast('ไม่พบข้อมูลครู', 'error'); return; }
 
         const settings = DataManager.getSettings();
 
         // Populate print form
         document.getElementById('print-date').textContent = new Date().getDate();
-        document.getElementById('print-month').textContent = DataManager.THAI_MONTHS_FULL[new Date().getMonth()];
+        document.getElementById('print-month').textContent = DataManager.THAI_MONTHS_FULL[new Date().getMonth() + 1];
         document.getElementById('print-year').textContent = new Date().getFullYear() + 543;
 
         document.getElementById('print-subject').textContent = `ขอลา${req.type === 'ป่วย' ? 'ป่วย' : req.type === 'กิจส่วนตัว' ? 'ลากิจส่วนตัว' : 'คลอดบุตร'}`;
@@ -213,11 +219,11 @@ const LeaveRequest = (() => {
         const sD = new Date(req.startDate);
         const eD = new Date(req.endDate);
         document.getElementById('print-start-d').textContent = sD.getDate();
-        document.getElementById('print-start-m').textContent = DataManager.THAI_MONTHS_FULL[sD.getMonth()];
+        document.getElementById('print-start-m').textContent = DataManager.THAI_MONTHS_FULL[sD.getMonth() + 1];
         document.getElementById('print-start-y').textContent = sD.getFullYear() + 543;
         
         document.getElementById('print-end-d').textContent = eD.getDate();
-        document.getElementById('print-end-m').textContent = DataManager.THAI_MONTHS_FULL[eD.getMonth()];
+        document.getElementById('print-end-m').textContent = DataManager.THAI_MONTHS_FULL[eD.getMonth() + 1];
         document.getElementById('print-end-y').textContent = eD.getFullYear() + 543;
         document.getElementById('print-days').textContent = req.days;
         

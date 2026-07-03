@@ -220,7 +220,10 @@ const App = (() => {
                     const tableSearch = document.getElementById('table-search');
                     if (tableSearch) tableSearch.value = '';
                     // Trigger re-render to update the table visually
-                    if (window.LeaveTable) LeaveTable.render();
+                    if (window.LeaveTable) {
+                        if (typeof LeaveTable.resetFilters === 'function') LeaveTable.resetFilters();
+                        LeaveTable.render();
+                    }
 
                     showToast('ออกจากโหมดผู้ดูแลระบบแล้ว', 'info');
                     navigate(currentPage); // Refresh page

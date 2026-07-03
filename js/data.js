@@ -38,7 +38,7 @@ const DataManager = (() => {
 
     // --- Cloud Sync Mechanism ---
     let syncTimeout = null;
-    let isSyncing = false;
+    
 
     function getCloudUrl() {
         return localStorage.getItem(KEYS.cloudUrl) || '';
@@ -81,6 +81,7 @@ const DataManager = (() => {
                 localStorage.setItem(KEYS.settings, JSON.stringify(data.settings));
                 return true;
             }
+            return false;
         } catch (error) {
             console.error('Cloud pull failed:', error);
             return false;
@@ -89,12 +90,12 @@ const DataManager = (() => {
 
     // Push all local data to Cloud
     async function pushToCloud() {
-        if (!isAdmin()) return; // Only admin can modify and push data
+        if (!isAdmin()) { if (window.App && App.hideSyncIndicator) App.hideSyncIndicator(); return; }
         
         const url = getCloudUrl();
         if (!url) return;
 
-        isSyncing = true;
+        
         const currentSettings = getSettings();
         currentSettings.lastUpdatedTimestamp = new Date().toISOString();
         localStorage.setItem(KEYS.settings, JSON.stringify(currentSettings));
@@ -133,7 +134,7 @@ const DataManager = (() => {
         } catch (error) {
             console.error('Cloud push failed:', error);
         } finally {
-            isSyncing = false;
+            
             if (window.App && App.hideSyncIndicator) App.hideSyncIndicator();
         }
     }
@@ -218,6 +219,7 @@ const DataManager = (() => {
     }
 
     function addTeacher(name, section, order, gender = '', title = '') {
+        if (!isAdmin()) return false;
         const teachers = load(KEYS.teachers, []);
         shiftOrdersFrom(teachers, order);
         const teacher = { id: generateId(), name, section: section || 'ทั่วไป', order, gender, title };
@@ -228,6 +230,7 @@ const DataManager = (() => {
     }
 
     function addTeachersBulk(items) {
+        if (!isAdmin()) return false;
         const teachers = load(KEYS.teachers, []);
         let nextOrder = teachers.length > 0 ? Math.max(...teachers.map(t => t.order)) + 1 : 1;
         const added = [];
@@ -251,6 +254,7 @@ const DataManager = (() => {
     }
 
     function updateTeacher(id, name, section, newOrder, gender = '', title = '') {
+        if (!isAdmin()) return false;
         let teachers = load(KEYS.teachers, []);
         const teacher = teachers.find(t => t.id === id);
         if (!teacher) return null;
@@ -275,6 +279,7 @@ const DataManager = (() => {
     }
 
     function deleteTeacher(id) {
+        if (!isAdmin()) return false;
         let teachers = load(KEYS.teachers, []);
         teachers = teachers.filter(t => t.id !== id);
         teachers.sort((a, b) => a.order - b.order);
@@ -336,15 +341,17 @@ const DataManager = (() => {
         return records;
     }
 
-    function addLeaveEvent(teacherId, month, year, type, times, days, notes) {
+    function addLeaveEvent(teacherId, month, year, type, times, days, notes, startDate = null, endDate = null) {
+        if (!isAdmin()) return false;
         let records = getLeaveRecords();
         const id = generateId();
-        records.push({ id, teacherId, month, year, type, times, days, notes });
+        records.push({ id, teacherId, month, year, type, times, days, notes, startDate, endDate });
         save(KEYS.leaveRecords, records);
         return id;
     }
 
     function updateLeaveEvent(id, times, days, notes) {
+        if (!isAdmin()) return false;
         let records = getLeaveRecords();
         const idx = records.findIndex(r => r.id === id);
         if (idx >= 0) {
@@ -356,6 +363,7 @@ const DataManager = (() => {
     }
 
     function deleteLeaveEvent(id) {
+        if (!isAdmin()) return false;
         let records = getLeaveRecords();
         records = records.filter(r => r.id !== id);
         save(KEYS.leaveRecords, records);
@@ -413,6 +421,7 @@ const DataManager = (() => {
     }
 
     function setRemark(teacherId, text) {
+        if (!isAdmin()) return false;
         const remarks = getRemarks();
         if (text && text.trim()) {
             remarks[teacherId] = text.trim();
@@ -526,12 +535,14 @@ const DataManager = (() => {
     }
 
     function deleteLeaveRequest(reqId) {
+        if (!isAdmin()) return false;
         let requests = getLeaveRequests();
         requests = requests.filter(r => r.id !== reqId);
         save(KEYS.leaveRequests, requests);
     }
 
     function clearCompletedLeaveRequests() {
+        if (!isAdmin()) return false;
         let requests = getLeaveRequests();
         requests = requests.filter(r => r.status === 'pending');
         save(KEYS.leaveRequests, requests);
@@ -591,6 +602,7 @@ const DataManager = (() => {
     }
 
     function clearLeaveData() {
+        if (!isAdmin()) return false;
         localStorage.removeItem(KEYS.leaveRecords);
         triggerCloudSync(); // sync empty leave state to cloud
     }
