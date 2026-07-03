@@ -18,6 +18,9 @@
     --color-sick: #ef4444;
     --color-sick-bg: rgba(239, 68, 68, 0.12);
     --color-sick-border: rgba(239, 68, 68, 0.3);
+    --color-maternity: #ec4899;
+    --color-maternity-bg: rgba(236, 72, 153, 0.12);
+    --color-maternity-border: rgba(236, 72, 153, 0.3);
     --color-other: #8b5cf6;
     --color-other-bg: rgba(139, 92, 246, 0.12);
     --color-other-border: rgba(139, 92, 246, 0.3);
@@ -71,6 +74,8 @@
     --color-personal-border: rgba(245, 158, 11, 0.4);
     --color-sick-bg: rgba(239, 68, 68, 0.18);
     --color-sick-border: rgba(239, 68, 68, 0.4);
+    --color-maternity-bg: rgba(236, 72, 153, 0.18);
+    --color-maternity-border: rgba(236, 72, 153, 0.4);
     --color-other-bg: rgba(139, 92, 246, 0.18);
     --color-other-border: rgba(139, 92, 246, 0.4);
     --color-total-bg: rgba(16, 185, 129, 0.18);
@@ -643,6 +648,8 @@ body:not(.is-admin) {
 th.type-personal { color: var(--color-personal); padding: 6px 4px !important; min-width: 35px; }
 .type-col.type-sick,
 th.type-sick { color: var(--color-sick); padding: 6px 4px !important; min-width: 35px; }
+.type-col.type-maternity,
+th.type-maternity { color: var(--color-maternity); padding: 6px 4px !important; min-width: 35px; }
 .type-col.type-other,
 th.type-other { color: var(--color-other); padding: 6px 4px !important; min-width: 35px; }
 .type-col.type-total,
@@ -707,6 +714,7 @@ tfoot .sticky-right {
 
 .summary-cell.type-personal { background: var(--color-personal-bg) !important; color: var(--color-personal); }
 .summary-cell.type-sick { background: var(--color-sick-bg) !important; color: var(--color-sick); }
+.summary-cell.type-maternity { background: var(--color-maternity-bg) !important; color: var(--color-maternity); }
 .summary-cell.type-other { background: var(--color-other-bg) !important; color: var(--color-other); }
 .summary-cell.type-total { background: var(--color-total-bg) !important; color: var(--color-total); }
 
@@ -730,6 +738,7 @@ tfoot .sticky-right {
 
 .leave-cell.has-data.type-personal { background: var(--color-personal-bg); color: var(--color-personal); }
 .leave-cell.has-data.type-sick { background: var(--color-sick-bg); color: var(--color-sick); }
+.leave-cell.has-data.type-maternity { background: var(--color-maternity-bg); color: var(--color-maternity); }
 .leave-cell.has-data.type-other { background: var(--color-other-bg); color: var(--color-other); }
 
 /* Table row hover */
@@ -744,6 +753,7 @@ tfoot .sticky-right {
 
 .teacher-row:hover .has-data.type-personal { background: rgba(245, 158, 11, 0.2); }
 .teacher-row:hover .has-data.type-sick { background: rgba(239, 68, 68, 0.2); }
+.teacher-row:hover .has-data.type-maternity { background: rgba(236, 72, 153, 0.2); }
 .teacher-row:hover .has-data.type-other { background: rgba(139, 92, 246, 0.2); }
 
 /* Striped rows */
@@ -756,6 +766,7 @@ tfoot .sticky-right {
 }
 .teacher-row:nth-child(even) .has-data.type-personal { background: var(--color-personal-bg); }
 .teacher-row:nth-child(even) .has-data.type-sick { background: var(--color-sick-bg); }
+.teacher-row:nth-child(even) .has-data.type-maternity { background: var(--color-maternity-bg); }
 .teacher-row:nth-child(even) .has-data.type-other { background: var(--color-other-bg); }
 
 /* Summary row (footer) */
@@ -1113,6 +1124,7 @@ th.type-days { color: var(--color-total); font-weight: 700; padding: 4px 2px !im
 
 .cal-dot.type-personal { background: var(--color-personal); }
 .cal-dot.type-sick { background: var(--color-sick); }
+.cal-dot.type-maternity { background: var(--color-maternity); }
 .cal-dot.type-other { background: var(--color-other); }
 
 .cal-count {
@@ -1211,6 +1223,11 @@ th.type-days { color: var(--color-total); font-weight: 700; padding: 4px 2px !im
     border-left-color: var(--color-sick);
 }
 
+.cal-detail-item.type-maternity {
+    background: var(--color-maternity-bg);
+    border-left-color: var(--color-maternity);
+}
+
 .cal-detail-item.type-other {
     background: var(--color-other-bg);
     border-left-color: var(--color-other);
@@ -1222,6 +1239,7 @@ th.type-days { color: var(--color-total); font-weight: 700; padding: 4px 2px !im
 
 .cal-detail-item.type-personal .material-icons-round { color: var(--color-personal); }
 .cal-detail-item.type-sick .material-icons-round { color: var(--color-sick); }
+.cal-detail-item.type-maternity .material-icons-round { color: var(--color-maternity); }
 .cal-detail-item.type-other .material-icons-round { color: var(--color-other); }
 
 .cal-detail-info {

@@ -2,6 +2,8 @@
    LeaveTable — Main Leave Overview Table
    ============================================ */
 const LeaveTable = (() => {
+    let deletedRecordsStack = [];
+    let searchTimeout;
     let searchQuery = '';
     let sectionFilter = '';
     let currentEdit = null;
@@ -10,7 +12,10 @@ const LeaveTable = (() => {
     function init() {
         document.getElementById('table-search').addEventListener('input', (e) => {
             searchQuery = e.target.value.trim().toLowerCase();
-            render();
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                render();
+            }, 300);
         });
 
         document.getElementById('table-section-filter').addEventListener('change', (e) => {
@@ -196,8 +201,9 @@ const LeaveTable = (() => {
 
         // Leave types: Sick then Personal (as requested)
         const leaveTypes = [
-            { key: 'sick', label: 'ป่วย', cls: 'type-sick' },
-            { key: 'personal', label: 'กิจ', cls: 'type-personal' }
+            { key: 'sick', label: 'ลาป่วย', cls: 'type-sick' },
+            { key: 'personal', label: 'ลากิจ', cls: 'type-personal' },
+            { key: 'maternity', label: 'ลาคลอด', cls: 'type-maternity' }
         ];
 
         let html = '<table class="leave-table" id="leave-table">';
@@ -257,8 +263,8 @@ const LeaveTable = (() => {
 
             html += `<tr class="teacher-row" data-teacher-id="${teacher.id}">`;
             html += `<td class="sticky-left col-order">${teacher.order}</td>`;
-            html += `<td class="sticky-left col-name" title="${teacher.name}">
-                        ${teacher.name}
+            html += `<td class="sticky-left col-name" title="${escapeHtml(teacher.name)}">
+                        ${escapeHtml(teacher.name)}
                      </td>`;
 
             months.forEach(({ month, year }) => {
@@ -295,8 +301,8 @@ const LeaveTable = (() => {
             });
 
             // Summary columns
-            const totalTimes = tTotals.sick.times + tTotals.personal.times;
-            const totalDays = tTotals.sick.days + tTotals.personal.days;
+            const totalTimes = tTotals.sick.times + tTotals.personal.times + (tTotals.maternity ? tTotals.maternity.times : 0);
+            const totalDays = tTotals.sick.days + tTotals.personal.days + (tTotals.maternity ? tTotals.maternity.days : 0);
 
             html += `<td class="summary-cell type-sick">${fmtTotal(tTotals.sick)}</td>`;
             html += `<td class="summary-cell type-personal">${fmtTotal(tTotals.personal)}</td>`;
@@ -304,11 +310,12 @@ const LeaveTable = (() => {
             html += `<td class="summary-cell type-days">${totalDays || '-'}</td>`;
 
             // Remarks column
-            html += `<td class="remarks-cell" data-teacher="${teacher.id}" title="${remark ? escapeHtml(remark) : 'คลิกเพื่อเพิ่มหมายเหตุ'}">${remark || '<span class="remarks-placeholder">-</span>'}</td>`;
+            html += `<td class="remarks-cell" data-teacher="${teacher.id}" title="${remark ? escapeHtml(remark) : 'คลิกเพื่อเพิ่มหมายเหตุ'}">${remark ? escapeHtml(remark) : '<span class="remarks-placeholder">-</span>'}</td>`;
 
             html += '</tr>';
 
-            for (const type of ['sick', 'personal']) {
+            for (const type of ['sick', 'personal', 'maternity']) {
+                if(!schoolTotals[type]) continue;
                 schoolTotals[type].times += tTotals[type].times;
                 schoolTotals[type].days += tTotals[type].days;
             }
@@ -525,7 +532,8 @@ const LeaveTable = (() => {
 
         const leaveTypes = [
             { key: 'sick', label: 'ป่วย' },
-            { key: 'personal', label: 'กิจ' }
+            { key: 'personal', label: 'กิจ' },
+            { key: 'maternity', label: 'คลอด' }
         ];
 
         const periodLabel = months.map(m => DataManager.getThaiMonth(m.month) + ' ' + m.year).join(' - ');
@@ -582,7 +590,7 @@ const LeaveTable = (() => {
             const leaveData = DataManager.getTeacherLeaveForPeriod(teacher.id);
             let tTotals = { sick: { times: 0, days: 0 }, personal: { times: 0, days: 0 } };
 
-            html += `<tr><td>${teacher.order}</td><td class="name">${teacher.name}</td>`;
+            html += `<tr><td>${teacher.order}</td><td class="name">${escapeHtml(teacher.name)}</td>`;
 
             months.forEach(({ month, year }) => {
                 const key = `${month}-${year}`;
@@ -607,7 +615,8 @@ const LeaveTable = (() => {
             html += `<td class="remarks">${escapeHtml(DataManager.getRemark(teacher.id))}</td>`;
             html += '</tr>';
 
-            for (const t of ['sick', 'personal']) {
+            for (const t of ['sick', 'personal', 'maternity']) {
+                if(!schoolTotals[t]) continue;
                 schoolTotals[t].times += tTotals[t].times;
                 schoolTotals[t].days += tTotals[t].days;
             }
@@ -649,7 +658,8 @@ const LeaveTable = (() => {
         const teachers = getFilteredTeachers();
         const leaveTypes = [
             { key: 'sick', label: 'ป่วย' },
-            { key: 'personal', label: 'กิจ' }
+            { key: 'personal', label: 'กิจ' },
+            { key: 'maternity', label: 'คลอด' }
         ];
 
         // BOM for Thai encoding in Excel
@@ -667,8 +677,8 @@ const LeaveTable = (() => {
         // Data rows
         teachers.forEach(teacher => {
             const leaveData = DataManager.getTeacherLeaveForPeriod(teacher.id);
-            let tTotals = { sick: { times: 0, days: 0 }, personal: { times: 0, days: 0 } };
-            let row = [teacher.order, `"${teacher.name}"`, `"${teacher.section}"`];
+            let tTotals = { sick: { times: 0, days: 0 }, personal: { times: 0, days: 0 }, maternity: { times: 0, days: 0 } };
+            let row = [teacher.order, `"${escapeHtml(teacher.name)}"`, `"${escapeHtml(teacher.section)}"`];
 
             months.forEach(({ month, year }) => {
                 const key = `${month}-${year}`;

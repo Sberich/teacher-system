@@ -41,7 +41,7 @@ const DataManager = (() => {
     let isSyncing = false;
 
     function getCloudUrl() {
-        return localStorage.getItem(KEYS.cloudUrl) || 'https://script.google.com/macros/s/AKfycbwXpmqLY60vbYaif5iVvvUYVtNLLGJ5UHAOoFQljaNfuOCcmCxOH2svFfjID5Fyn1Y/exec';
+        return localStorage.getItem(KEYS.cloudUrl) || '';
     }
 
     function setCloudUrl(url) {
@@ -463,6 +463,7 @@ const DataManager = (() => {
             teachers: load(KEYS.teachers, []),
             leaveRecords: load(KEYS.leaveRecords, []),
             remarks: load(KEYS.remarks, {}),
+            leaveRequests: load(KEYS.leaveRequests, []),
             settings: getSettings(),
             exportDate: new Date().toISOString(),
             version: '1.2'
@@ -474,6 +475,7 @@ const DataManager = (() => {
         if (data.teachers) localStorage.setItem(KEYS.teachers, JSON.stringify(data.teachers));
         if (data.leaveRecords) localStorage.setItem(KEYS.leaveRecords, JSON.stringify(data.leaveRecords));
         if (data.remarks) localStorage.setItem(KEYS.remarks, JSON.stringify(data.remarks));
+        if (data.leaveRequests) localStorage.setItem(KEYS.leaveRequests, JSON.stringify(data.leaveRequests));
         if (data.settings) localStorage.setItem(KEYS.settings, JSON.stringify(data.settings));
         triggerCloudSync(); // Push imported data to cloud
     }

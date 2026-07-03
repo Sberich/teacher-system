@@ -407,6 +407,7 @@ const App = (() => {
     function setupAntiCopy() {
         // Prevent right click
         document.addEventListener('contextmenu', function(e) {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
             if (!isAdmin()) {
                 e.preventDefault();
             }
@@ -414,6 +415,7 @@ const App = (() => {
 
         // Prevent copy shortcut
         document.addEventListener('copy', function(e) {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
             if (!isAdmin()) {
                 e.preventDefault();
                 showToast('ไม่อนุญาตให้คัดลอกข้อมูลในโหมดผู้ชม', 'warning');

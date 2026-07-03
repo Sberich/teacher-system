@@ -80,7 +80,7 @@ const TeacherManager = (() => {
                 <tr data-id="${t.id}">
                     <td class="order-cell">${t.order}</td>
                     <td class="name-cell">
-                        ${t.name}
+                        ${escapeHtml(t.name)}
                     </td>
                     <td>
                         <span class="section-badge" style="margin-left:0;">${escapeHtml(t.section)}</span>
