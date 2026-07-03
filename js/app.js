@@ -1,4 +1,4 @@
-/* ============================================
+﻿/* ============================================
    App — Main Controller (Routing, Theme, Modal, Toast)
    ============================================ */
 const App = (() => {
@@ -219,6 +219,8 @@ const App = (() => {
                     if (tableFilter) tableFilter.value = '';
                     const tableSearch = document.getElementById('table-search');
                     if (tableSearch) tableSearch.value = '';
+                    // Trigger re-render to update the table visually
+                    if (window.LeaveTable) LeaveTable.render();
 
                     showToast('ออกจากโหมดผู้ดูแลระบบแล้ว', 'info');
                     navigate(currentPage); // Refresh page

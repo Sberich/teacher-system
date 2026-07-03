@@ -1,4 +1,4 @@
-/* ============================================
+﻿/* ============================================
    LeaveTable — Main Leave Overview Table
    ============================================ */
 const LeaveTable = (() => {
@@ -531,8 +531,7 @@ const LeaveTable = (() => {
 
         const leaveTypes = [
             { key: 'sick', label: 'ป่วย' },
-            { key: 'personal', label: 'กิจ' },
-            { key: 'maternity', label: 'คลอด' }
+            { key: 'personal', label: 'กิจ' }
         ];
 
         const periodLabel = months.map(m => DataManager.getThaiMonth(m.month) + ' ' + m.year).join(' - ');
@@ -657,8 +656,7 @@ const LeaveTable = (() => {
         const teachers = getFilteredTeachers();
         const leaveTypes = [
             { key: 'sick', label: 'ป่วย' },
-            { key: 'personal', label: 'กิจ' },
-            { key: 'maternity', label: 'คลอด' }
+            { key: 'personal', label: 'กิจ' }
         ];
 
         // BOM for Thai encoding in Excel
