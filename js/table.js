@@ -202,8 +202,7 @@ const LeaveTable = (() => {
         // Leave types: Sick then Personal (as requested)
         const leaveTypes = [
             { key: 'sick', label: 'ลาป่วย', cls: 'type-sick' },
-            { key: 'personal', label: 'ลากิจ', cls: 'type-personal' },
-            { key: 'maternity', label: 'ลาคลอด', cls: 'type-maternity' }
+            { key: 'personal', label: 'ลากิจ', cls: 'type-personal' }
         ];
 
         let html = '<table class="leave-table" id="leave-table">';
@@ -241,8 +240,7 @@ const LeaveTable = (() => {
 
         let schoolTotals = {
             sick: { times: 0, days: 0 },
-            personal: { times: 0, days: 0 },
-            maternity: { times: 0, days: 0 }
+            personal: { times: 0, days: 0 }
         };
 
         const monthSchoolTotals = {};
@@ -250,8 +248,7 @@ const LeaveTable = (() => {
             const key = `${month}-${year}`;
             monthSchoolTotals[key] = {
                 sick: { times: 0, days: 0 },
-                personal: { times: 0, days: 0 },
-                maternity: { times: 0, days: 0 }
+                personal: { times: 0, days: 0 }
             };
         });
 
@@ -260,8 +257,7 @@ const LeaveTable = (() => {
             const remark = DataManager.getRemark(teacher.id);
             let tTotals = {
                 sick: { times: 0, days: 0 },
-                personal: { times: 0, days: 0 },
-                maternity: { times: 0, days: 0 }
+                personal: { times: 0, days: 0 }
             };
 
             html += `<tr class="teacher-row" data-teacher-id="${teacher.id}">`;
@@ -304,8 +300,8 @@ const LeaveTable = (() => {
             });
 
             // Summary columns
-            const totalTimes = tTotals.sick.times + tTotals.personal.times + (tTotals.maternity ? tTotals.maternity.times : 0);
-            const totalDays = tTotals.sick.days + tTotals.personal.days + (tTotals.maternity ? tTotals.maternity.days : 0);
+            const totalTimes = tTotals.sick.times + tTotals.personal.times;
+            const totalDays = tTotals.sick.days + tTotals.personal.days;
 
             html += `<td class="summary-cell type-sick">${fmtTotal(tTotals.sick)}</td>`;
             html += `<td class="summary-cell type-personal">${fmtTotal(tTotals.personal)}</td>`;
@@ -317,7 +313,7 @@ const LeaveTable = (() => {
 
             html += '</tr>';
 
-            for (const type of ['sick', 'personal', 'maternity']) {
+            for (const type of ['sick', 'personal']) {
                 if(!schoolTotals[type]) continue;
                 schoolTotals[type].times += tTotals[type].times;
                 schoolTotals[type].days += tTotals[type].days;
@@ -341,8 +337,8 @@ const LeaveTable = (() => {
             });
         });
 
-        const grandTimes = schoolTotals.sick.times + schoolTotals.personal.times + (schoolTotals.maternity ? schoolTotals.maternity.times : 0);
-        const grandDays = schoolTotals.sick.days + schoolTotals.personal.days + (schoolTotals.maternity ? schoolTotals.maternity.days : 0);
+        const grandTimes = schoolTotals.sick.times + schoolTotals.personal.times;
+        const grandDays = schoolTotals.sick.days + schoolTotals.personal.days;
 
         html += `<td class="summary-cell type-sick">${fmtTotal(schoolTotals.sick)}</td>`;
         html += `<td class="summary-cell type-personal">${fmtTotal(schoolTotals.personal)}</td>`;
@@ -587,11 +583,11 @@ const LeaveTable = (() => {
 
         // Body
         html += '<tbody>';
-        let schoolTotals = { sick: { times: 0, days: 0 }, personal: { times: 0, days: 0 }, maternity: { times: 0, days: 0 } };
+        let schoolTotals = { sick: { times: 0, days: 0 }, personal: { times: 0, days: 0 } };
 
         teachers.forEach(teacher => {
             const leaveData = DataManager.getTeacherLeaveForPeriod(teacher.id);
-            let tTotals = { sick: { times: 0, days: 0 }, personal: { times: 0, days: 0 }, maternity: { times: 0, days: 0 } };
+            let tTotals = { sick: { times: 0, days: 0 }, personal: { times: 0, days: 0 } };
 
             html += `<tr><td>${teacher.order}</td><td class="name">${escapeHtml(teacher.name)}</td>`;
 
@@ -609,8 +605,8 @@ const LeaveTable = (() => {
                 });
             });
 
-            const totalTimes = tTotals.sick.times + tTotals.personal.times + (tTotals.maternity ? tTotals.maternity.times : 0);
-            const totalDays = tTotals.sick.days + tTotals.personal.days + (tTotals.maternity ? tTotals.maternity.days : 0);
+            const totalTimes = tTotals.sick.times + tTotals.personal.times;
+            const totalDays = tTotals.sick.days + tTotals.personal.days;
             const fmtT = (t) => (t.times || t.days) ? t.times + '/' + t.days : '-';
 
             html += `<td>${fmtT(tTotals.sick)}</td><td>${fmtT(tTotals.personal)}</td>`;
@@ -618,7 +614,7 @@ const LeaveTable = (() => {
             html += `<td class="remarks">${escapeHtml(DataManager.getRemark(teacher.id))}</td>`;
             html += '</tr>';
 
-            for (const t of ['sick', 'personal', 'maternity']) {
+            for (const t of ['sick', 'personal']) {
                 if(!schoolTotals[t]) continue;
                 schoolTotals[t].times += tTotals[t].times;
                 schoolTotals[t].days += tTotals[t].days;
@@ -626,8 +622,8 @@ const LeaveTable = (() => {
         });
 
         // Footer
-        const gt = schoolTotals.sick.times + schoolTotals.personal.times + (schoolTotals.maternity ? schoolTotals.maternity.times : 0);
-        const gd = schoolTotals.sick.days + schoolTotals.personal.days + (schoolTotals.maternity ? schoolTotals.maternity.days : 0);
+        const gt = schoolTotals.sick.times + schoolTotals.personal.times;
+        const gd = schoolTotals.sick.days + schoolTotals.personal.days;
         const fmtT = (t) => (t.times || t.days) ? t.times + '/' + t.days : '-';
 
         html += `<tr class="footer-row"><td></td><td class="name">รวม (${teachers.length} คน)</td>`;
@@ -680,7 +676,7 @@ const LeaveTable = (() => {
         // Data rows
         teachers.forEach(teacher => {
             const leaveData = DataManager.getTeacherLeaveForPeriod(teacher.id);
-            let tTotals = { sick: { times: 0, days: 0 }, personal: { times: 0, days: 0 }, maternity: { times: 0, days: 0 } };
+            let tTotals = { sick: { times: 0, days: 0 }, personal: { times: 0, days: 0 } };
             let row = [teacher.order, `"${escapeHtml(teacher.name)}"`, `"${escapeHtml(teacher.section)}"`];
 
             months.forEach(({ month, year }) => {
@@ -697,8 +693,8 @@ const LeaveTable = (() => {
                 });
             });
 
-            const totalTimes = tTotals.sick.times + tTotals.personal.times + (tTotals.maternity ? tTotals.maternity.times : 0);
-            const totalDays = tTotals.sick.days + tTotals.personal.days + (tTotals.maternity ? tTotals.maternity.days : 0);
+            const totalTimes = tTotals.sick.times + tTotals.personal.times;
+            const totalDays = tTotals.sick.days + tTotals.personal.days;
             const fmtT = (t) => (t.times || t.days) ? t.times + '/' + t.days : '-';
 
             row.push(fmtT(tTotals.sick), fmtT(tTotals.personal));

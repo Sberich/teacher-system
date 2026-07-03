@@ -116,8 +116,8 @@ const Calendar = (() => {
         const detail = document.getElementById('calendar-detail');
         const events = dateMap[date] || [];
 
-        const typeLabels = { personal: 'ลากิจ', sick: 'ลาป่วย', maternity: 'ลาคลอด', other: 'อื่นๆ' };
-        const typeIcons = { personal: 'person', sick: 'sick', maternity: 'child_care', other: 'more_horiz' };
+        const typeLabels = { personal: 'ลากิจ', sick: 'ลาป่วย', other: 'อื่นๆ' };
+        const typeIcons = { personal: 'person', sick: 'sick', other: 'more_horiz' };
 
         if (events.length === 0) {
             detail.innerHTML = `
