@@ -1,4 +1,4 @@
-﻿/* ============================================
+/* ============================================
    Dashboard — Summary Statistics & Charts
    (Only ลากิจ and ลาป่วย — no อื่นๆ)
    ============================================ */
@@ -148,8 +148,10 @@ const Dashboard = (() => {
                     },
                     datalabels: {
                         display: true,
-                        color: 'white',
-                        font: { family: "'Noto Sans Thai', sans-serif", size: 11, weight: 'bold' },
+                        color: textColor,
+                        anchor: 'end',
+                        align: 'top',
+                        font: { family: "'Noto Sans Thai', sans-serif", size: 10, weight: '500' },
                         formatter: (val) => val > 0 ? val : ''
                     }
                 },
@@ -251,8 +253,10 @@ const Dashboard = (() => {
                     },
                     datalabels: {
                         display: true,
-                        color: 'white',
-                        font: { family: "'Noto Sans Thai', sans-serif", size: 11, weight: 'bold' },
+                        color: textColor,
+                        anchor: 'end',
+                        align: 'top',
+                        font: { family: "'Noto Sans Thai', sans-serif", size: 10, weight: '500' },
                         formatter: (val) => val > 0 ? val : ''
                     }
                 },

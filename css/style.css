@@ -950,12 +950,14 @@ th.type-days { color: var(--color-total); font-weight: 700; padding: 4px 2px !im
 .card-all .stat-icon { background: linear-gradient(135deg, #10b981, #059669); }
 
 .stat-value {
-    font-size: 2.2rem;
+    font-size: clamp(1.4rem, 2vw, 1.8rem);
     font-weight: 500;
-    line-height: 1;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     color: var(--text);
     letter-spacing: -0.5px;
-    white-space: nowrap;
 }
 
 .stat-label {
@@ -2043,9 +2045,14 @@ th.type-days { color: var(--color-total); font-weight: 700; padding: 4px 2px !im
     transition: all 0.2s;
 }
 .about-close-abs:hover { background: var(--bg-table-row-hover); color: var(--text); }
-/ *  
- P r e m i u m  
- A b o u t  
- M o d a l  
- * /  
+/ * 
+ 
+ P r e m i u m 
+ 
+ A b o u t 
+ 
+ M o d a l 
+ 
+ * / 
+ 
  
