@@ -1,4 +1,4 @@
-﻿/* ============================================
+/* ============================================
    DataManager — Cloud Sync (Google Sheets) + LocalStorage Cache
    ============================================ */
 const DataManager = (() => {
@@ -41,15 +41,11 @@ const DataManager = (() => {
     
 
     function getCloudUrl() {
-        return localStorage.getItem(KEYS.cloudUrl) || '';
+        return 'https://script.google.com/macros/s/AKfycbwXpmqLY60vbYaif5iVvvUYVtNLLGJ5UHAOoFQljaNfuOCcmCxOH2svFfjID5Fyn1Y/exec';
     }
 
     function setCloudUrl(url) {
-        if (url) {
-            localStorage.setItem(KEYS.cloudUrl, url.trim());
-        } else {
-            localStorage.removeItem(KEYS.cloudUrl);
-        }
+        // Disabled
     }
 
     // Pull data from Cloud into LocalStorage (On app start)
