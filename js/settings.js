@@ -22,7 +22,7 @@ const Settings = (() => {
             <div class="settings-card">
                 <h3><span class="material-icons-round">cloud_sync</span> การเชื่อมต่อฐานข้อมูล (Google Sheets)</h3>
                 <div class="settings-form">
-                    <div class="form-group admin-only">
+                    <div class="form-group admin-only" style="display:none;">
                         <label for="setting-cloud-url">Google Apps Script Web App URL</label>
                         <input type="text" id="setting-cloud-url" value="${DataManager.getCloudUrl()}" placeholder="https://script.google.com/macros/s/.../exec">
                         <small class="form-hint">วาง URL ที่ได้จากขั้นตอนการ Deploy Apps Script เพื่อเชื่อมต่อระบบเข้ากับ Cloud</small>
