@@ -41,11 +41,11 @@ const DataManager = (() => {
     
 
     function getCloudUrl() {
-        return 'https://script.google.com/macros/s/AKfycbwXpmqLY60vbYaif5iVvvUYVtNLLGJ5UHAOoFQljaNfuOCcmCxOH2svFfjID5Fyn1Y/exec';
+        return load(KEYS.cloudUrl, window.API_URL || '');
     }
 
     function setCloudUrl(url) {
-        // Disabled
+        save(KEYS.cloudUrl, url);
     }
 
     // Pull data from Cloud into LocalStorage (On app start)
