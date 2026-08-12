@@ -1,6 +1,12 @@
-﻿/* ============================================
+/* ============================================
    App — Main Controller (Routing, Theme, Modal, Toast)
    ============================================ */
+// ==========================================
+//  GLOBAL CONFIG
+// ==========================================
+// *** ให้เปลี่ยน URL ด้านล่างเป็น URL ที่ได้จาก Google Apps Script (Deploy as Web App) ***
+const API_URL = 'https://script.google.com/macros/s/AKfycbwnkuQIbW9br1xIq-jfVRGmEBScVSRzkju6x3AghnwViuWE-Qfri_1EsPlT40LX08wP/exec';
+
 const App = (() => {
     let currentPage = 'table';
 
