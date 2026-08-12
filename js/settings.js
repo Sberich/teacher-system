@@ -224,7 +224,13 @@ const Settings = (() => {
     }
 
     async function forceSync() {
-        const url = DataManager.getCloudUrl();
+        const cloudUrlEl = document.getElementById('setting-cloud-url');
+        const url = cloudUrlEl ? cloudUrlEl.value.trim() : DataManager.getCloudUrl();
+        
+        if (url) {
+            DataManager.setCloudUrl(url); // บันทึกให้ทันทีเผื่อลืมกด Save Settings
+        }
+
         if (!url) {
             App.showToast('กรุณาใส่ Web App URL และบันทึกการตั้งค่าก่อน', 'warning');
             return;
