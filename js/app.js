@@ -5,7 +5,7 @@
 //  GLOBAL CONFIG
 // ==========================================
 // *** ให้เปลี่ยน URL ด้านล่างเป็น URL ที่ได้จาก Google Apps Script (Deploy as Web App) ***
-window.API_URL = 'https://script.google.com/macros/s/AKfycbwoYluSQe2JajB2Kynd2aQZDIdx56qGpkeafOW17xsZShOElXiJfH5PHbTh-m5dd-KZ/exec';
+window.API_URL = 'https://script.google.com/macros/s/AKfycbxn0CzTCt3OSqBVIVu2ClvwLykM1-Nedl_XPGfgZc4pV53zDpwsKH8E-MVXA4jI5nLt/exec';
 
 const App = (() => {
     let currentPage = 'table';

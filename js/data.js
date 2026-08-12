@@ -25,9 +25,7 @@ const DataManager = (() => {
 
     function save(key, data) {
         localStorage.setItem(key, JSON.stringify(data));
-        if (key !== KEYS.cloudUrl) {
-            triggerCloudSync(); // Trigger sync whenever data changes
-        }
+        // ไม่ทำการ auto-sync อีกต่อไป ตามที่ผู้ใช้งานรีเควส (ให้ไปซิงค์ตอนกดปุ่มเมฆแทน)
     }
 
     function load(key, defaultValue) {
