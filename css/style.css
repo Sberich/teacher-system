@@ -950,14 +950,12 @@ th.type-days { color: var(--color-total); font-weight: 700; padding: 4px 2px !im
 .card-all .stat-icon { background: linear-gradient(135deg, #10b981, #059669); }
 
 .stat-value {
-    font-size: clamp(1.4rem, 2vw, 1.8rem);
+    font-size: 2.2rem;
     font-weight: 500;
-    line-height: 1.2;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    line-height: 1;
     color: var(--text);
     letter-spacing: -0.5px;
+    white-space: nowrap;
 }
 
 .stat-label {
@@ -2056,3 +2054,20 @@ th.type-days { color: var(--color-total); font-weight: 700; padding: 4px 2px !im
  * / 
  
  
+/* Late Admin Access Utilities */
+.late-admin-only {
+    display: none !important;
+}
+
+body.is-admin .late-admin-only, body.is-late-admin .late-admin-only {
+    display: flex !important;
+}
+
+body.is-late-admin .admin-only {
+    display: none !important;
+}
+
+/* Hide other nav items when late admin */
+body.is-late-admin .nav-item:not([data-page="late-arrival"]) {
+    display: none !important;
+}

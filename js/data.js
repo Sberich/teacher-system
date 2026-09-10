@@ -8,6 +8,7 @@ const DataManager = (() => {
         settings: 'tla_settings',
         remarks: 'tla_remarks',
         leaveRequests: 'tla_leaveRequests',
+        lateArrivals: 'tla_lateArrivals',
         cloudUrl: 'tla_cloudUrl' // Store Cloud URL separately
     };
 
@@ -25,7 +26,9 @@ const DataManager = (() => {
 
     function save(key, data) {
         localStorage.setItem(key, JSON.stringify(data));
-        // ไม่ทำการ auto-sync อีกต่อไป ตามที่ผู้ใช้งานรีเควส (ให้ไปซิงค์ตอนกดปุ่มเมฆแทน)
+        if (key !== KEYS.cloudUrl) {
+            triggerCloudSync(); // Trigger sync whenever data changes
+        }
     }
 
     function load(key, defaultValue) {
@@ -36,14 +39,18 @@ const DataManager = (() => {
 
     // --- Cloud Sync Mechanism ---
     let syncTimeout = null;
-    
+    let isSyncing = false;
 
     function getCloudUrl() {
-        return load(KEYS.cloudUrl, window.API_URL || '');
+        return localStorage.getItem(KEYS.cloudUrl) || '';
     }
 
     function setCloudUrl(url) {
-        save(KEYS.cloudUrl, url);
+        if (url) {
+            localStorage.setItem(KEYS.cloudUrl, url.trim());
+        } else {
+            localStorage.removeItem(KEYS.cloudUrl);
+        }
     }
 
     // Pull data from Cloud into LocalStorage (On app start)
@@ -72,10 +79,13 @@ const DataManager = (() => {
                     localStorage.setItem(KEYS.leaveRequests, JSON.stringify(data.leaveRequests));
                 }
                 
+                if (data.lateArrivals !== undefined) {
+                    localStorage.setItem(KEYS.lateArrivals, JSON.stringify(data.lateArrivals));
+                }
+                
                 localStorage.setItem(KEYS.settings, JSON.stringify(data.settings));
                 return true;
             }
-            return false;
         } catch (error) {
             console.error('Cloud pull failed:', error);
             return false;
@@ -84,12 +94,12 @@ const DataManager = (() => {
 
     // Push all local data to Cloud
     async function pushToCloud() {
-        if (!isAdmin()) { if (window.App && App.hideSyncIndicator) App.hideSyncIndicator(); return; }
+        if (!isAdmin() && !isLateAdmin()) { if (window.App && App.hideSyncIndicator) App.hideSyncIndicator(); return; }
         
         const url = getCloudUrl();
-        if (!url) return;
+        if (!url) { if (window.App) App.showToast('ยังไม่ได้ตั้งค่า URL ฐานข้อมูล', 'error'); return; }
 
-        
+        isSyncing = true;
         const currentSettings = getSettings();
         currentSettings.lastUpdatedTimestamp = new Date().toISOString();
         localStorage.setItem(KEYS.settings, JSON.stringify(currentSettings));
@@ -102,6 +112,7 @@ const DataManager = (() => {
                 leaveRecords: load(KEYS.leaveRecords, []),
                 remarks: load(KEYS.remarks, {}),
                 leaveRequests: load(KEYS.leaveRequests, []),
+                lateArrivals: load(KEYS.lateArrivals, []),
                 settings: currentSettings
             }
         };
@@ -122,13 +133,22 @@ const DataManager = (() => {
 
             if (!response.ok) throw new Error('Network error');
             const result = await response.json();
+
             if (result.status !== 'success') {
                 console.error('Cloud push error:', result.message);
+                if (window.App) App.showToast('บันทึกขึ้นคลาวด์ไม่สำเร็จ: ' + (result.message || ''), 'error');
+            } else if (result.detail) {
+                const failed = Object.entries(result.detail).filter(([k, v]) => v !== 'ok');
+                if (failed.length > 0) {
+                    console.error('Partial sync failure:', failed);
+                    if (window.App) App.showToast('บางส่วนบันทึกไม่สำเร็จ: ' + failed.map(f => f[0]).join(', '), 'warning');
+                }
             }
         } catch (error) {
             console.error('Cloud push failed:', error);
+            if (window.App) App.showToast('เชื่อมต่อฐานข้อมูลไม่สำเร็จ ข้อมูลอาจยังไม่ถูกบันทึกขึ้นคลาวด์', 'error');
         } finally {
-            
+            isSyncing = false;
             if (window.App && App.hideSyncIndicator) App.hideSyncIndicator();
         }
     }
@@ -159,19 +179,30 @@ const DataManager = (() => {
         return sessionStorage.getItem('tla_is_admin') === 'true';
     }
 
+    function isLateAdmin() {
+        return sessionStorage.getItem('tla_is_late_admin') === 'true';
+    }
+
     function login(pin) {
         const settings = getSettings();
         const correctPin = settings.adminPin ? String(settings.adminPin) : '1234';
+        const latePin = settings.lateAdminPin ? String(settings.lateAdminPin) : '4321';
         
         if (String(pin) === correctPin) {
             sessionStorage.setItem('tla_is_admin', 'true');
-            return true;
+            sessionStorage.removeItem('tla_is_late_admin');
+            return 'super_admin';
+        } else if (String(pin) === latePin) {
+            sessionStorage.setItem('tla_is_late_admin', 'true');
+            sessionStorage.removeItem('tla_is_admin');
+            return 'late_admin';
         }
         return false;
     }
 
     function logout() {
         sessionStorage.removeItem('tla_is_admin');
+        sessionStorage.removeItem('tla_is_late_admin');
     }
 
     // --- Thai Month Names ---
@@ -213,7 +244,6 @@ const DataManager = (() => {
     }
 
     function addTeacher(name, section, order, gender = '', title = '') {
-        if (!isAdmin()) return false;
         const teachers = load(KEYS.teachers, []);
         shiftOrdersFrom(teachers, order);
         const teacher = { id: generateId(), name, section: section || 'ทั่วไป', order, gender, title };
@@ -224,7 +254,6 @@ const DataManager = (() => {
     }
 
     function addTeachersBulk(items) {
-        if (!isAdmin()) return false;
         const teachers = load(KEYS.teachers, []);
         let nextOrder = teachers.length > 0 ? Math.max(...teachers.map(t => t.order)) + 1 : 1;
         const added = [];
@@ -248,7 +277,6 @@ const DataManager = (() => {
     }
 
     function updateTeacher(id, name, section, newOrder, gender = '', title = '') {
-        if (!isAdmin()) return false;
         let teachers = load(KEYS.teachers, []);
         const teacher = teachers.find(t => t.id === id);
         if (!teacher) return null;
@@ -273,7 +301,6 @@ const DataManager = (() => {
     }
 
     function deleteTeacher(id) {
-        if (!isAdmin()) return false;
         let teachers = load(KEYS.teachers, []);
         teachers = teachers.filter(t => t.id !== id);
         teachers.sort((a, b) => a.order - b.order);
@@ -335,17 +362,15 @@ const DataManager = (() => {
         return records;
     }
 
-    function addLeaveEvent(teacherId, month, year, type, times, days, notes, startDate = null, endDate = null) {
-        if (!isAdmin()) return false;
+    function addLeaveEvent(teacherId, month, year, type, times, days, notes) {
         let records = getLeaveRecords();
         const id = generateId();
-        records.push({ id, teacherId, month, year, type, times, days, notes, startDate, endDate });
+        records.push({ id, teacherId, month, year, type, times, days, notes });
         save(KEYS.leaveRecords, records);
         return id;
     }
 
     function updateLeaveEvent(id, times, days, notes) {
-        if (!isAdmin()) return false;
         let records = getLeaveRecords();
         const idx = records.findIndex(r => r.id === id);
         if (idx >= 0) {
@@ -357,7 +382,6 @@ const DataManager = (() => {
     }
 
     function deleteLeaveEvent(id) {
-        if (!isAdmin()) return false;
         let records = getLeaveRecords();
         records = records.filter(r => r.id !== id);
         save(KEYS.leaveRecords, records);
@@ -415,7 +439,6 @@ const DataManager = (() => {
     }
 
     function setRemark(teacherId, text) {
-        if (!isAdmin()) return false;
         const remarks = getRemarks();
         if (text && text.trim()) {
             remarks[teacherId] = text.trim();
@@ -467,9 +490,10 @@ const DataManager = (() => {
             leaveRecords: load(KEYS.leaveRecords, []),
             remarks: load(KEYS.remarks, {}),
             leaveRequests: load(KEYS.leaveRequests, []),
+            lateArrivals: load(KEYS.lateArrivals, []),
             settings: getSettings(),
             exportDate: new Date().toISOString(),
-            version: '1.2'
+            version: '1.3'
         }, null, 2);
     }
 
@@ -479,6 +503,7 @@ const DataManager = (() => {
         if (data.leaveRecords) localStorage.setItem(KEYS.leaveRecords, JSON.stringify(data.leaveRecords));
         if (data.remarks) localStorage.setItem(KEYS.remarks, JSON.stringify(data.remarks));
         if (data.leaveRequests) localStorage.setItem(KEYS.leaveRequests, JSON.stringify(data.leaveRequests));
+        if (data.lateArrivals) localStorage.setItem(KEYS.lateArrivals, JSON.stringify(data.lateArrivals));
         if (data.settings) localStorage.setItem(KEYS.settings, JSON.stringify(data.settings));
         triggerCloudSync(); // Push imported data to cloud
     }
@@ -529,14 +554,12 @@ const DataManager = (() => {
     }
 
     function deleteLeaveRequest(reqId) {
-        if (!isAdmin()) return false;
         let requests = getLeaveRequests();
         requests = requests.filter(r => r.id !== reqId);
         save(KEYS.leaveRequests, requests);
     }
 
     function clearCompletedLeaveRequests() {
-        if (!isAdmin()) return false;
         let requests = getLeaveRequests();
         requests = requests.filter(r => r.status === 'pending');
         save(KEYS.leaveRequests, requests);
@@ -596,9 +619,26 @@ const DataManager = (() => {
     }
 
     function clearLeaveData() {
-        if (!isAdmin()) return false;
         localStorage.removeItem(KEYS.leaveRecords);
         triggerCloudSync(); // sync empty leave state to cloud
+    }
+
+
+    // --- Late Arrivals ---
+    function getLateArrivals() {
+        return load(KEYS.lateArrivals, []);
+    }
+
+    function addLateArrival(record) {
+        const list = getLateArrivals();
+        list.push(record);
+        save(KEYS.lateArrivals, list);
+    }
+
+    function deleteLateArrival(id) {
+        let list = getLateArrivals();
+        list = list.filter(r => r.id !== id);
+        save(KEYS.lateArrivals, list);
     }
 
     return {
@@ -611,6 +651,6 @@ const DataManager = (() => {
         getSettings, updateSettings, getPeriodMonths,
         getThaiMonth, getThaiMonthFull, THAI_MONTHS, THAI_MONTHS_FULL,
         exportData, importData,
-        loadDemoData, hasData, clearAllData, clearLeaveData
+        loadDemoData, hasData, clearAllData, clearLeaveData, isLateAdmin, getLateArrivals, addLateArrival, deleteLateArrival
     };
 })();

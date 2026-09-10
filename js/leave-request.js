@@ -1,4 +1,4 @@
-﻿/* ============================================
+/* ============================================
    Leave Request (Hybrid Form) Manager
    ============================================ */
 const LeaveRequest = (() => {
@@ -45,14 +45,25 @@ const LeaveRequest = (() => {
         // Render Leave Request Form
         const select = document.getElementById('lr-teacher');
         if (select) {
-            select.innerHTML = '<option value="">-- เลือกชื่อผู้ลา --</option>';
-            const teachers = DataManager.getTeachers();
+            let html = '<option value="">-- เลือกชื่อผู้ลา --</option>';
+            const teachers = DataManager.getTeachers().sort((a, b) => a.order - b.order);
+            
+            // Group by section
+            const grouped = {};
             teachers.forEach(t => {
-                const opt = document.createElement('option');
-                opt.value = t.id;
-                opt.textContent = t.name;
-                select.appendChild(opt);
+                const sec = t.section || 'ทั่วไป';
+                if (!grouped[sec]) grouped[sec] = [];
+                grouped[sec].push(t);
             });
+            
+            for (const sec in grouped) {
+                html += `<optgroup label="${sec}">`;
+                grouped[sec].forEach(t => {
+                    html += `<option value="${t.id}">${t.name}</option>`;
+                });
+                html += `</optgroup>`;
+            }
+            select.innerHTML = html;
         }
 
         // Clear form
@@ -118,18 +129,14 @@ const LeaveRequest = (() => {
     }
 
     function submitRequest() {
-        const btnSubmit = document.getElementById('btn-submit-leave-request');
-        if (btnSubmit) { btnSubmit.disabled = true; btnSubmit.innerHTML = '<span class="material-icons-round">hourglass_empty</span> กำลังบันทึก...'; }
-        
         const teacherId = document.getElementById('lr-teacher').value;
         const type = document.getElementById('lr-type').value;
-        const reason = document.getElementById('lr-reason').value.trim();
+        const reason = document.getElementById('lr-reason').value;
         const startDate = document.getElementById('lr-start-date').value;
         const endDate = document.getElementById('lr-end-date').value;
-        const contact = document.getElementById('lr-contact').value.trim();
+        const contact = document.getElementById('lr-contact').value;
 
         if (!teacherId || !reason || !startDate || !endDate || !contact) {
-            if (btnSubmit) { btnSubmit.disabled = false; btnSubmit.innerHTML = '<span class="material-icons-round">send</span> ยื่นใบลาและบันทึก'; }
             App.showToast('กรุณากรอกข้อมูลให้ครบถ้วน', 'warning');
             return;
         }
@@ -137,7 +144,6 @@ const LeaveRequest = (() => {
         const sDate = new Date(startDate);
         const eDate = new Date(endDate);
         if (eDate < sDate) {
-            if (btnSubmit) { btnSubmit.disabled = false; btnSubmit.innerHTML = '<span class="material-icons-round">send</span> ยื่นใบลาและบันทึก'; }
             App.showToast('วันที่สิ้นสุดต้องไม่ก่อนวันที่เริ่มต้น', 'warning');
             return;
         }
@@ -165,7 +171,6 @@ const LeaveRequest = (() => {
 
         // Open Print view automatically
         printForm(newReq.id);
-        if (btnSubmit) { btnSubmit.disabled = false; btnSubmit.innerHTML = '<span class="material-icons-round">send</span> ยื่นใบลาและบันทึก'; }
 
         render();
     }
@@ -177,7 +182,7 @@ const LeaveRequest = (() => {
 
         const teachers = DataManager.getTeachers();
         const t = teachers.find(t => t.id === req.teacherId);
-        if (!t) { App.showToast('ไม่พบข้อมูลครู', 'error'); return; }
+        if (!t) return;
 
         const settings = DataManager.getSettings();
 

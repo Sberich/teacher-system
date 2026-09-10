@@ -1,12 +1,6 @@
 /* ============================================
    App — Main Controller (Routing, Theme, Modal, Toast)
    ============================================ */
-// ==========================================
-//  GLOBAL CONFIG
-// ==========================================
-// *** ให้เปลี่ยน URL ด้านล่างเป็น URL ที่ได้จาก Google Apps Script (Deploy as Web App) ***
-window.API_URL = 'https://script.google.com/macros/s/AKfycbxn0CzTCt3OSqBVIVu2ClvwLykM1-Nedl_XPGfgZc4pV53zDpwsKH8E-MVXA4jI5nLt/exec';
-
 const App = (() => {
     let currentPage = 'table';
 
@@ -75,6 +69,7 @@ const App = (() => {
         TeacherManager.init();
         Settings.init();
         LeaveRequest.init();
+        if (window.LateArrival) LateArrival.init();
 
         // Default page
         navigate('table');
@@ -119,6 +114,7 @@ const App = (() => {
             if (currentPage === 'dashboard') Dashboard.render();
             if (currentPage === 'calendar') Calendar.render();
             if (currentPage === 'teachers') TeacherManager.render();
+            if (currentPage === 'late-arrival' && window.LateArrival) LateArrival.render();
         } else {
             showToast('เกิดข้อผิดพลาดในการดึงข้อมูล', 'error');
         }
@@ -137,7 +133,19 @@ const App = (() => {
         });
     }
 
+    const PROTECTED_PAGES = {
+        'late-arrival': () => isAdmin() || isLateAdmin(),
+        'teachers': () => isAdmin(),
+        'settings': () => isAdmin(),
+        'manage-requests': () => isAdmin()
+    };
+
     function navigate(pageName) {
+        if (PROTECTED_PAGES[pageName] && !PROTECTED_PAGES[pageName]()) {
+            showToast('ไม่มีสิทธิ์เข้าถึงหน้านี้ กรุณาเข้าสู่ระบบ', 'warning');
+            pageName = 'table';
+        }
+
         currentPage = pageName;
 
         document.querySelectorAll('.nav-item').forEach(item => {
@@ -157,6 +165,7 @@ const App = (() => {
             case 'settings': Settings.render(); break;
             case 'leave-request': LeaveRequest.render(); break;
             case 'manage-requests': LeaveRequest.render(); break;
+            case 'late-arrival': if (window.LateArrival) LateArrival.render(); break;
         }
     }
 
@@ -214,9 +223,9 @@ const App = (() => {
         updateAuthUI();
 
         toggleBtn.addEventListener('click', () => {
-            if (isAdmin()) {
+            if (isAdmin() || isLateAdmin()) {
                 // Logout
-                confirm('ต้องการออกจากโหมดผู้ดูแลระบบหรือไม่?', () => {
+                confirm('ต้องการออกจากระบบหรือไม่?', () => {
                     DataManager.logout();
                     updateAuthUI();
 
@@ -225,14 +234,14 @@ const App = (() => {
                     if (tableFilter) tableFilter.value = '';
                     const tableSearch = document.getElementById('table-search');
                     if (tableSearch) tableSearch.value = '';
-                    // Trigger re-render to update the table visually
+                    
                     if (window.LeaveTable) {
                         if (typeof LeaveTable.resetFilters === 'function') LeaveTable.resetFilters();
                         LeaveTable.render();
                     }
 
-                    showToast('ออกจากโหมดผู้ดูแลระบบแล้ว', 'info');
-                    navigate(currentPage); // Refresh page
+                    navigate('table');
+                    showToast('ออกจากระบบแล้ว', 'info');
                 });
             } else {
                 // Show login modal
@@ -244,11 +253,17 @@ const App = (() => {
 
         loginBtn.addEventListener('click', () => {
             const pin = pinInput.value;
-            if (DataManager.login(pin)) {
+            const role = DataManager.login(pin);
+            if (role) {
                 hideModal('auth-modal');
                 updateAuthUI();
-                showToast('เข้าสู่ระบบผู้ดูแลเรียบร้อย');
-                navigate(currentPage); // Refresh page
+                if (role === 'late_admin') {
+                    showToast('เข้าสู่ระบบครูเวร (บันทึกมาสาย)');
+                    navigate('late-arrival');
+                } else {
+                    showToast('เข้าสู่ระบบผู้ดูแลเรียบร้อย');
+                    navigate(currentPage); // Refresh page
+                }
             } else {
                 showToast('รหัสผ่านไม่ถูกต้อง', 'error');
                 pinInput.value = '';
@@ -266,13 +281,21 @@ const App = (() => {
         return DataManager.isAdmin();
     }
 
+    function isLateAdmin() {
+        return typeof DataManager.isLateAdmin === 'function' ? DataManager.isLateAdmin() : false;
+    }
+
     function updateAuthUI() {
         const admin = isAdmin();
+        const lateAdmin = isLateAdmin();
         document.body.classList.toggle('is-admin', admin);
+        document.body.classList.toggle('is-late-admin', lateAdmin);
+        
         const toggleBtn = document.getElementById('auth-toggle');
-        toggleBtn.classList.toggle('is-admin', admin);
-        toggleBtn.title = admin ? 'ออกจากระบบผู้ดูแล' : 'เข้าสู่ระบบผู้ดูแล';
-        toggleBtn.querySelector('.material-icons-round').textContent = admin ? 'lock_open' : 'lock';
+        const isLoggedIn = admin || lateAdmin;
+        toggleBtn.classList.toggle('is-admin', isLoggedIn);
+        toggleBtn.title = isLoggedIn ? 'ออกจากระบบ' : 'เข้าสู่ระบบ';
+        toggleBtn.querySelector('.material-icons-round').textContent = isLoggedIn ? 'lock_open' : 'lock';
     }
 
     // --- Dropdowns ---

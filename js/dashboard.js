@@ -148,10 +148,8 @@ const Dashboard = (() => {
                     },
                     datalabels: {
                         display: true,
-                        color: textColor,
-                        anchor: 'end',
-                        align: 'top',
-                        font: { family: "'Noto Sans Thai', sans-serif", size: 10, weight: '500' },
+                        color: 'white',
+                        font: { family: "'Noto Sans Thai', sans-serif", size: 11, weight: 'bold' },
                         formatter: (val) => val > 0 ? val : ''
                     }
                 },
@@ -253,10 +251,8 @@ const Dashboard = (() => {
                     },
                     datalabels: {
                         display: true,
-                        color: textColor,
-                        anchor: 'end',
-                        align: 'top',
-                        font: { family: "'Noto Sans Thai', sans-serif", size: 10, weight: '500' },
+                        color: 'white',
+                        font: { family: "'Noto Sans Thai', sans-serif", size: 11, weight: 'bold' },
                         formatter: (val) => val > 0 ? val : ''
                     }
                 },

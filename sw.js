@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tla-cache-v1';
+const CACHE_NAME = 'tla-cache-v127';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
@@ -8,6 +8,7 @@ const ASSETS_TO_CACHE = [
     './js/calendar.js',
     './js/dashboard.js',
     './js/leave-request.js',
+    './js/late-arrival.js',
     './js/table.js',
     './js/teachers.js',
     './js/settings.js',

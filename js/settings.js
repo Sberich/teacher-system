@@ -22,7 +22,7 @@ const Settings = (() => {
             <div class="settings-card">
                 <h3><span class="material-icons-round">cloud_sync</span> การเชื่อมต่อฐานข้อมูล (Google Sheets)</h3>
                 <div class="settings-form">
-                    <div class="form-group admin-only" style="display:none;">
+                    <div class="form-group admin-only">
                         <label for="setting-cloud-url">Google Apps Script Web App URL</label>
                         <input type="text" id="setting-cloud-url" value="${DataManager.getCloudUrl()}" placeholder="https://script.google.com/macros/s/.../exec">
                         <small class="form-hint">วาง URL ที่ได้จากขั้นตอนการ Deploy Apps Script เพื่อเชื่อมต่อระบบเข้ากับ Cloud</small>
@@ -86,9 +86,15 @@ const Settings = (() => {
                     </div>
 
                     <div class="form-group admin-only" style="margin-top:12px;">
-                        <label for="setting-admin-pin">รหัสผ่านผู้ดูแลระบบ (PIN 4 ตัว)</label>
+                        <label for="setting-admin-pin">รหัสผ่านผู้ดูแลระบบ (PIN)</label>
                         <input type="text" id="setting-admin-pin" value="${settings.adminPin}" maxlength="10" inputmode="numeric">
-                        <small class="form-hint">ใช้สำหรับปลดล็อกสิทธิ์แก้ไขข้อมูล</small>
+                        <small class="form-hint">ใช้สำหรับล็อกอินเข้าจัดการข้อมูล</small>
+                    </div>
+
+                    <div class="form-group admin-only" style="margin-top:12px;">
+                        <label for="setting-late-admin-pin">รหัสผ่านครูเวร (บันทึกมาสาย)</label>
+                        <input type="text" id="setting-late-admin-pin" value="${settings.lateAdminPin || ''}" maxlength="10" inputmode="numeric" placeholder="ค่าเริ่มต้น 4321">
+                        <small class="form-hint">ใช้สำหรับล็อกอินเข้าจัดการข้อมูลมาสาย</small>
                     </div>
 
                     <div id="month-count-warning" style="display:none;color:#ef4444;font-size:0.85rem;font-weight:500;">
@@ -194,6 +200,8 @@ const Settings = (() => {
         const fiscalYear = parseInt(document.getElementById('setting-year').value);
         const adminPinEl = document.getElementById('setting-admin-pin');
         const adminPin = adminPinEl ? adminPinEl.value.trim() : DataManager.getSettings().adminPin;
+        const lateAdminPinEl = document.getElementById('setting-late-admin-pin');
+        const lateAdminPin = lateAdminPinEl ? lateAdminPinEl.value.trim() : DataManager.getSettings().lateAdminPin;
         const schoolName = document.getElementById('setting-school-name').value.trim();
         const directorName = document.getElementById('setting-director-name').value.trim();
         const deputyName = document.getElementById('setting-deputy-name').value.trim();
@@ -203,7 +211,7 @@ const Settings = (() => {
 
         const count = calcMonthCount(startMonth, endMonth);
         if (count > 6) {
-            App.showToast('รอบปีงบประมาณต้องไม่เกิน 6 เดือน', 'error');
+            if (window.App) App.showToast('ไม่สามารถบันทึกได้ กรอบเวลาต้องไม่เกิน 6 เดือน', 'error');
             return;
         }
 
@@ -218,19 +226,13 @@ const Settings = (() => {
         }
 
         DataManager.setCloudUrl(cloudUrl);
-        DataManager.updateSettings({ startMonth, endMonth, fiscalYear, adminPin, schoolName, directorName, deputyName, hrName });
+        DataManager.updateSettings({ startMonth, endMonth, fiscalYear, adminPin, lateAdminPin, schoolName, directorName, deputyName, hrName });
         App.showToast('บันทึกการตั้งค่าเรียบร้อย');
         render(); // Refresh preview
     }
 
     async function forceSync() {
-        const cloudUrlEl = document.getElementById('setting-cloud-url');
-        const url = cloudUrlEl ? cloudUrlEl.value.trim() : DataManager.getCloudUrl();
-        
-        if (url) {
-            DataManager.setCloudUrl(url); // บันทึกให้ทันทีเผื่อลืมกด Save Settings
-        }
-
+        const url = DataManager.getCloudUrl();
         if (!url) {
             App.showToast('กรุณาใส่ Web App URL และบันทึกการตั้งค่าก่อน', 'warning');
             return;

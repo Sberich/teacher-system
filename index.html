@@ -13,7 +13,7 @@
     <!-- Flatpickr for Date Picker -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/airbnb.css">
-    <link rel="stylesheet" href="css/style.css?v=1.9">
+    <link rel="stylesheet" href="css/style.css?v=5.1">
 
     <!-- Web App Manifest (Android & iOS) -->
     <meta name="theme-color" content="#0f172a">
@@ -71,6 +71,10 @@
                 <span class="material-icons-round">dashboard</span>
                 <span class="nav-label">แดชบอร์ด</span>
             </a>
+            <a href="#" class="nav-item late-admin-only" data-page="late-arrival">
+                <span class="material-icons-round">schedule</span>
+                <span class="nav-label">บันทึกมาสาย</span>
+            </a>
             <a href="#" class="nav-item" data-page="calendar">
                 <span class="material-icons-round">calendar_month</span>
                 <span class="nav-label">ปฏิทิน</span>
@@ -109,6 +113,17 @@
 
     <!-- Main Content -->
     <main id="app-content">
+        <!-- Page: Late Arrival -->
+        <section id="page-late-arrival" class="page">
+            <div class="page-header" style="max-width: 600px; margin: 0 auto; margin-bottom: 24px; text-align: center;">
+                <div style="display:inline-flex; align-items:center; justify-content:center; width:56px; height:56px; background:rgba(239, 68, 68, 0.15); border-radius:16px; margin-bottom:12px;">
+                    <span class="material-icons-round" style="color:var(--danger);font-size:32px;">schedule</span>
+                </div>
+                <h1 style="font-size: 2.2rem; font-weight: 800; letter-spacing: 1px; color: var(--text); margin-bottom: 8px;">บันทึกมาสาย</h1>
+                <p style="color: var(--text-secondary); font-size: 0.95rem;">กรอกข้อมูลเพื่อบันทึกเวลามาสายของบุคลากร</p>
+            </div>
+            <div id="late-arrival-container"></div>
+        </section>
         <!-- Page: Table -->
         <section id="page-table" class="page active">
             <div class="page-header">
@@ -714,17 +729,21 @@
         </div>
     </div>
 
+    <script>
+        window.API_URL = "https://script.google.com/macros/s/AKfycbzGw57Iv1jgcFyP9IRcPdT6xbGkLkYjHEr3tWzYY5bq4WYEhUyvWV9L8we0Rkdq7Kwt/exec";
+    </script>
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://npmcdn.com/flatpickr/dist/l10n/th.js"></script>
-    <script src="js/data.js?v=1.9"></script>
-    <script src="js/app.js?v=1.9"></script>
-    <script src="js/leave-request.js?v=1.9"></script>
-    <script src="js/table.js?v=1.9"></script>
-    <script src="js/dashboard.js?v=1.9"></script>
-    <script src="js/calendar.js?v=1.9"></script>
-    <script src="js/teachers.js?v=1.9"></script>
-    <script src="js/settings.js?v=1.9"></script>
+    <script src="js/data.js?v=5.1"></script>
+    <script src="js/app.js?v=5.1"></script>
+    <script src="js/leave-request.js?v=5.1"></script>
+    <script src="js/late-arrival.js?v=5.1"></script>
+    <script src="js/table.js?v=5.1"></script>
+    <script src="js/dashboard.js?v=5.1"></script>
+    <script src="js/calendar.js?v=5.1"></script>
+    <script src="js/teachers.js?v=5.1"></script>
+    <script src="js/settings.js?v=5.1"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {

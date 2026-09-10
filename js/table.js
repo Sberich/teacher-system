@@ -1,4 +1,4 @@
-﻿/* ============================================
+/* ============================================
    LeaveTable — Main Leave Overview Table
    ============================================ */
 const LeaveTable = (() => {
@@ -254,7 +254,7 @@ const LeaveTable = (() => {
 
         teachers.forEach(teacher => {
             const leaveData = DataManager.getTeacherLeaveForPeriod(teacher.id);
-            const remark = DataManager.getRemark(teacher.id);
+            const remark = getCombinedRemark(teacher.id);
             let tTotals = {
                 sick: { times: 0, days: 0 },
                 personal: { times: 0, days: 0 }
@@ -360,8 +360,23 @@ const LeaveTable = (() => {
         });
     }
 
-    function fmtTotal(t) {
-        return (t.times > 0 || t.days > 0) ? `${t.times}/${t.days}` : '-';
+    function fmtTotal(total) {
+        return (total.times > 0 || total.days > 0) ? `${total.times}/${total.days}` : '-';
+    }
+
+    // Helper function to combine remark with late arrivals
+    function getCombinedRemark(teacherId) {
+        const remark = DataManager.getRemark(teacherId) || '';
+        const lateArrivals = DataManager.getLateArrivals().filter(r => r.teacherId === teacherId);
+        const lateCount = lateArrivals.length;
+        if (lateCount > 0) {
+            const lateText = `มาสาย ${lateCount} ครั้ง`;
+            if (remark) {
+                return `${remark} (${lateText})`;
+            }
+            return lateText;
+        }
+        return remark;
     }
 
     function escapeHtml(str) {
@@ -610,7 +625,7 @@ const LeaveTable = (() => {
 
             html += `<td>${fmtT(tTotals.sick)}</td><td>${fmtT(tTotals.personal)}</td>`;
             html += `<td>${totalTimes || '-'}</td><td>${totalDays || '-'}</td>`;
-            html += `<td class="remarks">${escapeHtml(DataManager.getRemark(teacher.id))}</td>`;
+            html += `<td class="remarks">${escapeHtml(getCombinedRemark(teacher.id))}</td>`;
             html += '</tr>';
 
             for (const t of ['sick', 'personal']) {
@@ -697,7 +712,7 @@ const LeaveTable = (() => {
 
             row.push(fmtT(tTotals.sick), fmtT(tTotals.personal));
             row.push(totalTimes || '-', totalDays || '-');
-            row.push(`"${DataManager.getRemark(teacher.id)}"`);
+            row.push(`"${getCombinedRemark(teacher.id)}"`);
             csv += row.join(',') + '\n';
         });
 
@@ -718,7 +733,7 @@ const LeaveTable = (() => {
         document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('show'));
     }
 
-        function resetFilters() {
+    function resetFilters() {
         searchQuery = '';
         sectionFilter = '';
     }
