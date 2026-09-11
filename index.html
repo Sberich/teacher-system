@@ -115,12 +115,31 @@
     <main id="app-content">
         <!-- Page: Late Arrival -->
         <section id="page-late-arrival" class="page">
-            <div class="page-header" style="max-width: 600px; margin: 0 auto; margin-bottom: 24px; text-align: center;">
-                <div style="display:inline-flex; align-items:center; justify-content:center; width:56px; height:56px; background:rgba(239, 68, 68, 0.15); border-radius:16px; margin-bottom:12px;">
-                    <span class="material-icons-round" style="color:var(--danger);font-size:32px;">schedule</span>
+            <div class="page-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; margin-bottom: 24px;">
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <div style="display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; background:rgba(239, 68, 68, 0.15); border-radius:10px;">
+                        <span class="material-icons-round" style="color:var(--danger);font-size:24px;">schedule</span>
+                    </div>
+                    <div>
+                        <h1 style="font-size: 1.4rem; font-weight: 700; color: var(--text); margin:0;">บันทึกมาสาย</h1>
+                        <p style="color: var(--text-secondary); font-size: 0.85rem; margin:0; margin-top:2px;">บันทึกเวลามาสายของบุคลากร</p>
+                    </div>
                 </div>
-                <h1 style="font-size: 2.2rem; font-weight: 800; letter-spacing: 1px; color: var(--text); margin-bottom: 8px;">บันทึกมาสาย</h1>
-                <p style="color: var(--text-secondary); font-size: 0.95rem;">กรอกข้อมูลเพื่อบันทึกเวลามาสายของบุคลากร</p>
+                <div class="page-actions admin-only admin-only-flex" style="display:flex; gap:8px;">
+                    <div class="dropdown">
+                        <button class="btn-secondary dropdown-toggle" id="btn-export-late-menu" title="ส่งออกข้อมูล">
+                            <span class="material-icons-round">ios_share</span>
+                        </button>
+                        <div class="dropdown-menu">
+                            <button class="dropdown-item" id="btn-print-late-table">
+                                <span class="material-icons-round">print</span> พิมพ์ตาราง
+                            </button>
+                            <button class="dropdown-item" id="btn-export-late-csv">
+                                <span class="material-icons-round">download</span> ดาวน์โหลด CSV
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div id="late-arrival-container"></div>
         </section>
@@ -730,7 +749,8 @@
     </div>
 
     <script>
-        window.API_URL = "https://script.google.com/macros/s/AKfycbzGw57Iv1jgcFyP9IRcPdT6xbGkLkYjHEr3tWzYY5bq4WYEhUyvWV9L8we0Rkdq7Kwt/exec";
+        // กำหนด URL ของ Google Apps Script ที่ Deploy แล้ว
+        window.API_URL = "https://script.google.com/macros/s/AKfycbwXpmqLY60vbYaif5iVvvUYVtNLLGJ5UHAOoFQljaNfuOCcmCxOH2svFfjID5Fyn1Y/exec";
     </script>
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>

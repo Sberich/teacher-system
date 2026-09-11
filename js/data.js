@@ -179,8 +179,11 @@ const DataManager = (() => {
         }
     }
 
-    // Debounce push to avoid spamming the cloud API
+    // Debounce push to avoid spamming the cloud API (DISABLED for manual sync)
     function triggerCloudSync() {
+        // Disabled auto-sync based on user request. 
+        // Data will remain cached in localStorage until "Force Sync" button is pressed.
+        /*
         const url = getCloudUrl();
         if (!url) return;
 
@@ -190,6 +193,7 @@ const DataManager = (() => {
         syncTimeout = setTimeout(() => {
             pushToCloud();
         }, 1500); // wait 1.5s after last action before syncing
+        */
     }
 
     // Force an immediate sync (for settings page button)

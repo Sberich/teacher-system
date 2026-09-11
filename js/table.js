@@ -367,7 +367,17 @@ const LeaveTable = (() => {
     // Helper function to combine remark with late arrivals
     function getCombinedRemark(teacherId) {
         const remark = DataManager.getRemark(teacherId) || '';
-        const lateArrivals = DataManager.getLateArrivals().filter(r => r.teacherId === teacherId);
+        const periodMonths = DataManager.getPeriodMonths();
+        const lateArrivals = DataManager.getLateArrivals().filter(r => {
+            if (r.teacherId !== teacherId) return false;
+            const parts = (r.date || '').split('/');
+            if (parts.length === 3) {
+                const m = parseInt(parts[1], 10);
+                const y = parseInt(parts[2], 10);
+                return periodMonths.some(p => p.month === m && p.year === y);
+            }
+            return true; // Fallback if date is malformed
+        });
         const lateCount = lateArrivals.length;
         if (lateCount > 0) {
             const lateText = `มาสาย ${lateCount} ครั้ง`;
