@@ -1,7 +1,5 @@
 /* ============================================
    Settings — Fiscal Year Period & Data Management
-   (v2: PIN fields are write-only — server never sends the PIN back,
-        so leaving them blank now means "keep the current password".)
    ============================================ */
 const Settings = (() => {
     function init() {
@@ -27,9 +25,9 @@ const Settings = (() => {
                     <div class="form-group admin-only">
                         <label for="setting-cloud-url">Google Apps Script Web App URL</label>
                         <input type="text" id="setting-cloud-url" value="${DataManager.getCloudUrl()}" placeholder="https://script.google.com/macros/s/.../exec">
-                        <small class="form-hint">วาง URL ที่ได้จากขั้นตอนการ Deploy Apps Script เพื่อเชื่อมต่อระบบเข้ากับ Cloud หากเป็นการตั้งค่าครั้งแรก กรุณาออกจากระบบแล้วเข้าสู่ระบบใหม่อีกครั้งหลังบันทึก เพื่อให้ระบบซิงค์ข้อมูลกับคลาวด์ได้</small>
+                        <small class="form-hint">วาง URL ที่ได้จากขั้นตอนการ Deploy Apps Script เพื่อเชื่อมต่อระบบเข้ากับ Cloud</small>
                     </div>
-
+                    
                     <div class="export-import-btns admin-only" style="margin-top: 12px;">
                         <button class="btn-primary" id="btn-force-sync" style="background:var(--primary);">
                             <span class="material-icons-round">backup</span>
@@ -88,15 +86,15 @@ const Settings = (() => {
                     </div>
 
                     <div class="form-group admin-only" style="margin-top:12px;">
-                        <label for="setting-admin-pin">เปลี่ยนรหัสผ่านผู้ดูแลระบบ (PIN)</label>
-                        <input type="text" id="setting-admin-pin" value="" maxlength="10" inputmode="numeric" placeholder="เว้นว่างไว้ = ไม่เปลี่ยนรหัสผ่านเดิม">
-                        <small class="form-hint">เพื่อความปลอดภัย ระบบจะไม่แสดงรหัสผ่านปัจจุบัน กรอกเฉพาะเมื่อต้องการตั้งรหัสผ่านใหม่เท่านั้น</small>
+                        <label for="setting-admin-pin">รหัสผ่านผู้ดูแลระบบ (PIN)</label>
+                        <input type="text" id="setting-admin-pin" value="${settings.adminPin}" maxlength="10" inputmode="numeric">
+                        <small class="form-hint">ใช้สำหรับล็อกอินเข้าจัดการข้อมูล</small>
                     </div>
 
                     <div class="form-group admin-only" style="margin-top:12px;">
-                        <label for="setting-late-admin-pin">เปลี่ยนรหัสผ่านครูเวร (บันทึกมาสาย)</label>
-                        <input type="text" id="setting-late-admin-pin" value="" maxlength="10" inputmode="numeric" placeholder="เว้นว่างไว้ = ไม่เปลี่ยนรหัสผ่านเดิม (ค่าเริ่มต้น 4321)">
-                        <small class="form-hint">ใช้สำหรับล็อกอินเข้าจัดการข้อมูลมาสาย — เว้นว่างไว้หากไม่ต้องการเปลี่ยน</small>
+                        <label for="setting-late-admin-pin">รหัสผ่านครูเวร (บันทึกมาสาย)</label>
+                        <input type="text" id="setting-late-admin-pin" value="${settings.lateAdminPin || ''}" maxlength="10" inputmode="numeric" placeholder="ค่าเริ่มต้น 4321">
+                        <small class="form-hint">ใช้สำหรับล็อกอินเข้าจัดการข้อมูลมาสาย</small>
                     </div>
 
                     <div id="month-count-warning" style="display:none;color:#ef4444;font-size:0.85rem;font-weight:500;">
@@ -201,9 +199,9 @@ const Settings = (() => {
         const endMonth = parseInt(document.getElementById('setting-end-month').value);
         const fiscalYear = parseInt(document.getElementById('setting-year').value);
         const adminPinEl = document.getElementById('setting-admin-pin');
-        const adminPin = adminPinEl ? adminPinEl.value.trim() : '';
+        const adminPin = adminPinEl ? adminPinEl.value.trim() : DataManager.getSettings().adminPin;
         const lateAdminPinEl = document.getElementById('setting-late-admin-pin');
-        const lateAdminPin = lateAdminPinEl ? lateAdminPinEl.value.trim() : '';
+        const lateAdminPin = lateAdminPinEl ? lateAdminPinEl.value.trim() : DataManager.getSettings().lateAdminPin;
         const schoolName = document.getElementById('setting-school-name').value.trim();
         const directorName = document.getElementById('setting-director-name').value.trim();
         const deputyName = document.getElementById('setting-deputy-name').value.trim();
@@ -222,21 +220,14 @@ const Settings = (() => {
             return;
         }
 
-        // PIN fields are optional now: the server never echoes the current PIN back to the
-        // browser, so an empty field here means "leave the existing password untouched"
-        // (Code-api.js already keeps the old PIN server-side whenever it isn't included).
-        const patch = { startMonth, endMonth, fiscalYear, schoolName, directorName, deputyName, hrName };
-        if (adminPin) patch.adminPin = adminPin;
-        if (lateAdminPin) patch.lateAdminPin = lateAdminPin;
+        if (!adminPin) {
+            App.showToast('กรุณาตั้งรหัสผ่านผู้ดูแลระบบ', 'error');
+            return;
+        }
 
         DataManager.setCloudUrl(cloudUrl);
-        DataManager.updateSettings(patch);
+        DataManager.updateSettings({ startMonth, endMonth, fiscalYear, adminPin, lateAdminPin, schoolName, directorName, deputyName, hrName });
         App.showToast('บันทึกการตั้งค่าเรียบร้อย');
-
-        // Always clear the PIN inputs after saving so a typed-in new PIN never lingers on screen
-        if (adminPinEl) adminPinEl.value = '';
-        if (lateAdminPinEl) lateAdminPinEl.value = '';
-
         render(); // Refresh preview
     }
 
@@ -251,9 +242,9 @@ const Settings = (() => {
             const btn = document.getElementById('btn-force-sync');
             btn.disabled = true;
             btn.innerHTML = '<span class="material-icons-round spinning">sync</span> กำลังซิงค์...';
-
+            
             await DataManager.forceSyncToCloud();
-
+            
             btn.disabled = false;
             btn.innerHTML = '<span class="material-icons-round">backup</span> ส่งข้อมูลทั้งหมดขึ้น Cloud ทันที';
             App.showToast('ซิงค์ข้อมูลขึ้น Cloud เรียบร้อย', 'success');
@@ -302,28 +293,14 @@ const Settings = (() => {
         e.target.value = ''; // Reset input
     }
 
-    async function clearData() {
+    function clearData() {
         const pin = prompt('การล้างข้อมูลวันลาเป็นเรื่องสำคัญ!\nกรุณากรอกรหัสผ่านผู้ดูแลระบบ (PIN) เพื่อยืนยัน:');
         if (pin === null) return;
-
-        const btn = document.getElementById('btn-clear-data');
-        const originalHtml = btn ? btn.innerHTML : '';
-        if (btn) {
-            btn.disabled = true;
-            btn.innerHTML = '<span class="material-icons-round spinning">sync</span> กำลังตรวจสอบ...';
-        }
-
-        // The PIN is verified against the server now (it's no longer cached locally),
-        // via a dedicated check that does not disturb the current logged-in session.
-        const verified = await DataManager.verifyAdminPin(pin);
-
-        if (btn) {
-            btn.disabled = false;
-            btn.innerHTML = originalHtml;
-        }
-
-        if (!verified) {
-            App.showToast('รหัสผ่านไม่ถูกต้อง หรือไม่สามารถตรวจสอบได้ ล้มเลิกการล้างข้อมูล', 'error');
+        
+        const correctPin = sessionStorage.getItem('tla_auth_pin');
+        
+        if (String(pin) !== correctPin) {
+            App.showToast('รหัสผ่านไม่ถูกต้อง ล้มเลิกการล้างข้อมูล', 'error');
             return;
         }
 
