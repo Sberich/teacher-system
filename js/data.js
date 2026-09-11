@@ -1,5 +1,6 @@
 /* ============================================
    DataManager — Cloud Sync (Google Sheets) + LocalStorage Cache
+   (v2: Session Token auth — matches Code-api.js v2)
    ============================================ */
 const DataManager = (() => {
     const KEYS = {
@@ -11,6 +12,10 @@ const DataManager = (() => {
         lateArrivals: 'tla_lateArrivals',
         cloudUrl: 'tla_cloudUrl' // Store Cloud URL separately
     };
+
+    // Session token is kept in sessionStorage only (never persisted to localStorage,
+    // never sent anywhere except back to this same Apps Script backend).
+    const SESSION_TOKEN_KEY = 'tla_session_token';
 
     const defaultSettings = {
         startMonth: 4,
@@ -42,7 +47,7 @@ const DataManager = (() => {
     let isSyncing = false;
 
     function getCloudUrl() {
-        return localStorage.getItem(KEYS.cloudUrl) || window.API_URL || '';
+        return localStorage.getItem(KEYS.cloudUrl) || '';
     }
 
     function setCloudUrl(url) {
@@ -53,36 +58,40 @@ const DataManager = (() => {
         }
     }
 
-    // Pull data from Cloud into LocalStorage (On app start)
+    // Pull data from Cloud into LocalStorage (On app start). Public endpoint — no token needed.
     async function pullFromCloud() {
         const url = getCloudUrl();
         if (!url) return false; // No URL set, work offline
-        
+
         try {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 12000); // 12 วินาที Timeout
-            
+
             const response = await fetch(url + '?t=' + Date.now(), { signal: controller.signal });
             clearTimeout(timeoutId);
 
             if (!response.ok) throw new Error('Network error');
             const data = await response.json();
-            
+
             if (data.teachers && data.settings) {
                 // Save directly to localStorage without triggering pushToCloud
                 localStorage.setItem(KEYS.teachers, JSON.stringify(data.teachers));
                 localStorage.setItem(KEYS.leaveRecords, JSON.stringify(data.leaveRecords || []));
                 localStorage.setItem(KEYS.remarks, JSON.stringify(data.remarks || {}));
-                
+
                 // Preserve local leave requests if cloud doesn't send them (for backward compatibility)
                 if (data.leaveRequests !== undefined) {
                     localStorage.setItem(KEYS.leaveRequests, JSON.stringify(data.leaveRequests));
                 }
-                
+
                 if (data.lateArrivals !== undefined) {
                     localStorage.setItem(KEYS.lateArrivals, JSON.stringify(data.lateArrivals));
                 }
-                
+
+                // NOTE: data.settings no longer contains adminPin/lateAdminPin — the server
+                // strips those before responding. Any previously-cached PIN in localStorage
+                // gets overwritten here too, which is intentional: the PIN now only ever
+                // lives on the server, checked via the 'login' action below.
                 localStorage.setItem(KEYS.settings, JSON.stringify(data.settings));
                 return true;
             }
@@ -95,9 +104,22 @@ const DataManager = (() => {
     // Push all local data to Cloud
     async function pushToCloud() {
         if (!isAdmin() && !isLateAdmin()) { if (window.App && App.hideSyncIndicator) App.hideSyncIndicator(); return; }
-        
+
         const url = getCloudUrl();
-        if (!url) { if (window.App) App.showToast('ยังไม่ได้ตั้งค่า URL ฐานข้อมูล', 'error'); return; }
+        if (!url) return;
+
+        const token = getSessionToken();
+        if (!token) {
+            // Logged in locally but no session token on file — most commonly this happens
+            // the very first time a Cloud URL is saved (login happened before a URL existed),
+            // or after a deploy of this new token-based version while an old session was
+            // still marked "logged in" from before. Either way, syncing needs a fresh login.
+            if (window.App && App.hideSyncIndicator) App.hideSyncIndicator();
+            if (window.App && App.showToast) {
+                App.showToast('ยังไม่มีเซสชันสำหรับซิงค์ข้อมูล กรุณาออกจากระบบแล้วเข้าสู่ระบบใหม่อีกครั้ง', 'warning');
+            }
+            return;
+        }
 
         isSyncing = true;
         const currentSettings = getSettings();
@@ -106,7 +128,7 @@ const DataManager = (() => {
 
         const payload = {
             action: 'sync',
-            adminPin: currentSettings.adminPin,
+            token: token,
             payload: {
                 teachers: load(KEYS.teachers, []),
                 leaveRecords: load(KEYS.leaveRecords, []),
@@ -133,20 +155,24 @@ const DataManager = (() => {
 
             if (!response.ok) throw new Error('Network error');
             const result = await response.json();
-
             if (result.status !== 'success') {
                 console.error('Cloud push error:', result.message);
-                if (window.App) App.showToast('บันทึกขึ้นคลาวด์ไม่สำเร็จ: ' + (result.message || ''), 'error');
-            } else if (result.detail) {
-                const failed = Object.entries(result.detail).filter(([k, v]) => v !== 'ok');
-                if (failed.length > 0) {
-                    console.error('Partial sync failure:', failed);
-                    if (window.App) App.showToast('บางส่วนบันทึกไม่สำเร็จ: ' + failed.map(f => f[0]).join(', '), 'warning');
+
+                const msg = result.message || '';
+                const looksExpired = msg.indexOf('หมดอายุ') !== -1 || msg.toLowerCase().indexOf('unauthorized') !== -1;
+
+                if (looksExpired) {
+                    // Server rejected the token — clear the local session too so the UI
+                    // immediately reflects "logged out" instead of silently failing to sync.
+                    sessionStorage.removeItem('tla_is_admin');
+                    sessionStorage.removeItem('tla_is_late_admin');
+                    sessionStorage.removeItem(SESSION_TOKEN_KEY);
+                    if (window.App && App.updateAuthUI) App.updateAuthUI();
+                    if (window.App && App.showToast) App.showToast('เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่เพื่อซิงค์ข้อมูล', 'warning');
                 }
             }
         } catch (error) {
             console.error('Cloud push failed:', error);
-            if (window.App) App.showToast('เชื่อมต่อฐานข้อมูลไม่สำเร็จ ข้อมูลอาจยังไม่ถูกบันทึกขึ้นคลาวด์', 'error');
         } finally {
             isSyncing = false;
             if (window.App && App.hideSyncIndicator) App.hideSyncIndicator();
@@ -183,26 +209,124 @@ const DataManager = (() => {
         return sessionStorage.getItem('tla_is_late_admin') === 'true';
     }
 
-    function login(pin) {
-        const settings = getSettings();
-        const correctPin = settings.adminPin ? String(settings.adminPin) : '1234';
-        const latePin = settings.lateAdminPin ? String(settings.lateAdminPin) : '4321';
-        
-        if (String(pin) === correctPin) {
-            sessionStorage.setItem('tla_is_admin', 'true');
-            sessionStorage.removeItem('tla_is_late_admin');
-            return 'super_admin';
-        } else if (String(pin) === latePin) {
-            sessionStorage.setItem('tla_is_late_admin', 'true');
-            sessionStorage.removeItem('tla_is_admin');
-            return 'late_admin';
-        }
-        return false;
+    function getSessionToken() {
+        return sessionStorage.getItem(SESSION_TOKEN_KEY) || '';
     }
 
+    // login() is now async: when a Cloud URL is configured, the PIN is checked
+    // server-side and this device only ever receives a short-lived session token back —
+    // the real PIN is never stored in or echoed back to the browser.
+    async function login(pin) {
+        const url = getCloudUrl();
+
+        // Offline fallback — only meaningful before a Cloud URL has ever been configured.
+        // Once connected to the cloud, pullFromCloud() overwrites local settings with the
+        // server's PIN-stripped copy, so this branch naturally stops being able to see a
+        // real custom PIN and instead falls back to the defaults below.
+        if (!url) {
+            const settings = getSettings();
+            const correctPin = settings.adminPin ? String(settings.adminPin) : '1234';
+            const latePin = settings.lateAdminPin ? String(settings.lateAdminPin) : '4321';
+
+            if (String(pin) === correctPin) {
+                sessionStorage.setItem('tla_is_admin', 'true');
+                sessionStorage.removeItem('tla_is_late_admin');
+                sessionStorage.removeItem(SESSION_TOKEN_KEY);
+                return 'super_admin';
+            } else if (String(pin) === latePin) {
+                sessionStorage.setItem('tla_is_late_admin', 'true');
+                sessionStorage.removeItem('tla_is_admin');
+                sessionStorage.removeItem(SESSION_TOKEN_KEY);
+                return 'late_admin';
+            }
+            return false;
+        }
+
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 12000);
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ action: 'login', pin: pin }),
+                signal: controller.signal
+            });
+            clearTimeout(timeoutId);
+
+            if (!response.ok) throw new Error('Network error');
+            const result = await response.json();
+
+            if (result.status === 'success' && result.token) {
+                sessionStorage.setItem(SESSION_TOKEN_KEY, result.token);
+                if (result.role === 'super_admin') {
+                    sessionStorage.setItem('tla_is_admin', 'true');
+                    sessionStorage.removeItem('tla_is_late_admin');
+                } else if (result.role === 'late_admin') {
+                    sessionStorage.setItem('tla_is_late_admin', 'true');
+                    sessionStorage.removeItem('tla_is_admin');
+                }
+                return result.role;
+            }
+
+            return false;
+        } catch (error) {
+            console.error('Login request failed:', error);
+            return false;
+        }
+    }
+
+    // Re-check the admin PIN without disturbing the current session (used for
+    // "danger zone" style re-confirmation, e.g. before clearing all leave data).
+    // Stays synchronous-callable-as-promise so callers just `await` it.
+    async function verifyAdminPin(pin) {
+        const url = getCloudUrl();
+
+        if (!url) {
+            const settings = getSettings();
+            const correctPin = settings.adminPin ? String(settings.adminPin) : '1234';
+            return String(pin) === correctPin;
+        }
+
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 12000);
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ action: 'login', pin: pin }),
+                signal: controller.signal
+            });
+            clearTimeout(timeoutId);
+
+            if (!response.ok) return false;
+            const result = await response.json();
+            return result.status === 'success' && result.role === 'super_admin';
+        } catch (error) {
+            console.error('PIN verification failed:', error);
+            return false;
+        }
+    }
+
+    // logout() stays a plain (non-async-awaited) function on purpose: it clears the
+    // local session synchronously first, so the UI can update immediately even if the
+    // device is offline. Revoking the token on the server is best-effort in the background.
     function logout() {
+        const token = getSessionToken();
+        const url = getCloudUrl();
+
         sessionStorage.removeItem('tla_is_admin');
         sessionStorage.removeItem('tla_is_late_admin');
+        sessionStorage.removeItem(SESSION_TOKEN_KEY);
+
+        if (url && token) {
+            fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ action: 'logout', token: token })
+            }).catch(err => console.error('Logout revoke failed (ignored):', err));
+        }
     }
 
     // --- Thai Month Names ---
@@ -218,7 +342,7 @@ const DataManager = (() => {
     function getTeachers() {
         let teachers = load(KEYS.teachers, []);
         let needsSave = false;
-        
+
         // Fix zero or missing orders, and missing IDs
         teachers.forEach((t, i) => {
             if (!t.id || String(t.id).trim() === '') {
@@ -230,9 +354,9 @@ const DataManager = (() => {
                 needsSave = true;
             }
         });
-        
+
         teachers.sort((a, b) => a.order - b.order);
-        
+
         if (needsSave) save(KEYS.teachers, teachers);
         return teachers;
     }
@@ -261,10 +385,10 @@ const DataManager = (() => {
             const name = (item.name || '').trim();
             const section = (item.section || 'ทั่วไป').trim();
             if (!name) return;
-            const teacher = { 
-                id: generateId(), 
-                name, 
-                section, 
+            const teacher = {
+                id: generateId(),
+                name,
+                section,
                 order: nextOrder++,
                 gender: item.gender || '',
                 title: item.title || ''
@@ -346,7 +470,7 @@ const DataManager = (() => {
             // Remove corrupted records from the bug
             if (typeof r.teacherId === 'object' || (typeof r.teacherId === 'string' && r.teacherId.includes('{'))) {
                 needsSave = true;
-                return false; 
+                return false;
             }
             if (r.month === null || r.month === undefined) {
                 needsSave = true;
@@ -401,12 +525,12 @@ const DataManager = (() => {
 
         for (const { month, year } of months) {
             const key = `${month}-${year}`;
-            
+
             // Helper to aggregate records of a specific type
             const aggregate = (type) => {
                 const typeRecords = records.filter(r => r.month === month && r.year === year && r.type === type);
                 if (typeRecords.length === 0) return null;
-                
+
                 return typeRecords.reduce((acc, curr) => {
                     acc.times += curr.times;
                     acc.days += curr.days;
@@ -526,7 +650,7 @@ const DataManager = (() => {
         requests.push(newReq);
         save(KEYS.leaveRequests, requests);
 
-        // [BUGFIX] ส่งใบลาขึ้น Google Sheets ทันทีแม้จะไม่ใช่ Admin
+        // ส่งใบลาขึ้น Google Sheets ทันทีแม้จะไม่ใช่ Admin — เป็น public endpoint ไม่ต้องใช้ token
         const url = getCloudUrl();
         if (url) {
             fetch(url, {
@@ -642,7 +766,7 @@ const DataManager = (() => {
     }
 
     return {
-        isAdmin, login, logout,
+        isAdmin, isLateAdmin, login, logout, verifyAdminPin,
         getCloudUrl, setCloudUrl, pullFromCloud, forceSyncToCloud,
         getTeachers, getSections, addTeacher, addTeachersBulk, updateTeacher, deleteTeacher, getNextOrder,
         getLeaveRecords, addLeaveEvent, updateLeaveEvent, getLeaveRecord, getTeacherLeaveForPeriod, deleteLeaveEvent,
@@ -651,6 +775,6 @@ const DataManager = (() => {
         getSettings, updateSettings, getPeriodMonths,
         getThaiMonth, getThaiMonthFull, THAI_MONTHS, THAI_MONTHS_FULL,
         exportData, importData,
-        loadDemoData, hasData, clearAllData, clearLeaveData, isLateAdmin, getLateArrivals, addLateArrival, deleteLateArrival
+        loadDemoData, hasData, clearAllData, clearLeaveData, getLateArrivals, addLateArrival, deleteLateArrival
     };
 })();
