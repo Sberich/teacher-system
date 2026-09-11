@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tla-cache-v130';
+const CACHE_NAME = 'tla-cache-v133';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
@@ -25,6 +25,7 @@ const ASSETS_TO_CACHE = [
 
 // Install Event
 self.addEventListener('install', event => {
+    self.skipWaiting();
     event.waitUntil(
         caches.open(CACHE_NAME).then(cache => {
             return cache.addAll(ASSETS_TO_CACHE);
@@ -39,7 +40,7 @@ self.addEventListener('activate', event => {
             return Promise.all(keys
                 .filter(key => key !== CACHE_NAME)
                 .map(key => caches.delete(key))
-            );
+            ).then(() => self.clients.claim());
         })
     );
 });

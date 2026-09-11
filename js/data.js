@@ -179,21 +179,21 @@ const DataManager = (() => {
         }
     }
 
-    // Debounce push to avoid spamming the cloud API (DISABLED for manual sync)
+    // Debounce push to avoid spamming the cloud API
     function triggerCloudSync() {
-        // Disabled auto-sync based on user request. 
-        // Data will remain cached in localStorage until "Force Sync" button is pressed.
-        /*
+        // ให้ Super Admin ใช้ปุ่ม Force Sync เท่านั้น เพื่อจัดกลุ่มแจ้งเตือน
+        // แต่ให้ Late Admin (แอดมินครูเวร) Auto-sync ทันที เพราะไม่มีการแจ้งเตือนอยู่แล้ว
+        if (!isLateAdmin()) {
+            return;
+        }
+
         const url = getCloudUrl();
         if (!url) return;
-
-        if (window.App && App.showSyncIndicator) App.showSyncIndicator();
 
         if (syncTimeout) clearTimeout(syncTimeout);
         syncTimeout = setTimeout(() => {
             pushToCloud();
-        }, 1500); // wait 1.5s after last action before syncing
-        */
+        }, 2000); 
     }
 
     // Force an immediate sync (for settings page button)
