@@ -153,12 +153,22 @@ const LateArrival = (() => {
             return;
         }
 
+        let finalDate = date;
+        const parts = finalDate.split('/');
+        if (parts.length === 3) {
+            let y = parseInt(parts[2], 10);
+            if (y < 2500) {
+                y += 543;
+                finalDate = `${parts[0]}/${parts[1]}/${y}`;
+            }
+        }
+
         const id = 'la_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
         
         DataManager.addLateArrival({
             id: id,
             teacherId: teacherId,
-            date: date,
+            date: finalDate,
             time: time,
             reason: '',
             recordedBy: 'late_admin',
@@ -189,9 +199,18 @@ const LateArrival = (() => {
         
         lateArrivals.forEach(r => {
             const parts = r.date.split('/');
-            const m = parseInt(parts[1], 10);
-            const y = parseInt(parts[2], 10);
-            if (months.some(pm => pm.month === m && pm.year === y)) {
+            if (parts.length === 3) {
+                const m = parseInt(parts[1], 10);
+                let y = parseInt(parts[2], 10);
+                if (y < 2500) y += 543; // รองรับปี ค.ศ. แปลงเป็น พ.ศ.
+                if (months.some(pm => pm.month === m && pm.year === y)) {
+                    if (!recordsByTeacher[r.teacherId]) {
+                        recordsByTeacher[r.teacherId] = [];
+                    }
+                    recordsByTeacher[r.teacherId].push(r);
+                }
+            } else {
+                // If malformed date, just include it
                 if (!recordsByTeacher[r.teacherId]) {
                     recordsByTeacher[r.teacherId] = [];
                 }

@@ -373,7 +373,8 @@ const LeaveTable = (() => {
             const parts = (r.date || '').split('/');
             if (parts.length === 3) {
                 const m = parseInt(parts[1], 10);
-                const y = parseInt(parts[2], 10);
+                let y = parseInt(parts[2], 10);
+                if (y < 2500) y += 543; // รองรับปี ค.ศ. แปลงเป็น พ.ศ. อัตโนมัติ
                 return periodMonths.some(p => p.month === m && p.year === y);
             }
             return true; // Fallback if date is malformed
