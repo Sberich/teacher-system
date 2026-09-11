@@ -1,5 +1,6 @@
 /* ============================================
    App — Main Controller (Routing, Theme, Modal, Toast)
+   (v2: login is now async — server issues a session token)
    ============================================ */
 const App = (() => {
     let currentPage = 'table';
@@ -29,9 +30,9 @@ const App = (() => {
                 }
                 const icon = forceSaveBtn.querySelector('.material-icons-round');
                 if (icon) icon.classList.add('spinning');
-                
+
                 const success = await DataManager.forceSyncToCloud();
-                
+
                 if (icon) icon.classList.remove('spinning');
                 if (success) {
                     showToast('บังคับบันทึกข้อมูลขึ้นคลาวด์สำเร็จ!', 'success');
@@ -45,11 +46,11 @@ const App = (() => {
         if (DataManager.getCloudUrl()) {
             const loader = document.getElementById('global-loader');
             if (loader) loader.style.display = 'flex';
-            
+
             const success = await DataManager.pullFromCloud();
-            
+
             if (loader) loader.style.display = 'none';
-            
+
             if (success) {
                 showToast('อัปเดตข้อมูลจากฐานข้อมูลแล้ว', 'info');
                 updateLastUpdatedText();
@@ -73,7 +74,7 @@ const App = (() => {
 
         // Default page
         navigate('table');
-        
+
         // Initial text update
         updateLastUpdatedText();
 
@@ -101,9 +102,9 @@ const App = (() => {
 
         const icon = document.querySelector('#btn-refresh-data .material-icons-round');
         if (icon) icon.classList.add('spinning');
-        
+
         const success = await DataManager.pullFromCloud();
-        
+
         if (icon) icon.classList.remove('spinning');
 
         if (success) {
@@ -219,6 +220,7 @@ const App = (() => {
         const toggleBtn = document.getElementById('auth-toggle');
         const loginBtn = document.getElementById('btn-login-submit');
         const pinInput = document.getElementById('auth-pin');
+        const loginBtnDefaultHtml = loginBtn.innerHTML;
 
         updateAuthUI();
 
@@ -226,6 +228,8 @@ const App = (() => {
             if (isAdmin() || isLateAdmin()) {
                 // Logout
                 confirm('ต้องการออกจากระบบหรือไม่?', () => {
+                    // logout() clears the local session synchronously before it awaits
+                    // anything, so the UI is safe to refresh right away.
                     DataManager.logout();
                     updateAuthUI();
 
@@ -234,7 +238,7 @@ const App = (() => {
                     if (tableFilter) tableFilter.value = '';
                     const tableSearch = document.getElementById('table-search');
                     if (tableSearch) tableSearch.value = '';
-                    
+
                     if (window.LeaveTable) {
                         if (typeof LeaveTable.resetFilters === 'function') LeaveTable.resetFilters();
                         LeaveTable.render();
@@ -253,15 +257,24 @@ const App = (() => {
 
         loginBtn.addEventListener('click', async () => {
             const pin = pinInput.value;
-            if (!pin) return;
-            const originalText = loginBtn.innerHTML;
-            loginBtn.innerHTML = '<span class="material-icons-round spinning" style="font-size:18px;">autorenew</span> ????????????...';
+            if (!pin) {
+                showToast('กรุณากรอกรหัสผ่าน', 'warning');
+                return;
+            }
+
+            // login() now talks to the server (when a Cloud URL is configured), so give
+            // the user a bit of loading feedback instead of the modal appearing to hang.
             loginBtn.disabled = true;
-            
-            const role = await DataManager.login(pin);
-            
-            loginBtn.innerHTML = originalText;
-            loginBtn.disabled = false;
+            loginBtn.innerHTML = '<span class="material-icons-round spinning">sync</span> กำลังตรวจสอบ...';
+
+            let role = false;
+            try {
+                role = await DataManager.login(pin);
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = loginBtnDefaultHtml;
+            }
+
             if (role) {
                 hideModal('auth-modal');
                 updateAuthUI();
@@ -273,7 +286,7 @@ const App = (() => {
                     navigate(currentPage); // Refresh page
                 }
             } else {
-                showToast('รหัสผ่านไม่ถูกต้อง', 'error');
+                showToast('รหัสผ่านไม่ถูกต้อง หรือไม่สามารถเชื่อมต่อฐานข้อมูลได้', 'error');
                 pinInput.value = '';
                 pinInput.focus();
             }
@@ -298,7 +311,7 @@ const App = (() => {
         const lateAdmin = isLateAdmin();
         document.body.classList.toggle('is-admin', admin);
         document.body.classList.toggle('is-late-admin', lateAdmin);
-        
+
         const toggleBtn = document.getElementById('auth-toggle');
         const isLoggedIn = admin || lateAdmin;
         toggleBtn.classList.toggle('is-admin', isLoggedIn);
@@ -310,7 +323,7 @@ const App = (() => {
     function setupDropdowns() {
         document.addEventListener('click', (e) => {
             const isDropdownBtn = e.target.closest('.dropdown-toggle');
-            
+
             // Close all dropdowns
             document.querySelectorAll('.dropdown-menu').forEach(menu => {
                 if (isDropdownBtn && isDropdownBtn.nextElementSibling === menu) return;
@@ -425,7 +438,7 @@ const App = (() => {
     function openAbout() {
         document.getElementById('about-modal').classList.add('open');
     }
-    
+
     function closeAbout() {
         document.getElementById('about-modal').classList.remove('open');
     }
@@ -433,7 +446,7 @@ const App = (() => {
     // Initialize on DOM ready
     document.addEventListener('DOMContentLoaded', () => {
         init();
-        
+
         // Setup About Modal listeners
         const aboutModal = document.getElementById('about-modal');
         if (aboutModal) {
@@ -465,7 +478,11 @@ const App = (() => {
         });
     }
 
-    return { navigate, showModal, hideModal, showToast, confirm, isAdmin, showSyncIndicator, hideSyncIndicator, updateLastUpdatedText };
+    return {
+        navigate, showModal, hideModal, showToast, confirm, isAdmin,
+        showSyncIndicator, hideSyncIndicator, updateLastUpdatedText,
+        updateAuthUI // exposed so DataManager can refresh the header when a session expires mid-sync
+    };
 })();
 
 // Global functions for inline HTML event handlers
