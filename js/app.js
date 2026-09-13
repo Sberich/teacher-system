@@ -79,7 +79,7 @@ const App = (() => {
         if (urlPage && document.querySelector(`.nav-item[data-page="${urlPage}"]`)) {
             navigate(urlPage);
         } else {
-            navigate('table');
+            navigate('leave-request');
         }
 
         // Initial text update
