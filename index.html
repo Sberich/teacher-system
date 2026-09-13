@@ -13,7 +13,7 @@
     <!-- Flatpickr for Date Picker -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/airbnb.css">
-    <link rel="stylesheet" href="css/style.css?v=5.1">
+    <link rel="stylesheet" href="css/style.css?v=7.0">
 
     <!-- Web App Manifest (Android & iOS) -->
     <meta name="theme-color" content="#0f172a">
@@ -761,26 +761,24 @@
     <div id="liff-pdf-guide-modal" class="modal">
         <div class="modal-content modal-sm">
             <div class="modal-header">
-                <h3>✅ ส่งใบลาเรียบร้อย!</h3>
+                <h3>ข้อมูลถูกส่งเข้าระบบแล้ว!</h3>
                 <button class="modal-close" data-close="liff-pdf-guide-modal">
                     <span class="material-icons-round">close</span>
                 </button>
             </div>
             <div class="modal-body" style="text-align: center;">
                 <span class="material-icons-round" style="font-size: 48px; color: #10b981; margin-bottom: 16px;">check_circle</span>
-                <p style="font-size: 1.1rem; font-weight: 600; margin-bottom: 16px;">ข้อมูลใบลาของคุณถูกส่งเข้าสู่ระบบแล้ว</p>
+                <p style="font-size: 1.1rem; font-weight: 600; margin-bottom: 16px;">ระบบได้รับข้อมูลใบลาของคุณเรียบร้อยแล้ว</p>
                 <div style="background: #fffbeb; border: 1px solid #f59e0b; padding: 16px; border-radius: 8px; text-align: left; font-size: 0.95rem;">
-                    <p style="font-weight: 600; color: #b45309; margin-bottom: 8px;">📥 วิธีดาวน์โหลดใบลาเป็น PDF</p>
-                    <p style="color: #78350f; margin-bottom: 8px;">เนื่องจากคุณกำลังเปิดใช้งานผ่านแอป LINE ทำให้ไม่สามารถดาวน์โหลดไฟล์ PDF ได้โดยตรง</p>
-                    <ol style="color: #78350f; padding-left: 20px; margin: 0; line-height: 1.5;">
-                        <li>กดปุ่ม <strong>จุด 3 จุด (⋮)</strong> หรือ <strong>แชร์</strong> ที่มุมขวาบนของหน้าจอ LINE</li>
-                        <li>เลือก <strong>"เปิดด้วยเบราว์เซอร์เริ่มต้น"</strong> (Open in default browser)</li>
-                        <li>เมื่อหน้าเว็บเปิดใน Safari หรือ Chrome ให้กดปุ่มพิมพ์เพื่อบันทึกเป็น PDF ได้ทันทีครับ</li>
-                    </ol>
+                    <p style="font-weight: 600; color: #b45309; margin-bottom: 8px;">📖 วิธีดาวน์โหลดใบลาเป็น PDF</p>
+                    <p style="color: #78350f; margin-bottom: 8px;">เนื่องจากคุณกำลังใช้งานผ่านแอป LINE จะไม่สามารถบันทึก PDF ได้โดยตรง ให้กดปุ่มด้านล่างเพื่อเปิดหน้าเว็บและโหลด PDF ครับ</p>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button class="btn-primary" data-close="liff-pdf-guide-modal" style="width: 100%; justify-content: center;">รับทราบ</button>
+            <div class="modal-footer" style="flex-direction: column; gap: 8px;">
+                <button class="btn-primary" id="btn-liff-open-external" style="width: 100%; justify-content: center;">
+                    <span class="material-icons-round">open_in_browser</span> เปิดเบราว์เซอร์เพื่อโหลด PDF
+                </button>
+                <button class="btn-secondary" data-close="liff-pdf-guide-modal" style="width: 100%; justify-content: center;">ปิดหน้าต่าง</button>
             </div>
         </div>
     </div>
@@ -789,15 +787,15 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://npmcdn.com/flatpickr/dist/l10n/th.js"></script>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-    <script src="js/data.js?v=5.3"></script>
-    <script src="js/app.js?v=5.3"></script>
-    <script src="js/leave-request.js?v=5.3"></script>
-    <script src="js/late-arrival.js?v=5.3"></script>
-    <script src="js/table.js?v=5.3"></script>
-    <script src="js/dashboard.js?v=5.3"></script>
-    <script src="js/calendar.js?v=5.3"></script>
-    <script src="js/teachers.js?v=5.3"></script>
-    <script src="js/settings.js?v=5.3"></script>
+    <script src="js/data.js?v=7.0"></script>
+    <script src="js/app.js?v=7.0"></script>
+    <script src="js/leave-request.js?v=7.0"></script>
+    <script src="js/late-arrival.js?v=7.0"></script>
+    <script src="js/table.js?v=7.0"></script>
+    <script src="js/dashboard.js?v=7.0"></script>
+    <script src="js/calendar.js?v=7.0"></script>
+    <script src="js/teachers.js?v=7.0"></script>
+    <script src="js/settings.js?v=7.0"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
