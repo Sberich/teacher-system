@@ -657,35 +657,6 @@ const DataManager = (() => {
         return load(KEYS.leaveRequests, []).filter(r => r.status !== 'deleted');
     }
 
-    async function addLeaveRequestAsync(requestData) {
-        const requests = getLeaveRequests();
-        const newReq = {
-            id: generateId(),
-            ...requestData,
-            status: 'pending',
-            timestamp: new Date().toISOString()
-        };
-        requests.push(newReq);
-        save(KEYS.leaveRequests, requests);
-
-        const url = getCloudUrl();
-        if (url) {
-            try {
-                await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({
-                        action: 'submitRequest',
-                        payload: newReq
-                    })
-                });
-            } catch (err) {
-                console.error("Cloud submit failed:", err);
-            }
-        }
-        return newReq;
-    }
-
     function addLeaveRequest(requestData) {
         const requests = getLeaveRequests();
         const newReq = {
@@ -824,7 +795,7 @@ const DataManager = (() => {
         getCloudUrl, setCloudUrl, pullFromCloud, forceSyncToCloud,
         getTeachers, getSections, addTeacher, addTeachersBulk, updateTeacher, deleteTeacher, resetLineUserId, getNextOrder,
         getLeaveRecords, addLeaveEvent, updateLeaveEvent, getLeaveRecord, getTeacherLeaveForPeriod, deleteLeaveEvent,
-        getLeaveRequests, addLeaveRequest, addLeaveRequestAsync, updateLeaveRequestStatus, deleteLeaveRequest, clearCompletedLeaveRequests,
+        getLeaveRequests, addLeaveRequest, updateLeaveRequestStatus, deleteLeaveRequest, clearCompletedLeaveRequests,
         getRemarks, getRemark, setRemark,
         getSettings, updateSettings, getPeriodMonths,
         getThaiMonth, getThaiMonthFull, THAI_MONTHS, THAI_MONTHS_FULL,

@@ -107,19 +107,7 @@ const LeaveRequest = (() => {
             locale: "th",
             dateFormat: "Y-m-d",
             altInput: true,
-            altFormat: "custom",
-            formatDate: (date, format) => {
-                if (format === "Y-m-d") {
-                    const y = date.getFullYear();
-                    const m = String(date.getMonth() + 1).padStart(2, '0');
-                    const d = String(date.getDate()).padStart(2, '0');
-                    return `${y}-${m}-${d}`;
-                }
-                const y = date.getFullYear() + 543;
-                const m = DataManager.THAI_MONTHS[date.getMonth() + 1];
-                const d = date.getDate();
-                return `${d} ${m} ${y}`;
-            },
+            altFormat: "j F Y",
             onChange: function(selectedDates, dateStr, instance) {
                 if(datePickerEnd) {
                     datePickerEnd.set('minDate', dateStr);
@@ -131,41 +119,12 @@ const LeaveRequest = (() => {
             locale: "th",
             dateFormat: "Y-m-d",
             altInput: true,
-            altFormat: "custom",
-            formatDate: (date, format) => {
-                if (format === "Y-m-d") {
-                    const y = date.getFullYear();
-                    const m = String(date.getMonth() + 1).padStart(2, '0');
-                    const d = String(date.getDate()).padStart(2, '0');
-                    return `${y}-${m}-${d}`;
-                }
-                const y = date.getFullYear() + 543;
-                const m = DataManager.THAI_MONTHS[date.getMonth() + 1];
-                const d = date.getDate();
-                return `${d} ${m} ${y}`;
-            },
+            altFormat: "j F Y",
         });
 
         const btnSubmit = document.getElementById('btn-submit-leave-request');
         if (btnSubmit) {
             btnSubmit.addEventListener('click', submitRequest);
-        }
-
-        const btnExt = document.getElementById('btn-liff-open-external');
-        if (btnExt) {
-            btnExt.addEventListener('click', () => {
-                if (window.liff && liff.openWindow) {
-                    const rId = btnExt.getAttribute('data-reqid');
-                    let targetUrl = window.location.origin + window.location.pathname;
-                    if (rId) {
-                        targetUrl += '?print=' + encodeURIComponent(rId);
-                    } else {
-                        targetUrl = window.location.href; // fallback
-                    }
-                    App.showToast('กำลังเปิดเบราว์เซอร์...', 'info');
-                    liff.openWindow({ url: targetUrl, external: true });
-                }
-            });
         }
 
         const btnClear = document.getElementById('btn-clear-requests');
@@ -261,7 +220,7 @@ const LeaveRequest = (() => {
         });
     }
 
-    async function submitRequest() {
+    function submitRequest() {
         const teacherId = document.getElementById('lr-teacher').value;
         const type = document.getElementById('lr-type').value;
         const reason = document.getElementById('lr-reason').value;
@@ -291,7 +250,7 @@ const LeaveRequest = (() => {
         }
 
         if (days === 0) {
-            App.showToast('ช่วงเวลาที่เลือกตรงกับวันหยุดสุดสัปดาห์ทั้งหมด', 'warning');
+            App.showToast('ช่วงเวลาที่เลือกตรงกับวันหยุดเสาร์-อาทิตย์ทั้งหมด', 'warning');
             return;
         }
 
@@ -299,27 +258,8 @@ const LeaveRequest = (() => {
             teacherId, type, reason, startDate, endDate, contact, days
         };
 
-        const btnSubmit = document.getElementById('btn-submit-leave-request');
-        if (btnSubmit) {
-            btnSubmit.disabled = true;
-            btnSubmit.innerHTML = '<span class="material-icons-round spinning">refresh</span> กำลังส่งข้อมูล...';
-        }
-        
-        App.showToast('กำลังส่งข้อมูล...', 'info');
-
-        let newReq;
-        if (window.liff && liff.isInClient()) {
-            newReq = await DataManager.addLeaveRequestAsync(reqData);
-        } else {
-            newReq = DataManager.addLeaveRequest(reqData);
-        }
-
-        if (btnSubmit) {
-            btnSubmit.disabled = false;
-            btnSubmit.innerHTML = '<span class="material-icons-round">send</span> บันทึกและขอพิมพ์ใบลา';
-        }
-
-        App.showToast('บันทึกคำขอลาเรียบร้อย', 'success');
+        const newReq = DataManager.addLeaveRequest(reqData);
+        App.showToast('บันทึกคำขอลาเรียบร้อยแล้ว', 'success');
 
         // Open Print view automatically
         printForm(newReq.id);
@@ -327,32 +267,14 @@ const LeaveRequest = (() => {
         render();
     }
 
-    function printForm(reqId, isRetry = false) {
+    function printForm(reqId) {
         const requests = DataManager.getLeaveRequests();
         const req = requests.find(r => r.id === reqId);
-        
-        if (!req) {
-            if (!isRetry) {
-                App.showToast('กำลังค้นหาข้อมูลใบลา...', 'info');
-                // Force sync and retry once
-                DataManager.pullFromCloud().then(() => {
-                    printForm(reqId, true);
-                }).catch(() => {
-                    App.showToast('ไม่พบข้อมูลใบลา (ID: ' + reqId + ') กรุณารีเฟรชหน้าเว็บ', 'error');
-                });
-                return;
-            } else {
-                App.showToast('ไม่พบข้อมูลใบลา (ID: ' + reqId + ') ในฐานข้อมูล', 'error');
-                return;
-            }
-        }
+        if (!req) return;
 
         const teachers = DataManager.getTeachers();
         const t = teachers.find(t => t.id === req.teacherId);
-        if (!t) {
-            App.showToast('ไม่พบข้อมูลผู้ลาในฐานข้อมูล', 'error');
-            return;
-        }
+        if (!t) return;
 
         const settings = DataManager.getSettings();
 
@@ -465,12 +387,6 @@ const LeaveRequest = (() => {
         if (window.liff && liff.isInClient()) {
             // Close print view automatically since it won't work well
             document.body.classList.remove('print-mode');
-            // Append print query string so opening in Chrome directly prints it!
-            window.history.replaceState(null, '', '?print=' + reqId);
-            
-            const btnExt = document.getElementById('btn-liff-open-external');
-            if (btnExt) btnExt.setAttribute('data-reqid', reqId);
-
             App.showModal('liff-pdf-guide-modal');
         } else {
             // Trigger Print Window immediately (prevent mobile popup blockers)
