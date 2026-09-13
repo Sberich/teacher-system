@@ -101,14 +101,21 @@ const App = (() => {
             });
     }
 
-    async function handleManualRefresh() {
+    async function handleManualRefresh(e) {
+        if (e) e.preventDefault();
+        
         if (!DataManager.getCloudUrl()) {
-            showToast('คุณยังไม่ได้ตั้งค่า Google Sheets URL', 'warning');
+            showToast('กรุณาตั้งค่า Google Sheets URL', 'warning');
             return;
         }
 
         const icon = document.querySelector('#btn-refresh-data .material-icons-round');
         if (icon) icon.classList.add('spinning');
+
+        // Force sync any pending local changes BEFORE pulling, to prevent overwriting local edits
+        await DataManager.forceSyncToCloud();
+        // Add a tiny delay to ensure Cloud has finished processing before we pull
+        await new Promise(resolve => setTimeout(resolve, 500));
 
         const success = await DataManager.pullFromCloud();
 
