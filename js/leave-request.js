@@ -305,26 +305,26 @@ const LeaveRequest = (() => {
             btnSubmit.innerHTML = '<span class="material-icons-round spinning">refresh</span> กำลังส่งข้อมูล...';
         }
         
-        App.showToast('กำลังส่งข้อมูล...', 'info');
+        App.showToast('กำลังประมวลผล กรุณารอสักครู่...', 'info');
 
-        let newReq;
-        if (window.liff && liff.isInClient()) {
-            newReq = await DataManager.addLeaveRequestAsync(reqData);
-        } else {
-            newReq = DataManager.addLeaveRequest(reqData);
-        }
+        // FIRE AND FORGET - Do not await to prevent UI hanging on strict mobile browsers
+        let newReq = DataManager.addLeaveRequest(reqData);
 
-        if (btnSubmit) {
-            btnSubmit.disabled = false;
-            btnSubmit.innerHTML = '<span class="material-icons-round">send</span> บันทึกและขอพิมพ์ใบลา';
-        }
+        // Add small delay for UX so they see the spinner briefly
+        setTimeout(() => {
+            if (btnSubmit) {
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = '<span class="material-icons-round">send</span> ส่งใบยื่นคำขอลา';
+            }
 
-        App.showToast('บันทึกคำขอลาเรียบร้อย', 'success');
+            App.showToast('ระบบกำลังประมวลผล กรุณารอรับลิงก์ปริ้นใบลาทาง LINE ภายใน 5 วินาที', 'success');
 
-        // Open Print view automatically
-        printForm(newReq.id);
-
-        render();
+            // DO NOT auto-open print form, let them click the LINE link
+            // printForm(newReq.id);
+            document.getElementById('lr-reason').value = '';
+            
+            render();
+        }, 1500);
     }
 
     function printForm(reqId, isRetry = false) {
