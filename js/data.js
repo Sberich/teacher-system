@@ -447,6 +447,17 @@ const DataManager = (() => {
         save(KEYS.remarks, remarks);
     }
 
+    function resetLineUserId(id) {
+        let teachers = load(KEYS.teachers, []);
+        const teacher = teachers.find(t => t.id === id);
+        if (teacher) {
+            teacher.lineUserId = '';
+            save(KEYS.teachers, teachers);
+            return true;
+        }
+        return false;
+    }
+
     function shiftOrdersFrom(teachers, fromOrder) {
         const toShift = teachers.filter(t => t.order >= fromOrder).sort((a, b) => a.order - b.order);
         let cur = fromOrder;
