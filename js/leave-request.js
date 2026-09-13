@@ -151,6 +151,15 @@ const LeaveRequest = (() => {
             btnSubmit.addEventListener('click', submitRequest);
         }
 
+        const btnExt = document.getElementById('btn-liff-open-external');
+        if (btnExt) {
+            btnExt.addEventListener('click', () => {
+                if (window.liff && liff.openWindow) {
+                    liff.openWindow({ url: window.location.href, external: true });
+                }
+            });
+        }
+
         const btnClear = document.getElementById('btn-clear-requests');
         if (btnClear) {
             btnClear.addEventListener('click', clearRequests);
@@ -411,6 +420,8 @@ const LeaveRequest = (() => {
         if (window.liff && liff.isInClient()) {
             // Close print view automatically since it won't work well
             document.body.classList.remove('print-mode');
+            // Append print query string so opening in Chrome directly prints it!
+            window.history.replaceState(null, '', '?print=' + reqId);
             App.showModal('liff-pdf-guide-modal');
         } else {
             // Trigger Print Window immediately (prevent mobile popup blockers)
