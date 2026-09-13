@@ -107,7 +107,19 @@ const LeaveRequest = (() => {
             locale: "th",
             dateFormat: "Y-m-d",
             altInput: true,
-            altFormat: "j F Y",
+            altFormat: "custom",
+            formatDate: (date, format) => {
+                if (format === "Y-m-d") {
+                    const y = date.getFullYear();
+                    const m = String(date.getMonth() + 1).padStart(2, '0');
+                    const d = String(date.getDate()).padStart(2, '0');
+                    return `${y}-${m}-${d}`;
+                }
+                const y = date.getFullYear() + 543;
+                const m = DataManager.THAI_MONTHS[date.getMonth() + 1];
+                const d = date.getDate();
+                return `${d} ${m} ${y}`;
+            },
             onChange: function(selectedDates, dateStr, instance) {
                 if(datePickerEnd) {
                     datePickerEnd.set('minDate', dateStr);
@@ -119,7 +131,19 @@ const LeaveRequest = (() => {
             locale: "th",
             dateFormat: "Y-m-d",
             altInput: true,
-            altFormat: "j F Y",
+            altFormat: "custom",
+            formatDate: (date, format) => {
+                if (format === "Y-m-d") {
+                    const y = date.getFullYear();
+                    const m = String(date.getMonth() + 1).padStart(2, '0');
+                    const d = String(date.getDate()).padStart(2, '0');
+                    return `${y}-${m}-${d}`;
+                }
+                const y = date.getFullYear() + 543;
+                const m = DataManager.THAI_MONTHS[date.getMonth() + 1];
+                const d = date.getDate();
+                return `${d} ${m} ${y}`;
+            },
         });
 
         const btnSubmit = document.getElementById('btn-submit-leave-request');
