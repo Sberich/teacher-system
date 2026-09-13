@@ -155,7 +155,15 @@ const LeaveRequest = (() => {
         if (btnExt) {
             btnExt.addEventListener('click', () => {
                 if (window.liff && liff.openWindow) {
-                    liff.openWindow({ url: window.location.href, external: true });
+                    const rId = btnExt.getAttribute('data-reqid');
+                    let targetUrl = window.location.origin + window.location.pathname;
+                    if (rId) {
+                        targetUrl += '?print=' + encodeURIComponent(rId);
+                    } else {
+                        targetUrl = window.location.href; // fallback
+                    }
+                    App.showToast('กำลังเปิดเบราว์เซอร์...', 'info');
+                    liff.openWindow({ url: targetUrl, external: true });
                 }
             });
         }
@@ -319,14 +327,32 @@ const LeaveRequest = (() => {
         render();
     }
 
-    function printForm(reqId) {
+    function printForm(reqId, isRetry = false) {
         const requests = DataManager.getLeaveRequests();
         const req = requests.find(r => r.id === reqId);
-        if (!req) return;
+        
+        if (!req) {
+            if (!isRetry) {
+                App.showToast('กำลังค้นหาข้อมูลใบลา...', 'info');
+                // Force sync and retry once
+                DataManager.pullFromCloud().then(() => {
+                    printForm(reqId, true);
+                }).catch(() => {
+                    App.showToast('ไม่พบข้อมูลใบลา (ID: ' + reqId + ') กรุณารีเฟรชหน้าเว็บ', 'error');
+                });
+                return;
+            } else {
+                App.showToast('ไม่พบข้อมูลใบลา (ID: ' + reqId + ') ในฐานข้อมูล', 'error');
+                return;
+            }
+        }
 
         const teachers = DataManager.getTeachers();
         const t = teachers.find(t => t.id === req.teacherId);
-        if (!t) return;
+        if (!t) {
+            App.showToast('ไม่พบข้อมูลผู้ลาในฐานข้อมูล', 'error');
+            return;
+        }
 
         const settings = DataManager.getSettings();
 
@@ -441,6 +467,10 @@ const LeaveRequest = (() => {
             document.body.classList.remove('print-mode');
             // Append print query string so opening in Chrome directly prints it!
             window.history.replaceState(null, '', '?print=' + reqId);
+            
+            const btnExt = document.getElementById('btn-liff-open-external');
+            if (btnExt) btnExt.setAttribute('data-reqid', reqId);
+
             App.showModal('liff-pdf-guide-modal');
         } else {
             // Trigger Print Window immediately (prevent mobile popup blockers)

@@ -85,11 +85,12 @@ const App = (() => {
         // Handle auto-print from LINE LIFF redirect
         const printId = urlParams.get('print');
         if (printId && window.LeaveRequest) {
+            showToast('กำลังโหลดข้อมูลเพื่อพิมพ์ใบลา...', 'info');
             setTimeout(() => {
                 LeaveRequest.printForm(printId);
                 // Clean up URL so it doesn't loop on refresh
                 window.history.replaceState(null, '', window.location.pathname);
-            }, 500);
+            }, 1000);
         }
 
         // Initial text update
