@@ -7,7 +7,10 @@ const TeacherManager = (() => {
     function init() {
         document.getElementById('btn-add-teacher').addEventListener('click', () => openModal());
         document.getElementById('btn-save-teacher').addEventListener('click', saveTeacher);
-        document.getElementById('btn-reset-line').addEventListener('click', resetLineBinding);
+        
+        const btnResetLine = document.getElementById('btn-reset-line');
+        if (btnResetLine) btnResetLine.addEventListener('click', resetLineBinding);
+
         document.getElementById('btn-import-teachers').addEventListener('click', () => openImportModal());
         document.getElementById('btn-confirm-import').addEventListener('click', confirmImport);
 
