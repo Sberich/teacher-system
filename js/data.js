@@ -643,7 +643,7 @@ const DataManager = (() => {
     //  LEAVE REQUESTS (HYBRID)
     // =====================
     function getLeaveRequests() {
-        return load(KEYS.leaveRequests, []);
+        return load(KEYS.leaveRequests, []).filter(r => r.status !== 'deleted');
     }
 
     function addLeaveRequest(requestData) {
@@ -674,7 +674,7 @@ const DataManager = (() => {
     }
 
     function updateLeaveRequestStatus(reqId, newStatus) {
-        const requests = getLeaveRequests();
+        const requests = load(KEYS.leaveRequests, []);
         const req = requests.find(r => r.id === reqId);
         if (req) {
             req.status = newStatus;
@@ -685,14 +685,21 @@ const DataManager = (() => {
     }
 
     function deleteLeaveRequest(reqId) {
-        let requests = getLeaveRequests();
-        requests = requests.filter(r => r.id !== reqId);
-        save(KEYS.leaveRequests, requests);
+        let requests = load(KEYS.leaveRequests, []);
+        const req = requests.find(r => r.id === reqId);
+        if (req) {
+            req.status = 'deleted';
+            save(KEYS.leaveRequests, requests);
+        }
     }
 
     function clearCompletedLeaveRequests() {
-        let requests = getLeaveRequests();
-        requests = requests.filter(r => r.status === 'pending');
+        let requests = load(KEYS.leaveRequests, []);
+        requests.forEach(r => {
+            if (r.status === 'approved' || r.status === 'rejected') {
+                r.status = 'deleted';
+            }
+        });
         save(KEYS.leaveRequests, requests);
     }
 
