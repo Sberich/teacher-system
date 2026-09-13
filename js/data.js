@@ -47,7 +47,7 @@ const DataManager = (() => {
     let isSyncing = false;
 
     function getCloudUrl() {
-        return localStorage.getItem(KEYS.cloudUrl) || '';
+        return localStorage.getItem(KEYS.cloudUrl) || window.API_URL || '';
     }
 
     function setCloudUrl(url) {
