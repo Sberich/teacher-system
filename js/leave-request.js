@@ -253,7 +253,7 @@ const LeaveRequest = (() => {
         });
     }
 
-    function submitRequest() {
+    async function submitRequest() {
         const teacherId = document.getElementById('lr-teacher').value;
         const type = document.getElementById('lr-type').value;
         const reason = document.getElementById('lr-reason').value;
@@ -283,7 +283,7 @@ const LeaveRequest = (() => {
         }
 
         if (days === 0) {
-            App.showToast('ช่วงเวลาที่เลือกตรงกับวันหยุดเสาร์-อาทิตย์ทั้งหมด', 'warning');
+            App.showToast('ช่วงเวลาที่เลือกตรงกับวันหยุดสุดสัปดาห์ทั้งหมด', 'warning');
             return;
         }
 
@@ -291,8 +291,27 @@ const LeaveRequest = (() => {
             teacherId, type, reason, startDate, endDate, contact, days
         };
 
-        const newReq = DataManager.addLeaveRequest(reqData);
-        App.showToast('บันทึกคำขอลาเรียบร้อยแล้ว', 'success');
+        const btnSubmit = document.getElementById('btn-submit-leave-request');
+        if (btnSubmit) {
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = '<span class="material-icons-round spinning">refresh</span> กำลังส่งข้อมูล...';
+        }
+        
+        App.showToast('กำลังส่งข้อมูล...', 'info');
+
+        let newReq;
+        if (window.liff && liff.isInClient()) {
+            newReq = await DataManager.addLeaveRequestAsync(reqData);
+        } else {
+            newReq = DataManager.addLeaveRequest(reqData);
+        }
+
+        if (btnSubmit) {
+            btnSubmit.disabled = false;
+            btnSubmit.innerHTML = '<span class="material-icons-round">send</span> บันทึกและขอพิมพ์ใบลา';
+        }
+
+        App.showToast('บันทึกคำขอลาเรียบร้อย', 'success');
 
         // Open Print view automatically
         printForm(newReq.id);
