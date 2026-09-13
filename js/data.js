@@ -66,8 +66,11 @@ const DataManager = (() => {
         try {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 12000); // 12 วินาที Timeout
+            
+            const token = sessionStorage.getItem(SESSION_TOKEN_KEY) || '';
+            const fetchUrl = url + '?t=' + Date.now() + (token ? '&token=' + encodeURIComponent(token) : '');
 
-            const response = await fetch(url + '?t=' + Date.now(), { signal: controller.signal });
+            const response = await fetch(fetchUrl, { signal: controller.signal });
             clearTimeout(timeoutId);
 
             if (!response.ok) throw new Error('Network error');

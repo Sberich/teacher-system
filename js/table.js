@@ -682,26 +682,31 @@ const LeaveTable = (() => {
         const teachers = getFilteredTeachers();
         const leaveTypes = [
             { key: 'sick', label: 'ป่วย' },
-            { key: 'personal', label: 'กิจ' }
+            { key: 'personal', label: 'กิจส่วนตัว' }
         ];
 
         // BOM for Thai encoding in Excel
         let csv = '\uFEFF';
 
         // Header row 1
-        let row1 = ['ลำดับ', 'ชื่อ-สกุล', 'กลุ่ม'];
+        let row1 = ['ลำดับ', 'ชื่อ-สกุล', 'กลุ่มสาระฯ'];
         months.forEach(({ month, year }) => {
             row1.push(`${DataManager.getThaiMonth(month)} ${year} ป่วย`);
-            row1.push(`${DataManager.getThaiMonth(month)} ${year} กิจ`);
+            row1.push(`${DataManager.getThaiMonth(month)} ${year} ลากิจ`);
         });
-        row1.push('รวมป่วย', 'รวมกิจ', 'รวมครั้ง', 'รวมวัน', 'หมายเหตุ');
+        row1.push('รวม ป่วย', 'รวม กิจ', 'รวมทั้งหมด', 'รวม วัน', 'หมายเหตุ');
         csv += row1.join(',') + '\n';
+
+        const escapeCSV = (str) => {
+            if (!str) return '';
+            return str.toString().replace(/"/g, '""');
+        };
 
         // Data rows
         teachers.forEach(teacher => {
             const leaveData = DataManager.getTeacherLeaveForPeriod(teacher.id);
             let tTotals = { sick: { times: 0, days: 0 }, personal: { times: 0, days: 0 } };
-            let row = [teacher.order, `"${escapeHtml(teacher.name)}"`, `"${escapeHtml(teacher.section)}"`];
+            let row = [teacher.order, `"${escapeCSV(teacher.name)}"`, `"${escapeCSV(teacher.section)}"`];
 
             months.forEach(({ month, year }) => {
                 const key = `${month}-${year}`;
@@ -717,13 +722,13 @@ const LeaveTable = (() => {
                 });
             });
 
+            const fmtT = (t) => (t.times > 0 || t.days > 0) ? `${t.times}/${t.days}` : '-';
             const totalTimes = tTotals.sick.times + tTotals.personal.times;
             const totalDays = tTotals.sick.days + tTotals.personal.days;
-            const fmtT = (t) => (t.times || t.days) ? t.times + '/' + t.days : '-';
 
             row.push(fmtT(tTotals.sick), fmtT(tTotals.personal));
             row.push(totalTimes || '-', totalDays || '-');
-            row.push(`"${getCombinedRemark(teacher.id)}"`);
+            row.push(`"${escapeCSV(getCombinedRemark(teacher.id))}"`);
             csv += row.join(',') + '\n';
         });
 

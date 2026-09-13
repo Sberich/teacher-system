@@ -27,7 +27,13 @@ const Settings = (() => {
                     <div class="form-group admin-only">
                         <label for="setting-cloud-url">Google Apps Script Web App URL</label>
                         <input type="text" id="setting-cloud-url" value="${DataManager.getCloudUrl()}" placeholder="https://script.google.com/macros/s/.../exec">
-                        <small class="form-hint">วาง URL ที่ได้จากขั้นตอนการ Deploy Apps Script เพื่อเชื่อมต่อระบบเข้ากับ Cloud หากเป็นการตั้งค่าครั้งแรก กรุณาออกจากระบบแล้วเข้าสู่ระบบใหม่อีกครั้งหลังบันทึก เพื่อให้ระบบซิงค์ข้อมูลกับคลาวด์ได้</small>
+                        <small class="form-hint">ใส่ URL เมื่อ Deploy Apps Script เสร็จสิ้น เพื่อเชื่อมต่อ Cloud และดึงข้อมูลข้ามอุปกรณ์ (เปลี่ยนแค่แอดมินคนเดียว)</small>
+                    </div>
+
+                    <div class="form-group admin-only" style="margin-top:12px;">
+                        <label for="setting-liff-id">LINE LIFF ID (สำหรับบังคับยืนยันตัวตนตอนยื่นใบลา)</label>
+                        <input type="text" id="setting-liff-id" value="${settings.liffId || ''}" placeholder="1234567890-AbCdEfGh">
+                        <small class="form-hint">ปล่อยว่างไว้หากยังไม่ต้องการใช้ระบบ LIFF (ครูจะต้องเลือกชื่อตัวเองจาก Dropdown แบบเดิม)</small>
                     </div>
 
                     <div class="export-import-btns admin-only" style="margin-top: 12px;">
@@ -210,6 +216,8 @@ const Settings = (() => {
         const hrName = document.getElementById('setting-hr-name').value.trim();
         const cloudUrlEl = document.getElementById('setting-cloud-url');
         const cloudUrl = cloudUrlEl ? cloudUrlEl.value.trim() : DataManager.getCloudUrl();
+        const liffIdEl = document.getElementById('setting-liff-id');
+        const liffId = liffIdEl ? liffIdEl.value.trim() : '';
 
         const count = calcMonthCount(startMonth, endMonth);
         if (count > 6) {
@@ -225,7 +233,7 @@ const Settings = (() => {
         // PIN fields are optional now: the server never echoes the current PIN back to the
         // browser, so an empty field here means "leave the existing password untouched"
         // (Code-api.js already keeps the old PIN server-side whenever it isn't included).
-        const patch = { startMonth, endMonth, fiscalYear, schoolName, directorName, deputyName, hrName };
+        const patch = { startMonth, endMonth, fiscalYear, schoolName, directorName, deputyName, hrName, liffId };
         if (adminPin) patch.adminPin = adminPin;
         if (lateAdminPin) patch.lateAdminPin = lateAdminPin;
 

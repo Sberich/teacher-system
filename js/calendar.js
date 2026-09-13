@@ -154,8 +154,8 @@ const Calendar = (() => {
     function extractDates(notes, maxDay) {
         if (!notes) return [];
         const dates = [];
-        // Match: 10, 1-2, 10-12
-        const regex = /(\d{1,2})\s*(?:-\s*(\d{1,2}))?/g;
+        // Match: 10, 1-2, 10-12. Use word boundaries to avoid matching parts of years (e.g. 25 in 2568)
+        const regex = /(?<!\d)(\d{1,2})(?!\d)\s*(?:-\s*(?<!\d)(\d{1,2})(?!\d))?/g;
         let match;
         while ((match = regex.exec(notes)) !== null) {
             const start = parseInt(match[1]);

@@ -5,8 +5,100 @@ const LeaveRequest = (() => {
     let datePickerStart = null;
     let datePickerEnd = null;
 
-    function init() {
+    async function init() {
         bindEvents();
+        
+        // Wait briefly for DataManager to have settings
+        setTimeout(initLIFF, 100);
+    }
+
+    async function initLIFF() {
+        if (!window.liff) return; // LIFF SDK not loaded
+        
+        const settings = DataManager.getSettings();
+        if (!settings || !settings.liffId) return; // No LIFF ID configured
+
+        try {
+            await liff.init({ liffId: settings.liffId });
+            
+            if (liff.isLoggedIn()) {
+                const profile = await liff.getProfile();
+                const lineUserId = profile.userId;
+                
+                // Match teacher
+                const checkTeacher = () => {
+                    const teachers = DataManager.getTeachers();
+                    if (teachers.length > 0) {
+                        const teacher = teachers.find(t => t.lineUserId === lineUserId);
+                        const select = document.getElementById('lr-teacher');
+                        
+                        if (teacher && select) {
+                            // Lock dropdown to this teacher
+                            select.value = teacher.id;
+                            select.setAttribute('disabled', 'true');
+                            select.style.backgroundColor = '#f1f5f9';
+                            
+                            // Add verified badge if not already there
+                            if (!document.getElementById('liff-verified-badge')) {
+                                const hint = document.createElement('div');
+                                hint.id = 'liff-verified-badge';
+                                hint.style.fontSize = '0.85rem';
+                                hint.style.color = '#10b981'; // Success green
+                                hint.style.marginTop = '6px';
+                                hint.innerHTML = '<span class="material-icons-round" style="font-size:14px;vertical-align:middle;">verified_user</span> ยืนยันตัวตนผ่าน LINE แล้ว';
+                                select.parentNode.appendChild(hint);
+                                
+                                // Auto-fill contact if available
+                                const contactInput = document.getElementById('lr-contact');
+                                if (contactInput && !contactInput.value && teacher.lineUserId) {
+                                    // Optional: could fill phone number if we stored it, but we only have lineUserId
+                                }
+                            }
+                        } else if (!App.isAdmin()) {
+                            // Not an admin, and not linked
+                            if (!document.getElementById('liff-verified-badge')) {
+                                const hint = document.createElement('div');
+                                hint.id = 'liff-verified-badge';
+                                hint.style.fontSize = '0.85rem';
+                                hint.style.color = '#ef4444'; // Danger red
+                                hint.style.marginTop = '6px';
+                                hint.innerHTML = '<span class="material-icons-round" style="font-size:14px;vertical-align:middle;">error_outline</span> LINE ของคุณยังไม่ผูกกับข้อมูลครูในระบบ';
+                                if(select) select.parentNode.appendChild(hint);
+                            }
+                        }
+                    } else {
+                        setTimeout(checkTeacher, 500); // Wait for teachers data to load
+                    }
+                };
+                checkTeacher();
+            } else if (liff.isInClient()) {
+                // Should not happen in LINE app, but just in case
+            } else if (!App.isAdmin()) {
+                // If not logged in and not admin, we could optionally force login
+                // We'll add a login button next to the dropdown
+                const select = document.getElementById('lr-teacher');
+                if (select && !document.getElementById('btn-liff-login')) {
+                    const btn = document.createElement('button');
+                    btn.id = 'btn-liff-login';
+                    btn.type = 'button';
+                    btn.className = 'btn-secondary';
+                    btn.style.marginTop = '8px';
+                    btn.style.width = '100%';
+                    btn.innerHTML = '<span class="material-icons-round">login</span> เข้าสู่ระบบด้วย LINE เพื่อยื่นใบลา';
+                    btn.onclick = () => liff.login();
+                    
+                    // Hide select and show button
+                    select.style.display = 'none';
+                    select.parentNode.appendChild(btn);
+                    
+                    // Hide submit button
+                    const submitBtn = document.getElementById('btn-submit-leave-request');
+                    if(submitBtn) submitBtn.style.display = 'none';
+                }
+            }
+        } catch (err) {
+            console.error('LIFF Init Error:', err);
+        }
     }
 
     function bindEvents() {
@@ -237,6 +329,7 @@ const LeaveRequest = (() => {
 
         // Calculate past leave
         const records = DataManager.getLeaveRecords();
+        const periodMonths = DataManager.getPeriodMonths();
         let pastSick = 0, pastSickCount = 0;
         let pastPers = 0, pastPersCount = 0;
         let pastMat = 0, pastMatCount = 0;
@@ -244,13 +337,16 @@ const LeaveRequest = (() => {
 
         records.forEach(r => {
             if (r.teacherId === req.teacherId) {
-                // Determine logic for fiscal year, for now just sum all or within settings
-                // In a real scenario we check if r.year/month is in the current fiscal year
-                if (r.type === 'sick' || r.type === 'ป่วย') { pastSick += r.days; pastSickCount++; }
-                if (r.type === 'personal' || r.type === 'กิจส่วนตัว') { pastPers += r.days; pastPersCount++; }
-                if (r.type === 'maternity' || r.type === 'คลอดบุตร') { pastMat += r.days; pastMatCount++; }
+                // Determine if record is in current fiscal year
+                const isInPeriod = periodMonths.some(pm => pm.month === r.month && pm.year === r.year);
+                
+                if (isInPeriod) {
+                    if (r.type === 'sick' || r.type === 'ป่วย') { pastSick += r.days; pastSickCount += r.times || 1; }
+                    if (r.type === 'personal' || r.type === 'ลากิจส่วนตัว') { pastPers += r.days; pastPersCount += r.times || 1; }
+                    if (r.type === 'maternity' || r.type === 'ลาคลอดบุตร') { pastMat += r.days; pastMatCount += r.times || 1; }
+                }
 
-                // Find last leave
+                // Find last leave (overall history is fine for determining last leave taken)
                 if (!lastLeave || r.year > lastLeave.year || (r.year === lastLeave.year && r.month > lastLeave.month)) {
                     lastLeave = r;
                 }
