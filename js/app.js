@@ -72,8 +72,15 @@ const App = (() => {
         LeaveRequest.init();
         if (window.LateArrival) LateArrival.init();
 
-        // Default page
-        navigate('table');
+        // Default page based on URL hash or query string
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlPage = urlParams.get('page') || window.location.hash.substring(1);
+        
+        if (urlPage && document.querySelector(`.nav-item[data-page="${urlPage}"]`)) {
+            navigate(urlPage);
+        } else {
+            navigate('table');
+        }
 
         // Initial text update
         updateLastUpdatedText();
