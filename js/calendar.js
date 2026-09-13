@@ -37,23 +37,38 @@ const Calendar = (() => {
         const isCurrentMonth = today.getFullYear() === ceYear && today.getMonth() + 1 === currentMonth;
         const todayDate = today.getDate();
 
-        // Get leave records for this month
-        const records = DataManager.getLeaveRecords().filter(r =>
-            r.month === currentMonth && r.year === currentYear
-        );
-
+        // Use Leave Requests to build the calendar dots
+        const requests = DataManager.getLeaveRequests().filter(r => r.status === 'approved' || r.status === 'pending');
         const teachers = DataManager.getTeachers();
 
-        // Build dateMap: date -> [{teacher, type, record}]
+        // Build dateMap: date -> [{teacher, type, req}]
         const dateMap = {};
-        records.forEach(r => {
-            const teacher = teachers.find(t => t.id === r.teacherId);
+        requests.forEach(req => {
+            const teacher = teachers.find(t => t.id === req.teacherId);
             if (!teacher) return;
-            const dates = extractDates(r.notes, daysInMonth);
-            dates.forEach(d => {
-                if (!dateMap[d]) dateMap[d] = [];
-                dateMap[d].push({ teacher, type: r.type, record: r });
-            });
+            
+            const start = new Date(req.startDate);
+            const end = new Date(req.endDate);
+            
+            if (isNaN(start.getTime()) || isNaN(end.getTime())) return;
+            
+            let curr = new Date(start);
+            while (curr <= end) {
+                // Only process dates matching current calendar view
+                if (curr.getFullYear() === ceYear && (curr.getMonth() + 1) === currentMonth) {
+                    const d = curr.getDate();
+                    const dayOfWeek = curr.getDay();
+                    // Skip weekends
+                    if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+                        if (!dateMap[d]) dateMap[d] = [];
+                        // Check if we already added this teacher for this day (prevent dupes if multiple overlapping)
+                        if (!dateMap[d].find(item => item.teacher.id === teacher.id)) {
+                            dateMap[d].push({ teacher, type: req.type, req: req });
+                        }
+                    }
+                }
+                curr.setDate(curr.getDate() + 1);
+            }
         });
 
         // Day name headers
