@@ -7,6 +7,7 @@ const TeacherManager = (() => {
     function init() {
         document.getElementById('btn-add-teacher').addEventListener('click', () => openModal());
         document.getElementById('btn-save-teacher').addEventListener('click', saveTeacher);
+        document.getElementById('btn-reset-line').addEventListener('click', resetLineBinding);
         document.getElementById('btn-import-teachers').addEventListener('click', () => openImportModal());
         document.getElementById('btn-confirm-import').addEventListener('click', confirmImport);
 
@@ -156,10 +157,32 @@ const TeacherManager = (() => {
         document.getElementById('teacher-title').value = teacher ? (teacher.title || '') : '';
         document.getElementById('teacher-order').value = teacher ? teacher.order : DataManager.getNextOrder();
         
+        const resetBtn = document.getElementById('btn-reset-line');
+        if (teacher && teacher.lineUserId) {
+            resetBtn.style.display = 'flex';
+        } else {
+            resetBtn.style.display = 'none';
+        }
+
         populateSectionSuggestions();
         
         App.showModal('teacher-modal');
         setTimeout(() => document.getElementById('teacher-name').focus(), 200);
+    }
+
+    function resetLineBinding() {
+        if (!editingId) return;
+        App.confirm('คุณแน่ใจหรือไม่ว่าต้องการปลดล็อกการผูกบัญชี LINE สำหรับครูท่านนี้?\n(ครูจะต้องทำการลงทะเบียนใหม่ใน LINE อีกครั้ง)', () => {
+            const success = DataManager.resetLineUserId(editingId);
+            if (success) {
+                if (typeof DataManager.forceSyncToCloud === 'function') {
+                    DataManager.forceSyncToCloud();
+                }
+                App.showToast('ปลดล็อกบัญชี LINE สำเร็จ!', 'success');
+                App.hideModal('teacher-modal');
+                render();
+            }
+        });
     }
 
     function saveTeacher() {

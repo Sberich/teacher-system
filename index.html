@@ -489,11 +489,16 @@
                     <small class="form-hint">ถ้าลำดับซ้ำ ลำดับเดิมจะเลื่อนไปถัดไปอัตโนมัติ</small>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button class="btn-secondary" data-close="teacher-modal">ยกเลิก</button>
-                <button class="btn-primary" id="btn-save-teacher">
-                    <span class="material-icons-round">save</span> บันทึก
+            <div class="modal-footer" style="display: flex; justify-content: space-between;">
+                <button type="button" class="btn-danger" id="btn-reset-line" style="display: none;">
+                    <span class="material-icons-round">link_off</span> ปลดล็อก LINE
                 </button>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn-secondary" data-close="teacher-modal">ยกเลิก</button>
+                    <button class="btn-primary" id="btn-save-teacher">
+                        <span class="material-icons-round">save</span> บันทึก
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -752,6 +757,34 @@
         // กำหนด URL ของ Google Apps Script ที่ Deploy แล้ว
         window.API_URL = "https://script.google.com/macros/s/AKfycbwXpmqLY60vbYaif5iVvvUYVtNLLGJ5UHAOoFQljaNfuOCcmCxOH2svFfjID5Fyn1Y/exec";
     </script>
+    <!-- Modal: LIFF PDF Guide -->
+    <div id="liff-pdf-guide-modal" class="modal">
+        <div class="modal-content modal-sm">
+            <div class="modal-header">
+                <h3>✅ ส่งใบลาเรียบร้อย!</h3>
+                <button class="modal-close" data-close="liff-pdf-guide-modal">
+                    <span class="material-icons-round">close</span>
+                </button>
+            </div>
+            <div class="modal-body" style="text-align: center;">
+                <span class="material-icons-round" style="font-size: 48px; color: #10b981; margin-bottom: 16px;">check_circle</span>
+                <p style="font-size: 1.1rem; font-weight: 600; margin-bottom: 16px;">ข้อมูลใบลาของคุณถูกส่งเข้าสู่ระบบแล้ว</p>
+                <div style="background: #fffbeb; border: 1px solid #f59e0b; padding: 16px; border-radius: 8px; text-align: left; font-size: 0.95rem;">
+                    <p style="font-weight: 600; color: #b45309; margin-bottom: 8px;">📥 วิธีดาวน์โหลดใบลาเป็น PDF</p>
+                    <p style="color: #78350f; margin-bottom: 8px;">เนื่องจากคุณกำลังเปิดใช้งานผ่านแอป LINE ทำให้ไม่สามารถดาวน์โหลดไฟล์ PDF ได้โดยตรง</p>
+                    <ol style="color: #78350f; padding-left: 20px; margin: 0; line-height: 1.5;">
+                        <li>กดปุ่ม <strong>จุด 3 จุด (⋮)</strong> หรือ <strong>แชร์</strong> ที่มุมขวาบนของหน้าจอ LINE</li>
+                        <li>เลือก <strong>"เปิดด้วยเบราว์เซอร์เริ่มต้น"</strong> (Open in default browser)</li>
+                        <li>เมื่อหน้าเว็บเปิดใน Safari หรือ Chrome ให้กดปุ่มพิมพ์เพื่อบันทึกเป็น PDF ได้ทันทีครับ</li>
+                    </ol>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary" data-close="liff-pdf-guide-modal" style="width: 100%; justify-content: center;">รับทราบ</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://npmcdn.com/flatpickr/dist/l10n/th.js"></script>

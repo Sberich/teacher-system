@@ -381,10 +381,17 @@ const LeaveRequest = (() => {
 
         document.getElementById('print-stat-sick-total').textContent = req.type === 'ป่วย' ? `${pastSickCount + 1}/${pastSick + req.days}` : (pastSick > 0 ? `${pastSickCount}/${pastSick}` : '-');
         document.getElementById('print-stat-pers-total').textContent = req.type === 'กิจส่วนตัว' ? `${pastPersCount + 1}/${pastPers + req.days}` : (pastPers > 0 ? `${pastPersCount}/${pastPers}` : '-');
-        document.getElementById('print-stat-mat-total').textContent = req.type === 'คลอดบุตร' ? `${pastMatCount + 1}/${pastMat + req.days}` : (pastMat > 0 ? `${pastMatCount}/${pastMat}` : '-');
+        document.getElementById('print-stat-mat-total').textContent = req.type === 'ลาคลอดบุตร' ? `${pastMatCount + 1}/${pastMat + req.days}` : (pastMat > 0 ? `${pastMatCount}/${pastMat}` : '-');
 
-        // Trigger Print Window immediately (prevent mobile popup blockers)
-        window.print();
+        // Check if inside LINE LIFF
+        if (window.liff && liff.isInClient()) {
+            // Close print view automatically since it won't work well
+            document.body.classList.remove('print-mode');
+            App.showModal('liff-pdf-guide-modal');
+        } else {
+            // Trigger Print Window immediately (prevent mobile popup blockers)
+            window.print();
+        }
     }
 
     function approveRequest(reqId) {

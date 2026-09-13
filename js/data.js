@@ -782,7 +782,7 @@ const DataManager = (() => {
     return {
         isAdmin, isLateAdmin, login, logout, verifyAdminPin,
         getCloudUrl, setCloudUrl, pullFromCloud, forceSyncToCloud,
-        getTeachers, getSections, addTeacher, addTeachersBulk, updateTeacher, deleteTeacher, getNextOrder,
+        getTeachers, getSections, addTeacher, addTeachersBulk, updateTeacher, deleteTeacher, resetLineUserId, getNextOrder,
         getLeaveRecords, addLeaveEvent, updateLeaveEvent, getLeaveRecord, getTeacherLeaveForPeriod, deleteLeaveEvent,
         getLeaveRequests, addLeaveRequest, updateLeaveRequestStatus, deleteLeaveRequest, clearCompletedLeaveRequests,
         getRemarks, getRemark, setRemark,
