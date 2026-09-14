@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>??????????????????? v1.23</title>
+    <title>ระบบแสดงข้อมูลวันลาข้าราชการครู</title>
     <meta name="description" content="ระบบบันทึกและแสดงข้อมูลวันลาข้าราชการครู สำหรับสถานศึกษา">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%233b82f6'%3E%3Cpath d='M12 3L1 9L12 15L21 10.09V17H23V9M5 13.18V17.18C5 17.18 8.13 21 12 21C15.87 21 19 17.18 19 17.18V13.18C19 13.18 15.87 17 12 17C8.13 17 5 13.18 5 13.18Z'/%3E%3C/svg%3E">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -13,7 +13,7 @@
     <!-- Flatpickr for Date Picker -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/airbnb.css">
-    <link rel="stylesheet" href="css/style.css?v=19.0">
+    <link rel="stylesheet" href="css/style.css?v=6.0">
 
     <!-- Web App Manifest (Android & iOS) -->
     <meta name="theme-color" content="#0f172a">
@@ -44,7 +44,7 @@
             </button>
             <div class="logo" style="cursor:pointer;" onclick="openAbout()" title="เกี่ยวกับระบบ">
                 <span class="material-icons-round logo-icon">school</span>
-                <h1>ระบบลางาน <span style="font-size: 0.8rem; font-weight: 500; background: var(--primary); color: white; padding: 2px 6px; border-radius: 4px; margin-left: 8px;">v1.23</span></h1>
+                <h1>ระบบแสดงข้อมูลวันลา</h1>
             </div>
         </div>
         <nav id="main-nav">
@@ -755,30 +755,32 @@
 
     <script>
         // กำหนด URL ของ Google Apps Script ที่ Deploy แล้ว
-        window.API_URL = "https://script.google.com/macros/s/AKfycbzGw57Iv1jgcFyP9IRcPdT6xbGkLkYjHEr3tWzYY5bq4WYEhUyvWV9L8we0Rkdq7Kwt/exec";
+        window.API_URL = "https://script.google.com/macros/s/AKfycbwXpmqLY60vbYaif5iVvvUYVtNLLGJ5UHAOoFQljaNfuOCcmCxOH2svFfjID5Fyn1Y/exec";
     </script>
     <!-- Modal: LIFF PDF Guide -->
     <div id="liff-pdf-guide-modal" class="modal">
         <div class="modal-content modal-sm">
             <div class="modal-header">
-                <h3>ข้อมูลถูกส่งเข้าระบบแล้ว!</h3>
+                <h3>✅ ส่งใบลาเรียบร้อย!</h3>
                 <button class="modal-close" data-close="liff-pdf-guide-modal">
                     <span class="material-icons-round">close</span>
                 </button>
             </div>
             <div class="modal-body" style="text-align: center;">
                 <span class="material-icons-round" style="font-size: 48px; color: #10b981; margin-bottom: 16px;">check_circle</span>
-                <p style="font-size: 1.1rem; font-weight: 600; margin-bottom: 16px;">ระบบได้รับข้อมูลใบลาของคุณเรียบร้อยแล้ว</p>
+                <p style="font-size: 1.1rem; font-weight: 600; margin-bottom: 16px;">ข้อมูลใบลาของคุณถูกส่งเข้าสู่ระบบแล้ว</p>
                 <div style="background: #fffbeb; border: 1px solid #f59e0b; padding: 16px; border-radius: 8px; text-align: left; font-size: 0.95rem;">
-                    <p style="font-weight: 600; color: #b45309; margin-bottom: 8px;">📖 วิธีดาวน์โหลดใบลาเป็น PDF</p>
-                    <p style="color: #78350f; margin-bottom: 8px;">เนื่องจากคุณกำลังใช้งานผ่านแอป LINE จะไม่สามารถบันทึก PDF ได้โดยตรง ให้กดปุ่มด้านล่างเพื่อเปิดหน้าเว็บและโหลด PDF ครับ</p>
+                    <p style="font-weight: 600; color: #b45309; margin-bottom: 8px;">📥 วิธีดาวน์โหลดใบลาเป็น PDF</p>
+                    <p style="color: #78350f; margin-bottom: 8px;">เนื่องจากคุณกำลังเปิดใช้งานผ่านแอป LINE ทำให้ไม่สามารถดาวน์โหลดไฟล์ PDF ได้โดยตรง</p>
+                    <ol style="color: #78350f; padding-left: 20px; margin: 0; line-height: 1.5;">
+                        <li>กดปุ่ม <strong>จุด 3 จุด (⋮)</strong> หรือ <strong>แชร์</strong> ที่มุมขวาบนของหน้าจอ LINE</li>
+                        <li>เลือก <strong>"เปิดด้วยเบราว์เซอร์เริ่มต้น"</strong> (Open in default browser)</li>
+                        <li>เมื่อหน้าเว็บเปิดใน Safari หรือ Chrome ให้กดปุ่มพิมพ์เพื่อบันทึกเป็น PDF ได้ทันทีครับ</li>
+                    </ol>
                 </div>
             </div>
-            <div class="modal-footer" style="flex-direction: column; gap: 8px;">
-                <button class="btn-primary" id="btn-liff-open-external" style="width: 100%; justify-content: center;">
-                    <span class="material-icons-round">open_in_browser</span> เปิดเบราว์เซอร์เพื่อโหลด PDF
-                </button>
-                <button class="btn-secondary" data-close="liff-pdf-guide-modal" style="width: 100%; justify-content: center;">ปิดหน้าต่าง</button>
+            <div class="modal-footer">
+                <button class="btn-primary" data-close="liff-pdf-guide-modal" style="width: 100%; justify-content: center;">รับทราบ</button>
             </div>
         </div>
     </div>
@@ -787,15 +789,15 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://npmcdn.com/flatpickr/dist/l10n/th.js"></script>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-    <script src="js/data.js?v=19.0"></script>
-    <script src="js/app.js?v=19.0"></script>
-    <script src="js/leave-request.js?v=19.0"></script>
-    <script src="js/late-arrival.js?v=19.0"></script>
-    <script src="js/table.js?v=19.0"></script>
-    <script src="js/dashboard.js?v=19.0"></script>
-    <script src="js/calendar.js?v=19.0"></script>
-    <script src="js/teachers.js?v=19.0"></script>
-    <script src="js/settings.js?v=19.0"></script>
+    <script src="js/data.js?v=6.0"></script>
+    <script src="js/app.js?v=6.0"></script>
+    <script src="js/leave-request.js?v=6.0"></script>
+    <script src="js/late-arrival.js?v=6.0"></script>
+    <script src="js/table.js?v=6.0"></script>
+    <script src="js/dashboard.js?v=6.0"></script>
+    <script src="js/calendar.js?v=6.0"></script>
+    <script src="js/teachers.js?v=6.0"></script>
+    <script src="js/settings.js?v=6.0"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
