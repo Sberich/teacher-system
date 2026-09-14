@@ -82,6 +82,62 @@ const App = (() => {
             navigate('leave-request');
         }
 
+        // Handle auto-print from LINE LIFF redirect
+        const printId = urlParams.get('print');
+        if (printId && window.LeaveRequest) {
+            // Android Chrome blocks window.print() if called without direct user interaction
+            // So we must show a button for the user to click
+            const overlay = document.createElement('div');
+            overlay.style.position = 'fixed';
+            overlay.style.top = '0'; overlay.style.left = '0';
+            overlay.style.width = '100%'; overlay.style.height = '100%';
+            overlay.style.backgroundColor = 'rgba(15, 23, 42, 0.95)';
+            overlay.style.zIndex = '999999';
+            overlay.style.display = 'flex';
+            overlay.style.flexDirection = 'column';
+            overlay.style.alignItems = 'center';
+            overlay.style.justifyContent = 'center';
+            overlay.style.padding = '20px';
+            overlay.style.textAlign = 'center';
+            
+            const icon = document.createElement('span');
+            icon.className = 'material-icons-round';
+            icon.style.fontSize = '64px';
+            icon.style.color = '#10b981';
+            icon.style.marginBottom = '20px';
+            icon.textContent = 'task_alt';
+
+            const title = document.createElement('h2');
+            title.style.color = '#fff';
+            title.style.marginBottom = '10px';
+            title.textContent = 'ข้อมูลใบลาพร้อมพิมพ์แล้ว';
+
+            const subtitle = document.createElement('p');
+            subtitle.style.color = '#cbd5e1';
+            subtitle.style.marginBottom = '30px';
+            subtitle.textContent = 'กรุณากดปุ่มด้านล่างเพื่อเปิดหน้าต่างบันทึก PDF';
+
+            const btn = document.createElement('button');
+            btn.className = 'btn-primary';
+            btn.style.padding = '16px 32px';
+            btn.style.fontSize = '1.2rem';
+            btn.style.boxShadow = '0 10px 25px rgba(59, 130, 246, 0.5)';
+            btn.innerHTML = '<span class="material-icons-round" style="margin-right: 8px;">print</span> กดที่นี่เพื่อบันทึก PDF';
+            
+            overlay.appendChild(icon);
+            overlay.appendChild(title);
+            overlay.appendChild(subtitle);
+            overlay.appendChild(btn);
+            document.body.appendChild(overlay);
+
+            btn.onclick = () => {
+                overlay.style.display = 'none';
+                LeaveRequest.printForm(printId);
+                // Clean up URL so it doesn't loop on refresh
+                window.history.replaceState(null, '', window.location.pathname);
+            };
+        }
+
         // Initial text update
         updateLastUpdatedText();
 

@@ -151,6 +151,23 @@ const LeaveRequest = (() => {
             btnSubmit.addEventListener('click', submitRequest);
         }
 
+        const btnExt = document.getElementById('btn-liff-open-external');
+        if (btnExt) {
+            btnExt.addEventListener('click', () => {
+                if (window.liff && liff.openWindow) {
+                    const rId = btnExt.getAttribute('data-reqid');
+                    let targetUrl = window.location.origin + window.location.pathname;
+                    if (rId) {
+                        targetUrl += '?print=' + encodeURIComponent(rId) + '&cb=' + Date.now();
+                    } else {
+                        targetUrl = window.location.href; // fallback
+                    }
+                    App.showToast('กำลังเปิดเบราว์เซอร์...', 'info');
+                    liff.openWindow({ url: targetUrl, external: true });
+                }
+            });
+        }
+
         const btnClear = document.getElementById('btn-clear-requests');
         if (btnClear) {
             btnClear.addEventListener('click', clearRequests);
@@ -244,7 +261,7 @@ const LeaveRequest = (() => {
         });
     }
 
-    function submitRequest() {
+    async function submitRequest() {
         const teacherId = document.getElementById('lr-teacher').value;
         const type = document.getElementById('lr-type').value;
         const reason = document.getElementById('lr-reason').value;
@@ -274,7 +291,7 @@ const LeaveRequest = (() => {
         }
 
         if (days === 0) {
-            App.showToast('ช่วงเวลาที่เลือกตรงกับวันหยุดเสาร์-อาทิตย์ทั้งหมด', 'warning');
+            App.showToast('ช่วงเวลาที่เลือกตรงกับวันหยุดสุดสัปดาห์ทั้งหมด', 'warning');
             return;
         }
 
@@ -282,23 +299,71 @@ const LeaveRequest = (() => {
             teacherId, type, reason, startDate, endDate, contact, days
         };
 
-        const newReq = DataManager.addLeaveRequest(reqData);
-        App.showToast('บันทึกคำขอลาเรียบร้อยแล้ว', 'success');
+        const btnSubmit = document.getElementById('btn-submit-leave-request');
+        if (btnSubmit) {
+            btnSubmit.disabled = true;
+        }
 
-        // Open Print view automatically
+        // FIRE AND FORGET - Do not await to prevent UI hanging
+        let newReq = DataManager.addLeaveRequest(reqData);
+
+        App.showToast('ยื่นคำขอลาสำเร็จ', 'success');
+
+        if (btnSubmit) {
+            btnSubmit.disabled = false;
+        }
+
+        // Open Print view automatically (Original Behavior)
         printForm(newReq.id);
 
+        document.getElementById('lr-reason').value = '';
         render();
     }
 
-    function printForm(reqId) {
+    function printForm(reqId, isRetry = false) {
         const requests = DataManager.getLeaveRequests();
-        const req = requests.find(r => r.id === reqId);
-        if (!req) return;
+        let req = requests.find(r => r.id === reqId);
+        
+        // If not found OR if reason is blanked out (meaning we need the secret link data), fetch it!
+        if (!req || !req.reason || req.reason.trim() === '') {
+            if (!isRetry) {
+                App.showToast('กำลังเบิกข้อมูลใบลาลับ...', 'info');
+                
+                const cloudUrl = DataManager.getCloudUrl();
+                if (cloudUrl) {
+                    const fetchUrl = `${cloudUrl}?action=get_single&id=${encodeURIComponent(reqId)}`;
+                    fetch(fetchUrl)
+                        .then(r => r.json())
+                        .then(res => {
+                            if (res.status === 'success' && res.data) {
+                                // Add to local requests temporarily just for printing
+                                const idx = requests.findIndex(r => r.id === reqId);
+                                if (idx > -1) requests[idx] = res.data;
+                                else requests.push(res.data);
+                                printForm(reqId, true);
+                            } else {
+                                App.showToast('ไม่พบข้อมูลใบลา (ID: ' + reqId + ')', 'error');
+                            }
+                        })
+                        .catch(() => {
+                            App.showToast('เชื่อมต่อฐานข้อมูลล้มเหลว', 'error');
+                        });
+                    return;
+                }
+            } else {
+                if (!req) {
+                    App.showToast('ไม่พบข้อมูลใบลา (ID: ' + reqId + ')', 'error');
+                    return;
+                }
+            }
+        }
 
         const teachers = DataManager.getTeachers();
         const t = teachers.find(t => t.id === req.teacherId);
-        if (!t) return;
+        if (!t) {
+            App.showToast('ไม่พบข้อมูลผู้ลาในฐานข้อมูล', 'error');
+            return;
+        }
 
         const settings = DataManager.getSettings();
 
@@ -411,6 +476,12 @@ const LeaveRequest = (() => {
         if (window.liff && liff.isInClient()) {
             // Close print view automatically since it won't work well
             document.body.classList.remove('print-mode');
+            // Append print query string so opening in Chrome directly prints it!
+            window.history.replaceState(null, '', '?print=' + reqId);
+            
+            const btnExt = document.getElementById('btn-liff-open-external');
+            if (btnExt) btnExt.setAttribute('data-reqid', reqId);
+
             App.showModal('liff-pdf-guide-modal');
         } else {
             // Trigger Print Window immediately (prevent mobile popup blockers)

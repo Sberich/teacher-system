@@ -657,6 +657,35 @@ const DataManager = (() => {
         return load(KEYS.leaveRequests, []).filter(r => r.status !== 'deleted');
     }
 
+    async function addLeaveRequestAsync(requestData) {
+        const requests = getLeaveRequests();
+        const newReq = {
+            id: generateId(),
+            ...requestData,
+            status: 'pending',
+            timestamp: new Date().toISOString()
+        };
+        requests.push(newReq);
+        save(KEYS.leaveRequests, requests);
+
+        const url = getCloudUrl();
+        if (url) {
+            try {
+                await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        action: 'submitRequest',
+                        payload: newReq
+                    })
+                });
+            } catch (err) {
+                console.error("Cloud submit failed:", err);
+            }
+        }
+        return newReq;
+    }
+
     function addLeaveRequest(requestData) {
         const requests = getLeaveRequests();
         const newReq = {
@@ -759,17 +788,25 @@ const DataManager = (() => {
     }
 
     function clearAllData() {
+        if (getCloudUrl()) {
+            App.showToast('ไม่สามารถล้างข้อมูลจากแอปได้ขณะเชื่อมต่อฐานข้อมูล (โปรดลบจาก Google Sheet แทน)', 'error');
+            return;
+        }
         localStorage.removeItem(KEYS.teachers);
         localStorage.removeItem(KEYS.leaveRecords);
         localStorage.removeItem(KEYS.settings);
         localStorage.removeItem(KEYS.remarks);
         localStorage.removeItem(KEYS.leaveRequests);
-        // removed dangerous cloud sync
+        // Do NOT sync to cloud, this was extremely dangerous!
     }
 
     function clearLeaveData() {
+        if (getCloudUrl()) {
+            App.showToast('ไม่สามารถล้างข้อมูลจากแอปได้ขณะเชื่อมต่อฐานข้อมูล (โปรดลบจาก Google Sheet แทน)', 'error');
+            return;
+        }
         localStorage.removeItem(KEYS.leaveRecords);
-        triggerCloudSync(); // sync empty leave state to cloud
+        // Do NOT sync to cloud
     }
 
 
@@ -795,7 +832,7 @@ const DataManager = (() => {
         getCloudUrl, setCloudUrl, pullFromCloud, forceSyncToCloud,
         getTeachers, getSections, addTeacher, addTeachersBulk, updateTeacher, deleteTeacher, resetLineUserId, getNextOrder,
         getLeaveRecords, addLeaveEvent, updateLeaveEvent, getLeaveRecord, getTeacherLeaveForPeriod, deleteLeaveEvent,
-        getLeaveRequests, addLeaveRequest, updateLeaveRequestStatus, deleteLeaveRequest, clearCompletedLeaveRequests,
+        getLeaveRequests, addLeaveRequest, addLeaveRequestAsync, updateLeaveRequestStatus, deleteLeaveRequest, clearCompletedLeaveRequests,
         getRemarks, getRemark, setRemark,
         getSettings, updateSettings, getPeriodMonths,
         getThaiMonth, getThaiMonthFull, THAI_MONTHS, THAI_MONTHS_FULL,
