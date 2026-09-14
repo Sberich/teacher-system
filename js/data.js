@@ -764,7 +764,7 @@ const DataManager = (() => {
         localStorage.removeItem(KEYS.settings);
         localStorage.removeItem(KEYS.remarks);
         localStorage.removeItem(KEYS.leaveRequests);
-        triggerCloudSync(); // sync empty state to cloud
+        // removed dangerous cloud sync
     }
 
     function clearLeaveData() {
