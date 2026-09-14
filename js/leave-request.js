@@ -34,9 +34,14 @@ const LeaveRequest = (() => {
                         
                         if (teacher && select) {
                             // Lock dropdown to this teacher
-                            select.value = teacher.id;
-                            select.setAttribute('disabled', 'true');
-                            select.style.backgroundColor = '#f1f5f9';
+                            if (teacherChoiceInstance) {
+                                teacherChoiceInstance.setChoiceByValue(teacher.id);
+                                teacherChoiceInstance.disable();
+                            } else {
+                                select.value = teacher.id;
+                                select.setAttribute('disabled', 'true');
+                                select.style.backgroundColor = '#f1f5f9';
+                            }
                             
                             // Add verified badge if not already there
                             if (!document.getElementById('liff-verified-badge')) {
@@ -178,7 +183,34 @@ const LeaveRequest = (() => {
                 });
                 html += `</optgroup>`;
             }
+            
+            // Re-initialize Choices.js
+            if (teacherChoiceInstance) {
+                teacherChoiceInstance.destroy();
+            }
             select.innerHTML = html;
+            
+            try {
+                teacherChoiceInstance = new Choices(select, {
+                    searchEnabled: true,
+                    searchPlaceholderValue: '🔍 ค้นหาชื่อครู...',
+                    itemSelectText: '',
+                    noResultsText: 'ไม่พบรายชื่อ',
+                    shouldSort: false
+                });
+            } catch(e) {}
+        }
+        
+        const typeSelect = document.getElementById('lr-type');
+        if (typeSelect) {
+            if (typeChoiceInstance) typeChoiceInstance.destroy();
+            try {
+                typeChoiceInstance = new Choices(typeSelect, {
+                    searchEnabled: false,
+                    itemSelectText: '',
+                    shouldSort: false
+                });
+            } catch(e) {}
         }
 
         // Clear form

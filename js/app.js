@@ -63,6 +63,7 @@ const App = (() => {
             // We shouldn't load demo data automatically anymore to avoid confusion with empty fresh sheets.
         }
 
+        setupDynamicLogo();
         // Initialize all modules
         LeaveTable.init();
         Dashboard.init();
@@ -486,6 +487,15 @@ const App = (() => {
     function hideSyncIndicator() {
         const ind = document.getElementById('sync-indicator');
         if (ind) ind.classList.remove('show');
+    }
+
+    ﻿    function setupDynamicLogo() {
+        const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+        const now = new Date();
+        const mStr = months[now.getMonth()];
+        const dStr = now.getDate().toString();
+        document.querySelectorAll('.logo-month-text').forEach(el => el.textContent = mStr);
+        document.querySelectorAll('.logo-day-text').forEach(el => el.textContent = dStr);
     }
 
     function updateLastUpdatedText() {
