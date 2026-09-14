@@ -73,28 +73,9 @@ const LeaveRequest = (() => {
                 checkTeacher();
             } else if (liff.isInClient()) {
                 // Should not happen in LINE app, but just in case
-            } else if (!App.isAdmin()) {
-                // If not logged in and not admin, we could optionally force login
-                // We'll add a login button next to the dropdown
-                const select = document.getElementById('lr-teacher');
-                if (select && !document.getElementById('btn-liff-login')) {
-                    const btn = document.createElement('button');
-                    btn.id = 'btn-liff-login';
-                    btn.type = 'button';
-                    btn.className = 'btn-secondary';
-                    btn.style.marginTop = '8px';
-                    btn.style.width = '100%';
-                    btn.innerHTML = '<span class="material-icons-round">login</span> เข้าสู่ระบบด้วย LINE เพื่อยื่นใบลา';
-                    btn.onclick = () => liff.login();
-                    
-                    // Hide select and show button
-                    select.style.display = 'none';
-                    select.parentNode.appendChild(btn);
-                    
-                    // Hide submit button
-                    const submitBtn = document.getElementById('btn-submit-leave-request');
-                    if(submitBtn) submitBtn.style.display = 'none';
-                }
+            } else {
+                // If not logged in (e.g. on PC browser), just leave the dropdown open for manual selection.
+                // No forced login.
             }
         } catch (err) {
             console.error('LIFF Init Error:', err);
