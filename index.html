@@ -22,6 +22,165 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="ระบบวันลา">
     <link rel="apple-touch-icon" href="icon-app.png">
+
+
+<style>
+﻿/* --- Dynamic Calendar Logo --- */
+.dynamic-logo-wrapper {
+    position: relative;
+    width: 38px;
+    height: 42px;
+    margin-right: 12px;
+    display: flex;
+    align-items: flex-end;
+    flex-shrink: 0;
+}
+.dynamic-logo-cal {
+    position: relative;
+    width: 36px;
+    height: 32px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.5) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-top: 1px solid rgba(255, 255, 255, 0.5);
+    border-left: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1), inset 0 2px 10px rgba(255,255,255,0.2);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    padding-bottom: 2px;
+    z-index: 1;
+}
+[data-theme='dark'] .dynamic-logo-cal {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.4) 0%, rgba(139, 92, 246, 0.3) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    border-left: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 2px 10px rgba(255,255,255,0.05);
+}
+.dynamic-logo-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 11px;
+    background: var(--primary-gradient);
+    border-radius: 7px 7px 0 0;
+    opacity: 0.95;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+.dynamic-logo-month {
+    position: absolute;
+    top: 1px;
+    width: 100%;
+    text-align: center;
+    font-size: 0.45rem;
+    font-weight: 800;
+    color: white !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    z-index: 2;
+    line-height: 1;
+    -webkit-text-fill-color: white !important;
+}
+.dynamic-logo-day {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--text);
+    z-index: 2;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1;
+    margin-bottom: 2px;
+}
+.dynamic-logo-cap {
+    position: absolute;
+    top: -8px;
+    left: -4px;
+    font-size: 26px;
+    transform: rotate(-15deg);
+    text-shadow: -2px 3px 5px rgba(0,0,0,0.25);
+    z-index: 3;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+[data-theme='dark'] .dynamic-logo-cap {
+    background: linear-gradient(135deg, #60a5fa, #c084fc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+/* --- Premium Native Select --- */
+select.form-control, select#lr-teacher, select#lr-type {
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: var(--bg-input);
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 12px 40px 12px 16px;
+    font-size: 1rem;
+    color: var(--text);
+    width: 100%;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02) inset, 0 1px 2px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+[data-theme='dark'] select.form-control, [data-theme='dark'] select#lr-teacher, [data-theme='dark'] select#lr-type {
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1) inset, 0 1px 3px rgba(0,0,0,0.2);
+}
+select.form-control:focus, select#lr-teacher:focus, select#lr-type:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+    outline: none;
+}
+select.form-control:disabled, select#lr-teacher:disabled, select#lr-type:disabled {
+    background-color: var(--bg-hover);
+    color: var(--text-muted);
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+select.form-control optgroup {
+    font-weight: 700;
+    color: var(--primary);
+    background: var(--bg);
+}
+select.form-control option {
+    font-weight: normal;
+    color: var(--text);
+    background: var(--bg-card);
+    padding: 8px;
+}
+/* --- Responsive Logo Title --- */
+.desktop-title {
+    display: inline;
+    font-size: 1.35rem; /* Larger font for PC */
+    font-weight: 800;
+}
+.mobile-title {
+    display: none;
+}
+@media (max-width: 768px) {
+    .desktop-title {
+        display: none;
+    }
+    .mobile-title {
+        display: inline;
+        font-size: 1.15rem; /* Better size for mobile */
+        font-weight: 700;
+    }
+}
+
+
+</style>
 </head>
 <body>
     <!-- Global Loader (For Initial Cloud Pull) -->
@@ -53,7 +212,7 @@
                 </div>
                 <h1>
                     <span class="desktop-title">ระบบบันทึกข้อมูลวันลาข้าราชการครู</span>
-                    <span class="mobile-title">ระบบบันทึกวันลา</span>
+                    <span class="mobile-title">ระบบวันลาครู</span>
                 </h1>
             </div>
         </div>
@@ -631,7 +790,7 @@
     <div class="about-overlay" id="about-modal">
         <div class="about-box">
             <button class="about-close-abs" onclick="closeAbout()"><span class="material-icons-round">close</span></button>
-            <div class="about-logo" style="background: none;">
+            <div class="about-logo" style="background: none; width: auto; height: auto;">
                 <div class="dynamic-logo-wrapper" style="transform: scale(1.3); margin: 0;">
                     <span class="material-icons-round dynamic-logo-cap">school</span>
                     <div class="dynamic-logo-cal">
