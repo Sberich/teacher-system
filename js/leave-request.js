@@ -302,29 +302,22 @@ const LeaveRequest = (() => {
         const btnSubmit = document.getElementById('btn-submit-leave-request');
         if (btnSubmit) {
             btnSubmit.disabled = true;
-            btnSubmit.innerHTML = '<span class="material-icons-round spinning">refresh</span> กำลังส่งข้อมูล...';
         }
-        
-        App.showToast('กำลังประมวลผล กรุณารอสักครู่...', 'info');
 
-        // FIRE AND FORGET - Do not await to prevent UI hanging on strict mobile browsers
+        // FIRE AND FORGET - Do not await to prevent UI hanging
         let newReq = DataManager.addLeaveRequest(reqData);
 
-        // Add small delay for UX so they see the spinner briefly
-        setTimeout(() => {
-            if (btnSubmit) {
-                btnSubmit.disabled = false;
-                btnSubmit.innerHTML = '<span class="material-icons-round">send</span> ส่งใบยื่นคำขอลา';
-            }
+        App.showToast('ยื่นคำขอลาสำเร็จ', 'success');
 
-            App.showToast('ระบบกำลังประมวลผล กรุณารอรับลิงก์ปริ้นใบลาทาง LINE ภายใน 5 วินาที', 'success');
+        if (btnSubmit) {
+            btnSubmit.disabled = false;
+        }
 
-            // DO NOT auto-open print form, let them click the LINE link
-            // printForm(newReq.id);
-            document.getElementById('lr-reason').value = '';
-            
-            render();
-        }, 1500);
+        // Open Print view automatically (Original Behavior)
+        printForm(newReq.id);
+
+        document.getElementById('lr-reason').value = '';
+        render();
     }
 
     function printForm(reqId, isRetry = false) {
