@@ -37,55 +37,22 @@ const Calendar = (() => {
         const isCurrentMonth = today.getFullYear() === ceYear && today.getMonth() + 1 === currentMonth;
         const todayDate = today.getDate();
 
-        // 1. Get Leave Requests (New System)
-        const requests = DataManager.getLeaveRequests().filter(r => r.status === 'approved' || r.status === 'pending');
-        const teachers = DataManager.getTeachers();
-
-        // Build dateMap: date -> [{teacher, type, req}]
-        const dateMap = {};
-        requests.forEach(req => {
-            const teacher = teachers.find(t => t.id === req.teacherId);
-            if (!teacher) return;
-            
-            const start = new Date(req.startDate);
-            const end = new Date(req.endDate);
-            
-            if (isNaN(start.getTime()) || isNaN(end.getTime())) return;
-            
-            let curr = new Date(start);
-            while (curr <= end) {
-                // Only process dates matching current calendar view
-                if (curr.getFullYear() === ceYear && (curr.getMonth() + 1) === currentMonth) {
-                    const d = curr.getDate();
-                    const dayOfWeek = curr.getDay();
-                    // Skip weekends
-                    if (dayOfWeek !== 0 && dayOfWeek !== 6) {
-                        if (!dateMap[d]) dateMap[d] = [];
-                        // Check if we already added this teacher for this day (prevent dupes if multiple overlapping)
-                        if (!dateMap[d].find(item => item.teacher.id === teacher.id)) {
-                            dateMap[d].push({ teacher, type: req.type, req: req });
-                        }
-                    }
-                }
-                curr.setDate(curr.getDate() + 1);
-            }
-        });
-
-        // 2. Get Leave Records (Old System / Manual Table Entry)
+        // Get leave records for this month
         const records = DataManager.getLeaveRecords().filter(r =>
             r.month === currentMonth && r.year === currentYear
         );
 
+        const teachers = DataManager.getTeachers();
+
+        // Build dateMap: date -> [{teacher, type, record}]
+        const dateMap = {};
         records.forEach(r => {
             const teacher = teachers.find(t => t.id === r.teacherId);
             if (!teacher) return;
             const dates = extractDates(r.notes, daysInMonth);
             dates.forEach(d => {
                 if (!dateMap[d]) dateMap[d] = [];
-                // Check if already added by LeaveRequests (prioritize LeaveRequests)
-                if (!dateMap[d].find(item => item.teacher.id === teacher.id)) {
-                    dateMap[d].push({ teacher, type: r.type, record: r });
-                }
+                dateMap[d].push({ teacher, type: r.type, record: r });
             });
         });
 
@@ -188,7 +155,7 @@ const Calendar = (() => {
         if (!notes) return [];
         const dates = [];
         // Match: 10, 1-2, 10-12. Use word boundaries to avoid matching parts of years (e.g. 25 in 2568)
-        const regex = /\b(\d{1,2})\b\s*(?:-\s*\b(\d{1,2})\b)?/g;
+        const regex = /(?<!\d)(\d{1,2})(?!\d)\s*(?:-\s*(?<!\d)(\d{1,2})(?!\d))?/g;
         let match;
         while ((match = regex.exec(notes)) !== null) {
             const start = parseInt(match[1]);
