@@ -112,6 +112,55 @@ const LeaveTable = (() => {
     let noteDatePicker = null;
 
     function initDatePicker() {
+        const pickerInput = document.getElementById('leave-notes-picker');
+        const btnPick = document.getElementById('btn-pick-dates');
+        const notesArea = document.getElementById('leave-notes');
+
+        if (!pickerInput || !btnPick || typeof flatpickr === 'undefined') return;
+
+        noteDatePicker = flatpickr(pickerInput, {
+            mode: "multiple",
+            locale: "th",
+            dateFormat: "Y-m-d",
+            positionElement: btnPick,
+            onClose: function (selectedDates, dateStr, instance) {
+                if (selectedDates.length === 0) return;
+
+                // Sort dates
+                selectedDates.sort((a, b) => a - b);
+
+                // Format nicely using Thai locale (e.g. 10 มิ.ย.)
+                const formattedDates = selectedDates.map(date => {
+                    const d = date.getDate();
+                    const m = DataManager.getThaiMonth(date.getMonth() + 1);
+                    return `${d} ${m}`;
+                }).join(', ');
+
+                // Append to textarea
+                const currentVal = notesArea.value.trim();
+                if (currentVal) {
+                    notesArea.value = currentVal + ', ' + formattedDates;
+                } else {
+                    notesArea.value = formattedDates;
+                }
+
+                // Clear flatpickr so it's empty next time
+                instance.clear();
+            }
+        });
+
+        btnPick.addEventListener('click', () => {
+            if (noteDatePicker) {
+                if (currentEdit) {
+                    // Try to jump to the month we are editing
+                    const year = currentEdit.year - 543;
+                    const month = currentEdit.month - 1;
+                    const d = new Date(year, month, 1);
+                    noteDatePicker.jumpToDate(d);
+                }
+                noteDatePicker.open();
+            }
+        });
     }
 
     function render() {

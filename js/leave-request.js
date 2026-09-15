@@ -85,17 +85,58 @@ const LeaveRequest = (() => {
     }
 
     function bindEvents() {
-        // Native date inputs handle their own logic.
-        const startDateInput = document.getElementById('lr-start-date');
-        const endDateInput = document.getElementById('lr-end-date');
-
-        if (startDateInput && endDateInput) {
-            startDateInput.addEventListener('change', (e) => {
-                if (e.target.value) {
-                    endDateInput.min = e.target.value;
+        // Flatpickr — Thai Buddhist Era date picker config
+        const fpCommonConfig = {
+            locale: "th",
+            dateFormat: "Y-m-d",
+            altInput: true,
+            altFormat: "j F Y",
+            allowInput: false,
+            clickOpens: true,
+            disableMobile: true, // บังคับใช้ Flatpickr แม้บนมือถือ (ไม่ใช้ native picker)
+            animate: true,
+            formatDate: (date, format) => {
+                if (format === "Y-m-d") {
+                    const y = date.getFullYear();
+                    const m = String(date.getMonth() + 1).padStart(2, '0');
+                    const d = String(date.getDate()).padStart(2, '0');
+                    return `${y}-${m}-${d}`;
                 }
-            });
-        }
+                // Display format: แสดงเป็น พ.ศ.
+                const y = date.getFullYear() + 543;
+                const m = DataManager.THAI_MONTHS[date.getMonth() + 1];
+                const d = date.getDate();
+                return `${d} ${m} ${y}`;
+            },
+            onReady: function(selectedDates, dateStr, instance) {
+                // แสดงปี พ.ศ. ใน header ของปฏิทิน
+                const updateBEYear = () => {
+                    const yearEl = instance.currentYearElement;
+                    if (yearEl) {
+                        const ceYear = instance.currentYear;
+                        yearEl.value = ceYear + 543;
+                    }
+                };
+                updateBEYear();
+                instance.config.onMonthChange = instance.config.onMonthChange || [];
+                instance.config.onMonthChange.push(updateBEYear);
+                instance.config.onYearChange = instance.config.onYearChange || [];
+                instance.config.onYearChange.push(updateBEYear);
+            },
+        };
+
+        datePickerStart = flatpickr("#lr-start-date", {
+            ...fpCommonConfig,
+            onChange: function(selectedDates, dateStr, instance) {
+                if (datePickerEnd) {
+                    datePickerEnd.set('minDate', dateStr);
+                }
+            }
+        });
+
+        datePickerEnd = flatpickr("#lr-end-date", {
+            ...fpCommonConfig,
+        });
 
         const btnSubmit = document.getElementById('btn-submit-leave-request');
         if (btnSubmit) {
@@ -153,11 +194,10 @@ const LeaveRequest = (() => {
         }
 
         // Clear form
-        if (document.getElementById('lr-teacher')) document.getElementById('lr-teacher').value = '';
         if (document.getElementById('lr-reason')) document.getElementById('lr-reason').value = '';
-        if (document.getElementById('lr-start-date')) document.getElementById('lr-start-date').value = '';
-        if (document.getElementById('lr-end-date')) document.getElementById('lr-end-date').value = '';
         if (document.getElementById('lr-contact')) document.getElementById('lr-contact').value = '';
+        if (datePickerStart) datePickerStart.clear();
+        if (datePickerEnd) datePickerEnd.clear();
 
         // Render Manage Requests Table (Admin)
         renderManageTable();
