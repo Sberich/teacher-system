@@ -465,8 +465,12 @@ const LeaveRequest = (() => {
         document.getElementById('print-stat-pers-total').textContent = req.type === 'กิจส่วนตัว' ? `${dPastPersC + 1}/${dPastPers + req.days}` : (dPastPers > 0 ? `${dPastPersC}/${dPastPers}` : '-');
         document.getElementById('print-stat-mat-total').textContent = req.type === 'คลอดบุตร' ? `${dPastMatC + 1}/${dPastMat + req.days}` : (dPastMat > 0 ? `${dPastMatC}/${dPastMat}` : '-');
 
-        // Trigger Print Window immediately (prevent mobile popup blockers)
-        window.print();
+        // Check if in LINE LIFF app to prevent window.print() hanging
+        if (typeof liff !== 'undefined' && liff.isInClient && liff.isInClient()) {
+            if (window.App && App.openModal) App.openModal('liff-pdf-guide-modal');
+        } else {
+            window.print();
+        }
     }
 
     function approveRequest(reqId) {

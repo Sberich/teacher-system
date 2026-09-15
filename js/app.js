@@ -6,6 +6,16 @@ const App = (() => {
     let currentPage = 'table';
 
     async function init() {
+        // LIFF External Open Button
+        const btnLiffExternal = document.getElementById('btn-liff-open-external');
+        if (btnLiffExternal) {
+            btnLiffExternal.addEventListener('click', () => {
+                if (typeof liff !== 'undefined' && liff.openWindow) {
+                    liff.openWindow({ url: location.href, external: true });
+                }
+            });
+        }
+
         setupNavigation();
         setupTheme();
         setupModals();
