@@ -1,4 +1,4 @@
-﻿/* ============================================
+/* ============================================
    Leave Request (Hybrid Form) Manager
    ============================================ */
 const LeaveRequest = (() => {
@@ -35,7 +35,8 @@ const LeaveRequest = (() => {
                         if (teacher && select) {
                             // Lock dropdown to this teacher
                             select.value = teacher.id;
-                            select.setAttribute('disabled', 'true'); select.dispatchEvent(new Event('change'));
+                            select.setAttribute('disabled', 'true');
+                            select.dispatchEvent(new Event('change'));
                             select.style.backgroundColor = '#f1f5f9';
                             
                             // Add verified badge if not already there
@@ -45,7 +46,7 @@ const LeaveRequest = (() => {
                                 hint.style.fontSize = '0.85rem';
                                 hint.style.color = '#10b981'; // Success green
                                 hint.style.marginTop = '6px';
-                                hint.innerHTML = '<span class="material-icons-round" style="font-size:14px;vertical-align:middle;">verified_user</span> à¸¢à¸·à¸™à¸¢à¸±à¸™à¸•à¸±à¸§à¸•à¸™à¸œà¹ˆà¸²à¸™ LINE à¹à¸¥à¹‰à¸§';
+                                hint.innerHTML = '<span class="material-icons-round" style="font-size:14px;vertical-align:middle;">verified_user</span> ยืนยันตัวตนผ่าน LINE แล้ว';
                                 select.parentNode.appendChild(hint);
                                 
                                 // Auto-fill contact if available
@@ -62,7 +63,7 @@ const LeaveRequest = (() => {
                                 hint.style.fontSize = '0.85rem';
                                 hint.style.color = '#ef4444'; // Danger red
                                 hint.style.marginTop = '6px';
-                                hint.innerHTML = '<span class="material-icons-round" style="font-size:14px;vertical-align:middle;">error_outline</span> LINE à¸‚à¸­à¸‡à¸„à¸¸à¸“à¸¢à¸±à¸‡à¹„à¸¡à¹ˆà¸œà¸¹à¸à¸à¸±à¸šà¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸„à¸£à¸¹à¹ƒà¸™à¸£à¸°à¸šà¸š';
+                                hint.innerHTML = '<span class="material-icons-round" style="font-size:14px;vertical-align:middle;">error_outline</span> LINE ของคุณยังไม่ผูกกับข้อมูลครูในระบบ';
                                 if(select) select.parentNode.appendChild(hint);
                             }
                         }
@@ -144,7 +145,7 @@ const LeaveRequest = (() => {
                     } else {
                         targetUrl = window.location.href; // fallback
                     }
-                    App.showToast('à¸à¸³à¸¥à¸±à¸‡à¹€à¸›à¸´à¸”à¹€à¸šà¸£à¸²à¸§à¹Œà¹€à¸‹à¸­à¸£à¹Œ...', 'info');
+                    App.showToast('กำลังเปิดเบราว์เซอร์...', 'info');
                     liff.openWindow({ url: targetUrl, external: true });
                 }
             });
@@ -160,13 +161,13 @@ const LeaveRequest = (() => {
         // Render Leave Request Form
         const select = document.getElementById('lr-teacher');
         if (select) {
-            let html = '<option value="">-- à¹€à¸¥à¸·à¸­à¸à¸Šà¸·à¹ˆà¸­à¸œà¸¹à¹‰à¸¥à¸² --</option>';
+            let html = '<option value="">-- เลือกชื่อผู้ลา --</option>';
             const teachers = DataManager.getTeachers().sort((a, b) => a.order - b.order);
             
             // Group by section
             const grouped = {};
             teachers.forEach(t => {
-                const sec = t.section || 'à¸—à¸±à¹ˆà¸§à¹„à¸›';
+                const sec = t.section || 'ทั่วไป';
                 if (!grouped[sec]) grouped[sec] = [];
                 grouped[sec].push(t);
             });
@@ -201,7 +202,7 @@ const LeaveRequest = (() => {
         tbody.innerHTML = '';
 
         if (requests.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 20px; color: var(--text-muted);">à¹„à¸¡à¹ˆà¸¡à¸µà¸£à¸²à¸¢à¸à¸²à¸£à¸„à¸³à¸‚à¸­à¸¥à¸²</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 20px; color: var(--text-muted);">ไม่มีรายการคำขอลา</td></tr>';
             return;
         }
 
@@ -211,12 +212,12 @@ const LeaveRequest = (() => {
         requests.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).forEach((req, index) => {
             const tr = document.createElement('tr');
             const t = teachers.find(t => t.id === req.teacherId);
-            const teacherName = t ? t.name : 'à¹„à¸¡à¹ˆà¸—à¸£à¸²à¸šà¸Šà¸·à¹ˆà¸­';
+            const teacherName = t ? t.name : 'ไม่ทราบชื่อ';
 
             let statusBadge = '';
-            if (req.status === 'pending') statusBadge = '<span style="background:#fef08a;color:#854d0e;padding:4px 8px;border-radius:12px;font-size:0.8rem;font-weight:600;">à¸£à¸­à¸•à¸£à¸§à¸ˆà¸ªà¸­à¸š</span>';
-            else if (req.status === 'approved') statusBadge = '<span style="background:#bbf7d0;color:#166534;padding:4px 8px;border-radius:12px;font-size:0.8rem;font-weight:600;">à¸­à¸™à¸¸à¸¡à¸±à¸•à¸´à¹à¸¥à¹‰à¸§</span>';
-            else if (req.status === 'rejected') statusBadge = '<span style="background:#fecaca;color:#991b1b;padding:4px 8px;border-radius:12px;font-size:0.8rem;font-weight:600;">à¸¢à¸à¹€à¸¥à¸´à¸à¹à¸¥à¹‰à¸§</span>';
+            if (req.status === 'pending') statusBadge = '<span style="background:#fef08a;color:#854d0e;padding:4px 8px;border-radius:12px;font-size:0.8rem;font-weight:600;">รอตรวจสอบ</span>';
+            else if (req.status === 'approved') statusBadge = '<span style="background:#bbf7d0;color:#166534;padding:4px 8px;border-radius:12px;font-size:0.8rem;font-weight:600;">อนุมัติแล้ว</span>';
+            else if (req.status === 'rejected') statusBadge = '<span style="background:#fecaca;color:#991b1b;padding:4px 8px;border-radius:12px;font-size:0.8rem;font-weight:600;">ยกเลิกแล้ว</span>';
 
             const startDate = new Date(req.startDate);
             const endDate = new Date(req.endDate);
@@ -232,12 +233,12 @@ const LeaveRequest = (() => {
                 <td>${dateStr}</td>
                 <td>${statusBadge}</td>
                 <td style="text-align:right;">
-                    <button class="btn-icon" title="à¸žà¸´à¸¡à¸žà¹Œà¹ƒà¸šà¸¥à¸²" onclick="LeaveRequest.printForm('${req.id}')" style="color:var(--primary);"><span class="material-icons-round">print</span></button>
+                    <button class="btn-icon" title="พิมพ์ใบลา" onclick="LeaveRequest.printForm('${req.id}')" style="color:var(--primary);"><span class="material-icons-round">print</span></button>
                     ${req.status === 'pending' ? `
-                    <button class="btn-icon admin-only" title="à¸­à¸™à¸¸à¸¡à¸±à¸•à¸´ (à¸šà¸±à¸™à¸—à¸¶à¸à¸¥à¸‡à¸ªà¸–à¸´à¸•à¸´)" onclick="LeaveRequest.approveRequest('${req.id}')" style="color:#10b981;"><span class="material-icons-round">check_circle</span></button>
-                    <button class="btn-icon admin-only" title="à¸¢à¸à¹€à¸¥à¸´à¸/à¸¥à¸šà¸—à¸´à¹‰à¸‡" onclick="LeaveRequest.rejectRequest('${req.id}')" style="color:#f59e0b;"><span class="material-icons-round">cancel</span></button>
+                    <button class="btn-icon admin-only" title="อนุมัติ (บันทึกลงสถิติ)" onclick="LeaveRequest.approveRequest('${req.id}')" style="color:#10b981;"><span class="material-icons-round">check_circle</span></button>
+                    <button class="btn-icon admin-only" title="ยกเลิก/ลบทิ้ง" onclick="LeaveRequest.rejectRequest('${req.id}')" style="color:#f59e0b;"><span class="material-icons-round">cancel</span></button>
                     ` : `
-                    <button class="btn-icon admin-only" title="à¸¥à¸šà¸£à¸²à¸¢à¸à¸²à¸£à¸™à¸µà¹‰" onclick="LeaveRequest.deleteRequest('${req.id}')" style="color:#ef4444;"><span class="material-icons-round">delete</span></button>
+                    <button class="btn-icon admin-only" title="ลบรายการนี้" onclick="LeaveRequest.deleteRequest('${req.id}')" style="color:#ef4444;"><span class="material-icons-round">delete</span></button>
                     `}
                 </td>
             `;
@@ -254,14 +255,14 @@ const LeaveRequest = (() => {
         const contact = document.getElementById('lr-contact').value;
 
         if (!teacherId || !reason || !startDate || !endDate || !contact) {
-            App.showToast('à¸à¸£à¸¸à¸“à¸²à¸à¸£à¸­à¸à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¹ƒà¸«à¹‰à¸„à¸£à¸šà¸–à¹‰à¸§à¸™', 'warning');
+            App.showToast('กรุณากรอกข้อมูลให้ครบถ้วน', 'warning');
             return;
         }
 
         const sDate = new Date(startDate);
         const eDate = new Date(endDate);
         if (eDate < sDate) {
-            App.showToast('à¸§à¸±à¸™à¸—à¸µà¹ˆà¸ªà¸´à¹‰à¸™à¸ªà¸¸à¸”à¸•à¹‰à¸­à¸‡à¹„à¸¡à¹ˆà¸à¹ˆà¸­à¸™à¸§à¸±à¸™à¸—à¸µà¹ˆà¹€à¸£à¸´à¹ˆà¸¡à¸•à¹‰à¸™', 'warning');
+            App.showToast('วันที่สิ้นสุดต้องไม่ก่อนวันที่เริ่มต้น', 'warning');
             return;
         }
 
@@ -275,7 +276,7 @@ const LeaveRequest = (() => {
         }
 
         if (days === 0) {
-            App.showToast('à¸Šà¹ˆà¸§à¸‡à¹€à¸§à¸¥à¸²à¸—à¸µà¹ˆà¹€à¸¥à¸·à¸­à¸à¸•à¸£à¸‡à¸à¸±à¸šà¸§à¸±à¸™à¸«à¸¢à¸¸à¸”à¸ªà¸¸à¸”à¸ªà¸±à¸›à¸”à¸²à¸«à¹Œà¸—à¸±à¹‰à¸‡à¸«à¸¡à¸”', 'warning');
+            App.showToast('ช่วงเวลาที่เลือกตรงกับวันหยุดสุดสัปดาห์ทั้งหมด', 'warning');
             return;
         }
 
@@ -291,7 +292,7 @@ const LeaveRequest = (() => {
         // FIRE AND FORGET - Do not await to prevent UI hanging
         let newReq = DataManager.addLeaveRequest(reqData);
 
-        App.showToast('à¸¢à¸·à¹ˆà¸™à¸„à¸³à¸‚à¸­à¸¥à¸²à¸ªà¸³à¹€à¸£à¹‡à¸ˆ', 'success');
+        App.showToast('ยื่นคำขอลาสำเร็จ', 'success');
 
         if (btnSubmit) {
             btnSubmit.disabled = false;
@@ -311,7 +312,7 @@ const LeaveRequest = (() => {
         // If not found OR if reason is blanked out (meaning we need the secret link data), fetch it!
         if (!req || !req.reason || req.reason.trim() === '') {
             if (!isRetry) {
-                App.showToast('à¸à¸³à¸¥à¸±à¸‡à¹€à¸šà¸´à¸à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¹ƒà¸šà¸¥à¸²à¸¥à¸±à¸š...', 'info');
+                App.showToast('กำลังเบิกข้อมูลใบลาลับ...', 'info');
                 
                 const cloudUrl = DataManager.getCloudUrl();
                 if (cloudUrl) {
@@ -326,17 +327,17 @@ const LeaveRequest = (() => {
                                 else requests.push(res.data);
                                 printForm(reqId, true);
                             } else {
-                                App.showToast('à¹„à¸¡à¹ˆà¸žà¸šà¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¹ƒà¸šà¸¥à¸² (ID: ' + reqId + ')', 'error');
+                                App.showToast('ไม่พบข้อมูลใบลา (ID: ' + reqId + ')', 'error');
                             }
                         })
                         .catch(() => {
-                            App.showToast('à¹€à¸Šà¸·à¹ˆà¸­à¸¡à¸•à¹ˆà¸­à¸à¸²à¸™à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸¥à¹‰à¸¡à¹€à¸«à¸¥à¸§', 'error');
+                            App.showToast('เชื่อมต่อฐานข้อมูลล้มเหลว', 'error');
                         });
                     return;
                 }
             } else {
                 if (!req) {
-                    App.showToast('à¹„à¸¡à¹ˆà¸žà¸šà¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¹ƒà¸šà¸¥à¸² (ID: ' + reqId + ')', 'error');
+                    App.showToast('ไม่พบข้อมูลใบลา (ID: ' + reqId + ')', 'error');
                     return;
                 }
             }
@@ -345,7 +346,7 @@ const LeaveRequest = (() => {
         const teachers = DataManager.getTeachers();
         const t = teachers.find(t => t.id === req.teacherId);
         if (!t) {
-            App.showToast('à¹„à¸¡à¹ˆà¸žà¸šà¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸œà¸¹à¹‰à¸¥à¸²à¹ƒà¸™à¸à¸²à¸™à¸‚à¹‰à¸­à¸¡à¸¹à¸¥', 'error');
+            App.showToast('ไม่พบข้อมูลผู้ลาในฐานข้อมูล', 'error');
             return;
         }
 
@@ -356,15 +357,15 @@ const LeaveRequest = (() => {
         document.getElementById('print-month').textContent = DataManager.THAI_MONTHS_FULL[new Date().getMonth() + 1];
         document.getElementById('print-year').textContent = new Date().getFullYear() + 543;
 
-        document.getElementById('print-subject').textContent = `à¸‚à¸­à¸¥à¸²${req.type === 'à¸›à¹ˆà¸§à¸¢' ? 'à¸›à¹ˆà¸§à¸¢' : req.type === 'à¸à¸´à¸ˆà¸ªà¹ˆà¸§à¸™à¸•à¸±à¸§' ? 'à¸¥à¸²à¸à¸´à¸ˆà¸ªà¹ˆà¸§à¸™à¸•à¸±à¸§' : 'à¸„à¸¥à¸­à¸”à¸šà¸¸à¸•à¸£'}`;
+        document.getElementById('print-subject').textContent = `ขอลา${req.type === 'ป่วย' ? 'ป่วย' : req.type === 'กิจส่วนตัว' ? 'ลากิจส่วนตัว' : 'คลอดบุตร'}`;
         document.getElementById('print-name').textContent = t.name;
         document.getElementById('print-position').textContent = t.title || '...................';
         
         // Populate settings (School Name, Director Name, etc.)
         if (settings.schoolName) {
-            document.getElementById('print-location').textContent = `à¹‚à¸£à¸‡à¹€à¸£à¸µà¸¢à¸™${settings.schoolName}`;
-            document.getElementById('print-director').textContent = `à¸œà¸¹à¹‰à¸­à¸³à¸™à¸§à¸¢à¸à¸²à¸£à¹‚à¸£à¸‡à¹€à¸£à¸µà¸¢à¸™${settings.schoolName}`;
-            document.getElementById('print-director-pos').textContent = `à¸œà¸¹à¹‰à¸­à¸³à¸™à¸§à¸¢à¸à¸²à¸£à¹‚à¸£à¸‡à¹€à¸£à¸µà¸¢à¸™${settings.schoolName}`;
+            document.getElementById('print-location').textContent = `โรงเรียน${settings.schoolName}`;
+            document.getElementById('print-director').textContent = `ผู้อำนวยการโรงเรียน${settings.schoolName}`;
+            document.getElementById('print-director-pos').textContent = `ผู้อำนวยการโรงเรียน${settings.schoolName}`;
         }
         if (settings.directorName) {
             document.getElementById('print-director-name').textContent = settings.directorName;
@@ -377,12 +378,12 @@ const LeaveRequest = (() => {
         }
         
         // Reset checkboxes
-        document.getElementById('print-cb-sick').textContent = 'â˜';
-        document.getElementById('print-cb-personal').textContent = 'â˜';
-        document.getElementById('print-cb-maternity').textContent = 'â˜';
-        if (req.type === 'à¸›à¹ˆà¸§à¸¢') document.getElementById('print-cb-sick').textContent = 'â˜‘';
-        if (req.type === 'à¸à¸´à¸ˆà¸ªà¹ˆà¸§à¸™à¸•à¸±à¸§') document.getElementById('print-cb-personal').textContent = 'â˜‘';
-        if (req.type === 'à¸„à¸¥à¸­à¸”à¸šà¸¸à¸•à¸£') document.getElementById('print-cb-maternity').textContent = 'â˜‘';
+        document.getElementById('print-cb-sick').textContent = '☐';
+        document.getElementById('print-cb-personal').textContent = '☐';
+        document.getElementById('print-cb-maternity').textContent = '☐';
+        if (req.type === 'ป่วย') document.getElementById('print-cb-sick').textContent = '☑';
+        if (req.type === 'กิจส่วนตัว') document.getElementById('print-cb-personal').textContent = '☑';
+        if (req.type === 'คลอดบุตร') document.getElementById('print-cb-maternity').textContent = '☑';
 
         document.getElementById('print-reason').textContent = req.reason;
 
@@ -414,9 +415,9 @@ const LeaveRequest = (() => {
                 const isInPeriod = periodMonths.some(pm => pm.month === r.month && pm.year === r.year);
                 
                 if (isInPeriod) {
-                    if (r.type === 'sick' || r.type === 'à¸›à¹ˆà¸§à¸¢') { pastSick += r.days; pastSickCount += r.times || 1; }
-                    if (r.type === 'personal' || r.type === 'à¸¥à¸²à¸à¸´à¸ˆà¸ªà¹ˆà¸§à¸™à¸•à¸±à¸§') { pastPers += r.days; pastPersCount += r.times || 1; }
-                    if (r.type === 'maternity' || r.type === 'à¸¥à¸²à¸„à¸¥à¸­à¸”à¸šà¸¸à¸•à¸£') { pastMat += r.days; pastMatCount += r.times || 1; }
+                    if (r.type === 'sick' || r.type === 'ป่วย') { pastSick += r.days; pastSickCount += r.times || 1; }
+                    if (r.type === 'personal' || r.type === 'ลากิจส่วนตัว') { pastPers += r.days; pastPersCount += r.times || 1; }
+                    if (r.type === 'maternity' || r.type === 'ลาคลอดบุตร') { pastMat += r.days; pastMatCount += r.times || 1; }
                 }
 
                 // Find last leave (overall history is fine for determining last leave taken)
@@ -427,42 +428,42 @@ const LeaveRequest = (() => {
         });
 
         // Last leave details
-        document.getElementById('print-last-cb-sick').textContent = 'â˜';
-        document.getElementById('print-last-cb-personal').textContent = 'â˜';
-        document.getElementById('print-last-cb-maternity').textContent = 'â˜';
+        document.getElementById('print-last-cb-sick').textContent = '☐';
+        document.getElementById('print-last-cb-personal').textContent = '☐';
+        document.getElementById('print-last-cb-maternity').textContent = '☐';
         document.getElementById('print-last-start').textContent = '.......................................';
         document.getElementById('print-last-days').textContent = '........';
 
         if (lastLeave) {
-            if (lastLeave.type === 'sick' || lastLeave.type === 'à¸›à¹ˆà¸§à¸¢') document.getElementById('print-last-cb-sick').textContent = 'â˜‘';
-            if (lastLeave.type === 'personal' || lastLeave.type === 'à¸à¸´à¸ˆà¸ªà¹ˆà¸§à¸™à¸•à¸±à¸§') document.getElementById('print-last-cb-personal').textContent = 'â˜‘';
-            if (lastLeave.type === 'maternity' || lastLeave.type === 'à¸„à¸¥à¸­à¸”à¸šà¸¸à¸•à¸£') document.getElementById('print-last-cb-maternity').textContent = 'â˜‘';
+            if (lastLeave.type === 'sick' || lastLeave.type === 'ป่วย') document.getElementById('print-last-cb-sick').textContent = '☑';
+            if (lastLeave.type === 'personal' || lastLeave.type === 'กิจส่วนตัว') document.getElementById('print-last-cb-personal').textContent = '☑';
+            if (lastLeave.type === 'maternity' || lastLeave.type === 'คลอดบุตร') document.getElementById('print-last-cb-maternity').textContent = '☑';
             
-            document.getElementById('print-last-start').textContent = lastLeave.notes || '(à¸”à¸¹à¹ƒà¸™à¸ªà¸–à¸´à¸•à¸´)';
+            document.getElementById('print-last-start').textContent = lastLeave.notes || '(ดูในสถิติ)';
             document.getElementById('print-last-days').textContent = lastLeave.days;
         }
 
         // Adjust past stats if this request is already approved (already in records)
         let isApproved = req.status === 'approved';
-        let dPastSick = isApproved && req.type === 'à¸›à¹ˆà¸§à¸¢' ? pastSick - req.days : pastSick;
-        let dPastSickC = isApproved && req.type === 'à¸›à¹ˆà¸§à¸¢' ? pastSickCount - 1 : pastSickCount;
-        let dPastPers = isApproved && req.type === 'à¸à¸´à¸ˆà¸ªà¹ˆà¸§à¸™à¸•à¸±à¸§' ? pastPers - req.days : pastPers;
-        let dPastPersC = isApproved && req.type === 'à¸à¸´à¸ˆà¸ªà¹ˆà¸§à¸™à¸•à¸±à¸§' ? pastPersCount - 1 : pastPersCount;
-        let dPastMat = isApproved && req.type === 'à¸„à¸¥à¸­à¸”à¸šà¸¸à¸•à¸£' ? pastMat - req.days : pastMat;
-        let dPastMatC = isApproved && req.type === 'à¸„à¸¥à¸­à¸”à¸šà¸¸à¸•à¸£' ? pastMatCount - 1 : pastMatCount;
+        let dPastSick = isApproved && req.type === 'ป่วย' ? pastSick - req.days : pastSick;
+        let dPastSickC = isApproved && req.type === 'ป่วย' ? pastSickCount - 1 : pastSickCount;
+        let dPastPers = isApproved && req.type === 'กิจส่วนตัว' ? pastPers - req.days : pastPers;
+        let dPastPersC = isApproved && req.type === 'กิจส่วนตัว' ? pastPersCount - 1 : pastPersCount;
+        let dPastMat = isApproved && req.type === 'คลอดบุตร' ? pastMat - req.days : pastMat;
+        let dPastMatC = isApproved && req.type === 'คลอดบุตร' ? pastMatCount - 1 : pastMatCount;
 
         // Stats Table (Format: Count/Days)
         document.getElementById('print-stat-sick-past').textContent = dPastSick > 0 ? `${dPastSickC}/${dPastSick}` : '-';
         document.getElementById('print-stat-pers-past').textContent = dPastPers > 0 ? `${dPastPersC}/${dPastPers}` : '-';
         document.getElementById('print-stat-mat-past').textContent = dPastMat > 0 ? `${dPastMatC}/${dPastMat}` : '-';
 
-        document.getElementById('print-stat-sick-now').textContent = req.type === 'à¸›à¹ˆà¸§à¸¢' ? `1/${req.days}` : '-';
-        document.getElementById('print-stat-pers-now').textContent = req.type === 'à¸à¸´à¸ˆà¸ªà¹ˆà¸§à¸™à¸•à¸±à¸§' ? `1/${req.days}` : '-';
-        document.getElementById('print-stat-mat-now').textContent = req.type === 'à¸„à¸¥à¸­à¸”à¸šà¸¸à¸•à¸£' ? `1/${req.days}` : '-';
+        document.getElementById('print-stat-sick-now').textContent = req.type === 'ป่วย' ? `1/${req.days}` : '-';
+        document.getElementById('print-stat-pers-now').textContent = req.type === 'กิจส่วนตัว' ? `1/${req.days}` : '-';
+        document.getElementById('print-stat-mat-now').textContent = req.type === 'คลอดบุตร' ? `1/${req.days}` : '-';
 
-        document.getElementById('print-stat-sick-total').textContent = req.type === 'à¸›à¹ˆà¸§à¸¢' ? `${dPastSickC + 1}/${dPastSick + req.days}` : (dPastSick > 0 ? `${dPastSickC}/${dPastSick}` : '-');
-        document.getElementById('print-stat-pers-total').textContent = req.type === 'à¸à¸´à¸ˆà¸ªà¹ˆà¸§à¸™à¸•à¸±à¸§' ? `${dPastPersC + 1}/${dPastPers + req.days}` : (dPastPers > 0 ? `${dPastPersC}/${dPastPers}` : '-');
-        document.getElementById('print-stat-mat-total').textContent = req.type === 'à¸„à¸¥à¸­à¸”à¸šà¸¸à¸•à¸£' ? `${dPastMatC + 1}/${dPastMat + req.days}` : (dPastMat > 0 ? `${dPastMatC}/${dPastMat}` : '-');
+        document.getElementById('print-stat-sick-total').textContent = req.type === 'ป่วย' ? `${dPastSickC + 1}/${dPastSick + req.days}` : (dPastSick > 0 ? `${dPastSickC}/${dPastSick}` : '-');
+        document.getElementById('print-stat-pers-total').textContent = req.type === 'กิจส่วนตัว' ? `${dPastPersC + 1}/${dPastPers + req.days}` : (dPastPers > 0 ? `${dPastPersC}/${dPastPers}` : '-');
+        document.getElementById('print-stat-mat-total').textContent = req.type === 'คลอดบุตร' ? `${dPastMatC + 1}/${dPastMat + req.days}` : (dPastMat > 0 ? `${dPastMatC}/${dPastMat}` : '-');
 
         // Trigger Print Window immediately (prevent mobile popup blockers)
         window.print();
@@ -471,7 +472,7 @@ const LeaveRequest = (() => {
     function approveRequest(reqId) {
         if(!DataManager.isAdmin()) return;
         
-        if(confirm('à¸•à¹‰à¸­à¸‡à¸à¸²à¸£à¸­à¸™à¸¸à¸¡à¸±à¸•à¸´à¹à¸¥à¸°à¸šà¸±à¸™à¸—à¸¶à¸à¸ªà¸–à¸´à¸•à¸´à¸à¸²à¸£à¸¥à¸²à¸™à¸µà¹‰à¹ƒà¸Šà¹ˆà¸«à¸£à¸·à¸­à¹„à¸¡à¹ˆ?')) {
+        if(confirm('ต้องการอนุมัติและบันทึกสถิติการลานี้ใช่หรือไม่?')) {
             const requests = DataManager.getLeaveRequests();
             const req = requests.find(r => r.id === reqId);
             if (!req) return;
@@ -479,7 +480,7 @@ const LeaveRequest = (() => {
             // Convert to leave event
             const startDate = new Date(req.startDate);
             const endDate = new Date(req.endDate);
-            let eType = req.type === 'à¸›à¹ˆà¸§à¸¢' ? 'sick' : req.type === 'à¸à¸´à¸ˆà¸ªà¹ˆà¸§à¸™à¸•à¸±à¸§' ? 'personal' : 'maternity';
+            let eType = req.type === 'ป่วย' ? 'sick' : req.type === 'กิจส่วนตัว' ? 'personal' : 'maternity';
             
             let noteStr = '';
             const sDay = startDate.getDate();
@@ -518,7 +519,7 @@ const LeaveRequest = (() => {
             );
             DataManager.updateLeaveRequestStatus(reqId, 'approved');
             
-            App.showToast('à¸­à¸™à¸¸à¸¡à¸±à¸•à¸´à¹à¸¥à¸°à¸šà¸±à¸™à¸—à¸¶à¸à¸ªà¸–à¸´à¸•à¸´à¹€à¸£à¸µà¸¢à¸šà¸£à¹‰à¸­à¸¢', 'success');
+            App.showToast('อนุมัติและบันทึกสถิติเรียบร้อย', 'success');
             renderManageTable();
         }
     }
@@ -526,9 +527,9 @@ const LeaveRequest = (() => {
     function rejectRequest(reqId) {
         if(!DataManager.isAdmin()) return;
         
-        if(confirm('à¸•à¹‰à¸­à¸‡à¸à¸²à¸£à¸¢à¸à¹€à¸¥à¸´à¸à¸„à¸³à¸‚à¸­à¸¥à¸²à¸™à¸µà¹‰à¹ƒà¸Šà¹ˆà¸«à¸£à¸·à¸­à¹„à¸¡à¹ˆ?')) {
+        if(confirm('ต้องการยกเลิกคำขอลานี้ใช่หรือไม่?')) {
             DataManager.updateLeaveRequestStatus(reqId, 'rejected');
-            App.showToast('à¸¢à¸à¹€à¸¥à¸´à¸à¸„à¸³à¸‚à¸­à¸¥à¸²à¹à¸¥à¹‰à¸§', 'info');
+            App.showToast('ยกเลิกคำขอลาแล้ว', 'info');
             renderManageTable();
         }
     }
@@ -536,7 +537,7 @@ const LeaveRequest = (() => {
     function clearRequests() {
         if(!DataManager.isAdmin()) return;
 
-        if(confirm('à¸•à¹‰à¸­à¸‡à¸à¸²à¸£à¸¥à¹‰à¸²à¸‡à¸£à¸²à¸¢à¸à¸²à¸£à¸—à¸µà¹ˆà¸­à¸™à¸¸à¸¡à¸±à¸•à¸´/à¸¢à¸à¹€à¸¥à¸´à¸à¹à¸¥à¹‰à¸§à¸­à¸­à¸à¸ˆà¸²à¸à¸•à¸²à¸£à¸²à¸‡à¹ƒà¸Šà¹ˆà¸«à¸£à¸·à¸­à¹„à¸¡à¹ˆ?')) {
+        if(confirm('ต้องการล้างรายการที่อนุมัติ/ยกเลิกแล้วออกจากตารางใช่หรือไม่?')) {
             DataManager.clearCompletedLeaveRequests();
             renderManageTable();
         }
@@ -545,9 +546,9 @@ const LeaveRequest = (() => {
     function deleteRequest(reqId) {
         if(!DataManager.isAdmin()) return;
 
-        if(confirm('à¸•à¹‰à¸­à¸‡à¸à¸²à¸£à¸¥à¸šà¸£à¸²à¸¢à¸à¸²à¸£à¸„à¸³à¸‚à¸­à¸¥à¸²à¸™à¸µà¹‰à¸­à¸­à¸à¸ˆà¸²à¸à¸£à¸°à¸šà¸šà¹ƒà¸Šà¹ˆà¸«à¸£à¸·à¸­à¹„à¸¡à¹ˆ?')) {
+        if(confirm('ต้องการลบรายการคำขอลานี้ออกจากระบบใช่หรือไม่?')) {
             DataManager.deleteLeaveRequest(reqId);
-            App.showToast('à¸¥à¸šà¸£à¸²à¸¢à¸à¸²à¸£à¸„à¸³à¸‚à¸­à¸¥à¸²à¹à¸¥à¹‰à¸§', 'info');
+            App.showToast('ลบรายการคำขอลาแล้ว', 'info');
             renderManageTable();
         }
     }
@@ -556,5 +557,3 @@ const LeaveRequest = (() => {
         init, render, printForm, approveRequest, rejectRequest, deleteRequest
     };
 })();
-
-

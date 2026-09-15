@@ -1,6 +1,6 @@
-﻿/* ============================================
-   Dashboard â€” Summary Statistics & Charts
-   (Only à¸¥à¸²à¸à¸´à¸ˆ and à¸¥à¸²à¸›à¹ˆà¸§à¸¢ â€” no à¸­à¸·à¹ˆà¸™à¹†)
+/* ============================================
+   Dashboard — Summary Statistics & Charts
+   (Only ลากิจ and ลาป่วย — no อื่นๆ)
    ============================================ */
 const Dashboard = (() => {
     let monthlyChart = null;
@@ -57,28 +57,28 @@ const Dashboard = (() => {
                 <div class="stat-icon"><span class="material-icons-round">people</span></div>
                 <div class="stat-info">
                     <div class="stat-value">${teachers.length}</div>
-                    <div class="stat-label">à¸ˆà¸³à¸™à¸§à¸™à¸„à¸£à¸¹à¸—à¸±à¹‰à¸‡à¸«à¸¡à¸”</div>
+                    <div class="stat-label">จำนวนครูทั้งหมด</div>
                 </div>
             </div>
             <div class="stat-card card-all">
                 <div class="stat-icon"><span class="material-icons-round">summarize</span></div>
                 <div class="stat-info">
-                    <div class="stat-value">${timesAll}<small style="font-size:0.55em;color:var(--text-secondary);"> à¸„à¸£à¸±à¹‰à¸‡</small> / ${totalAll}<small style="font-size:0.55em;color:var(--text-secondary);"> à¸§à¸±à¸™</small></div>
-                    <div class="stat-label">à¸£à¸§à¸¡à¸—à¸¸à¸à¸›à¸£à¸°à¹€à¸ à¸—</div>
+                    <div class="stat-value">${timesAll}<small style="font-size:0.55em;color:var(--text-secondary);"> ครั้ง</small> / ${totalAll}<small style="font-size:0.55em;color:var(--text-secondary);"> วัน</small></div>
+                    <div class="stat-label">รวมทุกประเภท</div>
                 </div>
             </div>
             <div class="stat-card card-sick">
                 <div class="stat-icon"><span class="material-icons-round">local_hospital</span></div>
                 <div class="stat-info">
-                    <div class="stat-value">${timesSick}<small style="font-size:0.55em;color:var(--text-secondary);"> à¸„à¸£à¸±à¹‰à¸‡</small> / ${totalSick}<small style="font-size:0.55em;color:var(--text-secondary);"> à¸§à¸±à¸™</small></div>
-                    <div class="stat-label">à¸¥à¸²à¸›à¹ˆà¸§à¸¢</div>
+                    <div class="stat-value">${timesSick}<small style="font-size:0.55em;color:var(--text-secondary);"> ครั้ง</small> / ${totalSick}<small style="font-size:0.55em;color:var(--text-secondary);"> วัน</small></div>
+                    <div class="stat-label">ลาป่วย</div>
                 </div>
             </div>
             <div class="stat-card card-personal">
                 <div class="stat-icon"><span class="material-icons-round">event_note</span></div>
                 <div class="stat-info">
-                    <div class="stat-value">${timesPersonal}<small style="font-size:0.55em;color:var(--text-secondary);"> à¸„à¸£à¸±à¹‰à¸‡</small> / ${totalPersonal}<small style="font-size:0.55em;color:var(--text-secondary);"> à¸§à¸±à¸™</small></div>
-                    <div class="stat-label">à¸¥à¸²à¸à¸´à¸ˆà¸ªà¹ˆà¸§à¸™à¸•à¸±à¸§</div>
+                    <div class="stat-value">${timesPersonal}<small style="font-size:0.55em;color:var(--text-secondary);"> ครั้ง</small> / ${totalPersonal}<small style="font-size:0.55em;color:var(--text-secondary);"> วัน</small></div>
+                    <div class="stat-label">ลากิจส่วนตัว</div>
                 </div>
             </div>
         `;
@@ -114,7 +114,7 @@ const Dashboard = (() => {
                 labels,
                 datasets: [
                     {
-                        label: 'à¸¥à¸²à¸›à¹ˆà¸§à¸¢ (à¸§à¸±à¸™)',
+                        label: 'ลาป่วย (วัน)',
                         data: sickData,
                         backgroundColor: 'rgba(239, 68, 68, 0.8)',
                         borderColor: 'rgba(239, 68, 68, 1)',
@@ -122,7 +122,7 @@ const Dashboard = (() => {
                         borderRadius: 6
                     },
                     {
-                        label: 'à¸¥à¸²à¸à¸´à¸ˆ (à¸§à¸±à¸™)',
+                        label: 'ลากิจ (วัน)',
                         data: personalData,
                         backgroundColor: 'rgba(245, 158, 11, 0.8)',
                         borderColor: 'rgba(245, 158, 11, 1)',
@@ -192,13 +192,13 @@ const Dashboard = (() => {
         );
 
         // Group teachers by section
-        const sections = [...new Set(teachers.map(t => t.section || 'à¸—à¸±à¹ˆà¸§à¹„à¸›'))].sort();
+        const sections = [...new Set(teachers.map(t => t.section || 'ทั่วไป'))].sort();
         
         const personalData = [];
         const sickData = [];
 
         sections.forEach(sec => {
-            const secTeacherIds = teachers.filter(t => (t.section || 'à¸—à¸±à¹ˆà¸§à¹„à¸›') === sec).map(t => t.id);
+            const secTeacherIds = teachers.filter(t => (t.section || 'ทั่วไป') === sec).map(t => t.id);
             const secRecords = periodRecords.filter(r => secTeacherIds.includes(r.teacherId));
             
             personalData.push(secRecords.filter(r => r.type === 'personal').reduce((s, r) => s + r.days, 0));
@@ -217,7 +217,7 @@ const Dashboard = (() => {
                 labels: sections,
                 datasets: [
                     {
-                        label: 'à¸¥à¸²à¸›à¹ˆà¸§à¸¢ (à¸§à¸±à¸™)',
+                        label: 'ลาป่วย (วัน)',
                         data: sickData,
                         backgroundColor: 'rgba(239, 68, 68, 0.8)',
                         borderColor: 'rgba(239, 68, 68, 1)',
@@ -225,7 +225,7 @@ const Dashboard = (() => {
                         borderRadius: 6
                     },
                     {
-                        label: 'à¸¥à¸²à¸à¸´à¸ˆ (à¸§à¸±à¸™)',
+                        label: 'ลากิจ (วัน)',
                         data: personalData,
                         backgroundColor: 'rgba(245, 158, 11, 0.8)',
                         borderColor: 'rgba(245, 158, 11, 1)',
@@ -306,7 +306,7 @@ const Dashboard = (() => {
         pieChart = new Chart(canvas, {
             type: 'doughnut',
             data: {
-                labels: ['à¸¥à¸²à¸›à¹ˆà¸§à¸¢', 'à¸¥à¸²à¸à¸´à¸ˆ'],
+                labels: ['ลาป่วย', 'ลากิจ'],
                 datasets: [{
                     data: hasData ? [totalSick, totalPersonal] : [1, 1],
                     backgroundColor: hasData
@@ -337,7 +337,7 @@ const Dashboard = (() => {
                         titleFont: { family: "'Noto Sans Thai', sans-serif" },
                         bodyFont: { family: "'Noto Sans Thai', sans-serif" },
                         callbacks: {
-                            label: (ctx) => `${ctx.label}: ${ctx.parsed} à¸§à¸±à¸™`
+                            label: (ctx) => `${ctx.label}: ${ctx.parsed} วัน`
                         }
                     },
                     datalabels: {
@@ -358,8 +358,8 @@ const Dashboard = (() => {
         let unspecCount = 0;
 
         teachers.forEach(t => {
-            if (t.gender === 'à¸Šà¸²à¸¢') maleCount++;
-            else if (t.gender === 'à¸«à¸à¸´à¸‡') femaleCount++;
+            if (t.gender === 'ชาย') maleCount++;
+            else if (t.gender === 'หญิง') femaleCount++;
             else unspecCount++;
         });
 
@@ -374,14 +374,14 @@ const Dashboard = (() => {
         const bgColors = [];
         const borderColors = [];
 
-        if (maleCount > 0) { labels.push('à¸Šà¸²à¸¢'); data.push(maleCount); bgColors.push('rgba(59, 130, 246, 0.85)'); borderColors.push('rgba(59, 130, 246, 1)'); }
-        if (femaleCount > 0) { labels.push('à¸«à¸à¸´à¸‡'); data.push(femaleCount); bgColors.push('rgba(236, 72, 153, 0.85)'); borderColors.push('rgba(236, 72, 153, 1)'); }
-        if (unspecCount > 0) { labels.push('à¹„à¸¡à¹ˆà¸£à¸°à¸šà¸¸'); data.push(unspecCount); bgColors.push('rgba(156, 163, 175, 0.85)'); borderColors.push('rgba(156, 163, 175, 1)'); }
+        if (maleCount > 0) { labels.push('ชาย'); data.push(maleCount); bgColors.push('rgba(59, 130, 246, 0.85)'); borderColors.push('rgba(59, 130, 246, 1)'); }
+        if (femaleCount > 0) { labels.push('หญิง'); data.push(femaleCount); bgColors.push('rgba(236, 72, 153, 0.85)'); borderColors.push('rgba(236, 72, 153, 1)'); }
+        if (unspecCount > 0) { labels.push('ไม่ระบุ'); data.push(unspecCount); bgColors.push('rgba(156, 163, 175, 0.85)'); borderColors.push('rgba(156, 163, 175, 1)'); }
 
         genderChart = new Chart(canvas, {
             type: 'doughnut',
             data: {
-                labels: hasData ? labels : ['à¹„à¸¡à¹ˆà¸¡à¸µà¸‚à¹‰à¸­à¸¡à¸¹à¸¥'],
+                labels: hasData ? labels : ['ไม่มีข้อมูล'],
                 datasets: [{
                     data: hasData ? data : [1],
                     backgroundColor: hasData ? bgColors : ['rgba(200,200,200,0.3)'],
@@ -408,12 +408,12 @@ const Dashboard = (() => {
                         titleFont: { family: "'Noto Sans Thai', sans-serif" },
                         bodyFont: { family: "'Noto Sans Thai', sans-serif" },
                         callbacks: {
-                            label: (ctx) => `${ctx.label}: ${ctx.parsed} à¸„à¸™`
+                            label: (ctx) => `${ctx.label}: ${ctx.parsed} คน`
                         }
                     },
                     datalabels: {
                         display: hasData,
-                        formatter: (val) => val + ' à¸„à¸™'
+                        formatter: (val) => val + ' คน'
                     }
                 }
             }
@@ -427,14 +427,14 @@ const Dashboard = (() => {
         const teachers = DataManager.getTeachers();
         
         // Define title order
-        const titleOrder = ['à¸¥à¸¹à¸à¸ˆà¹‰à¸²à¸‡à¸¯', 'à¸„à¸£à¸¹à¸­à¸±à¸•à¸£à¸²à¸ˆà¹‰à¸²à¸‡', 'à¸žà¸™à¸±à¸à¸‡à¸²à¸™à¸¯', 'à¸„à¸£à¸¹à¸œà¸¹à¹‰à¸Šà¹ˆà¸§à¸¢', 'à¸„à¸¨.1', 'à¸„à¸¨.2', 'à¸„à¸¨.3', 'à¸„à¸¨.4'];
-        const titleCounts = { 'à¸¥à¸¹à¸à¸ˆà¹‰à¸²à¸‡à¸¯': 0, 'à¸„à¸£à¸¹à¸­à¸±à¸•à¸£à¸²à¸ˆà¹‰à¸²à¸‡': 0, 'à¸žà¸™à¸±à¸à¸‡à¸²à¸™à¸¯': 0, 'à¸„à¸£à¸¹à¸œà¸¹à¹‰à¸Šà¹ˆà¸§à¸¢': 0, 'à¸„à¸¨.1': 0, 'à¸„à¸¨.2': 0, 'à¸„à¸¨.3': 0, 'à¸„à¸¨.4': 0, 'à¹„à¸¡à¹ˆà¸£à¸°à¸šà¸¸': 0 };
+        const titleOrder = ['ลูกจ้างฯ', 'ครูอัตราจ้าง', 'พนักงานฯ', 'ครูผู้ช่วย', 'คศ.1', 'คศ.2', 'คศ.3', 'คศ.4'];
+        const titleCounts = { 'ลูกจ้างฯ': 0, 'ครูอัตราจ้าง': 0, 'พนักงานฯ': 0, 'ครูผู้ช่วย': 0, 'คศ.1': 0, 'คศ.2': 0, 'คศ.3': 0, 'คศ.4': 0, 'ไม่ระบุ': 0 };
 
         teachers.forEach(t => {
             const title = t.title || '';
-            if (title === '') titleCounts['à¹„à¸¡à¹ˆà¸£à¸°à¸šà¸¸']++;
+            if (title === '') titleCounts['ไม่ระบุ']++;
             else if (titleCounts[title] !== undefined) titleCounts[title]++;
-            else titleCounts['à¹„à¸¡à¹ˆà¸£à¸°à¸šà¸¸']++;
+            else titleCounts['ไม่ระบุ']++;
         });
 
         if (titleChart) titleChart.destroy();
@@ -449,9 +449,9 @@ const Dashboard = (() => {
             labels.push(t);
             data.push(titleCounts[t]);
         });
-        if (titleCounts['à¹„à¸¡à¹ˆà¸£à¸°à¸šà¸¸'] > 0) {
-            labels.push('à¹„à¸¡à¹ˆà¸£à¸°à¸šà¸¸');
-            data.push(titleCounts['à¹„à¸¡à¹ˆà¸£à¸°à¸šà¸¸']);
+        if (titleCounts['ไม่ระบุ'] > 0) {
+            labels.push('ไม่ระบุ');
+            data.push(titleCounts['ไม่ระบุ']);
         }
 
         titleChart = new Chart(canvas, {
@@ -460,7 +460,7 @@ const Dashboard = (() => {
                 labels: labels,
                 datasets: [
                     {
-                        label: 'à¸ˆà¸³à¸™à¸§à¸™à¸šà¸¸à¸„à¸¥à¸²à¸à¸£ (à¸„à¸™)',
+                        label: 'จำนวนบุคลากร (คน)',
                         data: data,
                         backgroundColor: 'rgba(16, 185, 129, 0.8)',
                         borderColor: 'rgba(16, 185, 129, 1)',
@@ -480,7 +480,7 @@ const Dashboard = (() => {
                         titleFont: { family: "'Noto Sans Thai', sans-serif" },
                         bodyFont: { family: "'Noto Sans Thai', sans-serif" },
                         callbacks: {
-                            label: (ctx) => ` ${ctx.parsed.y} à¸„à¸™`
+                            label: (ctx) => ` ${ctx.parsed.y} คน`
                         }
                     }
                 },
@@ -509,28 +509,30 @@ const Dashboard = (() => {
         const teachers = DataManager.getTeachers();
 
         // Data structure
-        const posOrder = ['à¸œà¸¹à¹‰à¸šà¸£à¸´à¸«à¸²à¸£', 'à¸„à¸£à¸¹', 'à¸„à¸£à¸¹à¸œà¸¹à¹‰à¸Šà¹ˆà¸§à¸¢', 'à¸žà¸™à¸±à¸à¸‡à¸²à¸™à¸¯', 'à¸„à¸£à¸¹à¸­à¸±à¸•à¸£à¸²à¸ˆà¹‰à¸²à¸‡', 'à¸¥à¸¹à¸à¸ˆà¹‰à¸²à¸‡à¸¯'];
+        const posOrder = ['ผู้บริหาร', 'ครู', 'ครูผู้ช่วย', 'พนักงานฯ', 'ครูอัตราจ้าง', 'ลูกจ้างฯ', 'ไม่ระบุ'];
         const counts = {};
-        posOrder.forEach(p => { counts[p] = { 'à¸Šà¸²à¸¢': 0, 'à¸«à¸à¸´à¸‡': 0, 'à¹„à¸¡à¹ˆà¸£à¸°à¸šà¸¸': 0 }; });
+        posOrder.forEach(p => { counts[p] = { 'ชาย': 0, 'หญิง': 0, 'ไม่ระบุ': 0 }; });
 
         teachers.forEach(t => {
             const section = t.section || '';
             const title = t.title || '';
-            const gender = t.gender || 'à¹„à¸¡à¹ˆà¸£à¸°à¸šà¸¸';
+            const gender = t.gender || 'ไม่ระบุ';
             
             let pos = '';
-            if (section.includes('à¸œà¸¹à¹‰à¸šà¸£à¸´à¸«à¸²à¸£') || section.includes('à¸œà¸¹à¹‰à¸­à¸³à¸™à¸§à¸¢à¸à¸²à¸£')) {
-                pos = 'à¸œà¸¹à¹‰à¸šà¸£à¸´à¸«à¸²à¸£';
-            } else if (title.includes('à¸„à¸¨')) {
-                pos = 'à¸„à¸£à¸¹';
-            } else if (title === 'à¸„à¸£à¸¹à¸œà¸¹à¹‰à¸Šà¹ˆà¸§à¸¢') {
-                pos = 'à¸„à¸£à¸¹à¸œà¸¹à¹‰à¸Šà¹ˆà¸§à¸¢';
-            } else if (title === 'à¸žà¸™à¸±à¸à¸‡à¸²à¸™à¸¯') {
-                pos = 'à¸žà¸™à¸±à¸à¸‡à¸²à¸™à¸¯';
-            } else if (title === 'à¸„à¸£à¸¹à¸­à¸±à¸•à¸£à¸²à¸ˆà¹‰à¸²à¸‡') {
-                pos = 'à¸„à¸£à¸¹à¸­à¸±à¸•à¸£à¸²à¸ˆà¹‰à¸²à¸‡';
-            } else if (title === 'à¸¥à¸¹à¸à¸ˆà¹‰à¸²à¸‡à¸¯') {
-                pos = 'à¸¥à¸¹à¸à¸ˆà¹‰à¸²à¸‡à¸¯';
+            if (section.includes('ผู้บริหาร') || section.includes('ผู้อำนวยการ')) {
+                pos = 'ผู้บริหาร';
+            } else if (title.includes('คศ')) {
+                pos = 'ครู';
+            } else if (title === 'ครูผู้ช่วย') {
+                pos = 'ครูผู้ช่วย';
+            } else if (title === 'พนักงานฯ') {
+                pos = 'พนักงานฯ';
+            } else if (title === 'ครูอัตราจ้าง') {
+                pos = 'ครูอัตราจ้าง';
+            } else if (title === 'ลูกจ้างฯ') {
+                pos = 'ลูกจ้างฯ';
+            } else {
+                pos = 'ไม่ระบุ';
             }
 
             if (pos && counts[pos] && counts[pos][gender] !== undefined) {
@@ -545,8 +547,8 @@ const Dashboard = (() => {
         const gridColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)';
 
         const labels = posOrder;
-        const maleData = posOrder.map(p => counts[p]['à¸Šà¸²à¸¢']);
-        const femaleData = posOrder.map(p => counts[p]['à¸«à¸à¸´à¸‡']);
+        const maleData = posOrder.map(p => counts[p]['ชาย']);
+        const femaleData = posOrder.map(p => counts[p]['หญิง']);
 
         positionChart = new Chart(canvas, {
             type: 'bar',
@@ -554,7 +556,7 @@ const Dashboard = (() => {
                 labels: labels,
                 datasets: [
                     {
-                        label: 'à¸Šà¸²à¸¢',
+                        label: 'ชาย',
                         data: maleData,
                         backgroundColor: 'rgba(59, 130, 246, 0.8)',
                         borderColor: 'rgba(59, 130, 246, 1)',
@@ -563,7 +565,7 @@ const Dashboard = (() => {
                         maxBarThickness: 30
                     },
                     {
-                        label: 'à¸«à¸à¸´à¸‡',
+                        label: 'หญิง',
                         data: femaleData,
                         backgroundColor: 'rgba(236, 72, 153, 0.8)',
                         borderColor: 'rgba(236, 72, 153, 1)',
@@ -585,7 +587,7 @@ const Dashboard = (() => {
                         titleFont: { family: "'Noto Sans Thai', sans-serif" },
                         bodyFont: { family: "'Noto Sans Thai', sans-serif" },
                         callbacks: {
-                            label: (ctx) => ` ${ctx.dataset.label}: ${ctx.parsed.y} à¸„à¸™`
+                            label: (ctx) => ` ${ctx.dataset.label}: ${ctx.parsed.y} คน`
                         }
                     },
                     datalabels: {
@@ -616,4 +618,3 @@ const Dashboard = (() => {
 
     return { init, render };
 })();
-
