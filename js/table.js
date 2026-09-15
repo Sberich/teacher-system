@@ -1,5 +1,5 @@
-/* ============================================
-   LeaveTable — Main Leave Overview Table
+﻿/* ============================================
+   LeaveTable â€” Main Leave Overview Table
    ============================================ */
 const LeaveTable = (() => {
     let deletedRecordsStack = [];
@@ -50,7 +50,7 @@ const LeaveTable = (() => {
                 });
 
                 DataManager.deleteLeaveEvent(id);
-                App.showToast('ลบรายการแล้ว (สามารถกดย้อนกลับได้)', 'info');
+                App.showToast('à¸¥à¸šà¸£à¸²à¸¢à¸à¸²à¸£à¹à¸¥à¹‰à¸§ (à¸ªà¸²à¸¡à¸²à¸£à¸–à¸à¸”à¸¢à¹‰à¸­à¸™à¸à¸¥à¸±à¸šà¹„à¸”à¹‰)', 'info');
                 
                 const mockCell = {
                     dataset: {
@@ -66,7 +66,7 @@ const LeaveTable = (() => {
                 const rec = deletedRecordsStack.pop();
                 if (rec) {
                     DataManager.addLeaveEvent(rec.teacherId, rec.month, rec.year, rec.type, rec.times, rec.days, rec.notes);
-                    App.showToast('กู้คืนรายการเรียบร้อย', 'success');
+                    App.showToast('à¸à¸¹à¹‰à¸„à¸·à¸™à¸£à¸²à¸¢à¸à¸²à¸£à¹€à¸£à¸µà¸¢à¸šà¸£à¹‰à¸­à¸¢', 'success');
                     const mockCell = {
                         dataset: {
                             teacher: currentEdit.teacherId,
@@ -92,10 +92,10 @@ const LeaveTable = (() => {
                 // Update UI to edit mode
                 document.getElementById('leave-form-title').style.color = 'var(--warning)';
                 document.getElementById('leave-form-icon').textContent = 'edit';
-                document.getElementById('leave-form-text').textContent = 'แก้ไขรายการลา';
+                document.getElementById('leave-form-text').textContent = 'à¹à¸à¹‰à¹„à¸‚à¸£à¸²à¸¢à¸à¸²à¸£à¸¥à¸²';
                 document.getElementById('btn-cancel-edit').style.display = 'inline-block';
                 document.getElementById('btn-save-icon').textContent = 'save';
-                document.getElementById('btn-save-text').textContent = 'บันทึกการแก้ไข';
+                document.getElementById('btn-save-text').textContent = 'à¸šà¸±à¸™à¸—à¸¶à¸à¸à¸²à¸£à¹à¸à¹‰à¹„à¸‚';
             }
         });
 
@@ -126,7 +126,7 @@ const LeaveTable = (() => {
                 // Sort dates
                 selectedDates.sort((a, b) => a - b);
 
-                // Format nicely using Thai locale (e.g. 10 มิ.ย.)
+                // Format nicely using Thai locale (e.g. 10 à¸¡à¸´.à¸¢.)
                 const formattedDates = selectedDates.map(date => {
                     const d = date.getDate();
                     const m = DataManager.getThaiMonth(date.getMonth() + 1);
@@ -169,7 +169,7 @@ const LeaveTable = (() => {
         // Populate section dropdown if not focused (prevent cursor jump)
         if (document.activeElement !== sectionSelect) {
             const sections = DataManager.getSections();
-            let selectHtml = '<option value="">ทุกหมวดหมู่/กลุ่ม</option>';
+            let selectHtml = '<option value="">à¸—à¸¸à¸à¸«à¸¡à¸§à¸”à¸«à¸¡à¸¹à¹ˆ/à¸à¸¥à¸¸à¹ˆà¸¡</option>';
             sections.forEach(s => {
                 selectHtml += `<option value="${escapeHtml(s)}" ${sectionFilter === s ? 'selected' : ''}>${escapeHtml(s)}</option>`;
             });
@@ -185,39 +185,39 @@ const LeaveTable = (() => {
         }
 
         if (months.length === 0) {
-            container.innerHTML = '<div class="empty-state"><span class="material-icons-round">settings</span><p>กรุณาตั้งค่ารอบปีงบประมาณก่อน</p></div>';
+            container.innerHTML = '<div class="empty-state"><span class="material-icons-round">settings</span><p>à¸à¸£à¸¸à¸“à¸²à¸•à¸±à¹‰à¸‡à¸„à¹ˆà¸²à¸£à¸­à¸šà¸›à¸µà¸‡à¸šà¸›à¸£à¸°à¸¡à¸²à¸“à¸à¹ˆà¸­à¸™</p></div>';
             return;
         }
 
         if (teachers.length === 0 && !searchQuery && !sectionFilter) {
-            container.innerHTML = '<div class="empty-state"><span class="material-icons-round">people</span><p>ยังไม่มีรายชื่อครู กรุณาเพิ่มรายชื่อก่อน</p></div>';
+            container.innerHTML = '<div class="empty-state"><span class="material-icons-round">people</span><p>à¸¢à¸±à¸‡à¹„à¸¡à¹ˆà¸¡à¸µà¸£à¸²à¸¢à¸Šà¸·à¹ˆà¸­à¸„à¸£à¸¹ à¸à¸£à¸¸à¸“à¸²à¹€à¸žà¸´à¹ˆà¸¡à¸£à¸²à¸¢à¸Šà¸·à¹ˆà¸­à¸à¹ˆà¸­à¸™</p></div>';
             return;
         }
 
         if (teachers.length === 0 && (searchQuery || sectionFilter)) {
-            container.innerHTML = '<div class="empty-state"><span class="material-icons-round">search_off</span><p>ไม่พบครูที่ค้นหาในกลุ่มที่เลือก</p></div>';
+            container.innerHTML = '<div class="empty-state"><span class="material-icons-round">search_off</span><p>à¹„à¸¡à¹ˆà¸žà¸šà¸„à¸£à¸¹à¸—à¸µà¹ˆà¸„à¹‰à¸™à¸«à¸²à¹ƒà¸™à¸à¸¥à¸¸à¹ˆà¸¡à¸—à¸µà¹ˆà¹€à¸¥à¸·à¸­à¸</p></div>';
             return;
         }
 
         // Leave types: Sick then Personal (as requested)
         const leaveTypes = [
-            { key: 'sick', label: 'ลาป่วย', cls: 'type-sick' },
-            { key: 'personal', label: 'ลากิจ', cls: 'type-personal' }
+            { key: 'sick', label: 'à¸¥à¸²à¸›à¹ˆà¸§à¸¢', cls: 'type-sick' },
+            { key: 'personal', label: 'à¸¥à¸²à¸à¸´à¸ˆ', cls: 'type-personal' }
         ];
 
         let html = '<table class="leave-table" id="leave-table">';
 
         // --- HEADER ROW 1: Month groups + Summary + Remarks ---
         html += '<thead><tr class="header-months">';
-        html += '<th class="sticky-left col-order" rowspan="2">ลำดับ</th>';
-        html += '<th class="sticky-left col-name" rowspan="2">ชื่อ-สกุล</th>';
+        html += '<th class="sticky-left col-order" rowspan="2">à¸¥à¸³à¸”à¸±à¸š</th>';
+        html += '<th class="sticky-left col-name" rowspan="2">à¸Šà¸·à¹ˆà¸­-à¸ªà¸à¸¸à¸¥</th>';
 
         months.forEach(({ month, year }) => {
             html += `<th colspan="2" class="month-header">${DataManager.getThaiMonth(month)} ${year}</th>`;
         });
 
-        html += '<th colspan="4" class="summary-header">รวมทั้งหมด</th>';
-        html += '<th class="remarks-header" rowspan="2">หมายเหตุ</th>';
+        html += '<th colspan="4" class="summary-header">à¸£à¸§à¸¡à¸—à¸±à¹‰à¸‡à¸«à¸¡à¸”</th>';
+        html += '<th class="remarks-header" rowspan="2">à¸«à¸¡à¸²à¸¢à¹€à¸«à¸•à¸¸</th>';
         html += '</tr>';
 
         // --- HEADER ROW 2: Leave types per month + Summary sub-headers ---
@@ -228,11 +228,11 @@ const LeaveTable = (() => {
             });
         });
 
-        // Summary sub-headers: ป่วย | กิจ | รวมครั้ง | รวมวัน
-        html += '<th class="type-col type-sick sum-col">ป่วย</th>';
-        html += '<th class="type-col type-personal sum-col">กิจ</th>';
-        html += '<th class="type-col type-times sum-col">รวมครั้ง</th>';
-        html += '<th class="type-col type-days sum-col">รวมวัน</th>';
+        // Summary sub-headers: à¸›à¹ˆà¸§à¸¢ | à¸à¸´à¸ˆ | à¸£à¸§à¸¡à¸„à¸£à¸±à¹‰à¸‡ | à¸£à¸§à¸¡à¸§à¸±à¸™
+        html += '<th class="type-col type-sick sum-col">à¸›à¹ˆà¸§à¸¢</th>';
+        html += '<th class="type-col type-personal sum-col">à¸à¸´à¸ˆ</th>';
+        html += '<th class="type-col type-times sum-col">à¸£à¸§à¸¡à¸„à¸£à¸±à¹‰à¸‡</th>';
+        html += '<th class="type-col type-days sum-col">à¸£à¸§à¸¡à¸§à¸±à¸™</th>';
         html += '</tr></thead>';
 
         // --- BODY ---
@@ -309,7 +309,7 @@ const LeaveTable = (() => {
             html += `<td class="summary-cell type-days">${totalDays || '-'}</td>`;
 
             // Remarks column
-            html += `<td class="remarks-cell" data-teacher="${teacher.id}" title="${remark ? escapeHtml(remark) : 'คลิกเพื่อเพิ่มหมายเหตุ'}">${remark ? escapeHtml(remark) : '<span class="remarks-placeholder">-</span>'}</td>`;
+            html += `<td class="remarks-cell" data-teacher="${teacher.id}" title="${remark ? escapeHtml(remark) : 'à¸„à¸¥à¸´à¸à¹€à¸žà¸·à¹ˆà¸­à¹€à¸žà¸´à¹ˆà¸¡à¸«à¸¡à¸²à¸¢à¹€à¸«à¸•à¸¸'}">${remark ? escapeHtml(remark) : '<span class="remarks-placeholder">-</span>'}</td>`;
 
             html += '</tr>';
 
@@ -325,7 +325,7 @@ const LeaveTable = (() => {
         // --- FOOTER: School summary ---
         html += '<tfoot><tr class="summary-row">';
         html += '<td class="sticky-left col-order"></td>';
-        html += `<td class="sticky-left col-name" style="font-size:0.8rem;">รวม (${teachers.length} คน)</td>`;
+        html += `<td class="sticky-left col-name" style="font-size:0.8rem;">à¸£à¸§à¸¡ (${teachers.length} à¸„à¸™)</td>`;
 
         months.forEach(({ month, year }) => {
             const key = `${month}-${year}`;
@@ -374,14 +374,14 @@ const LeaveTable = (() => {
             if (parts.length === 3) {
                 const m = parseInt(parts[1], 10);
                 let y = parseInt(parts[2], 10);
-                if (y < 2500) y += 543; // รองรับปี ค.ศ. แปลงเป็น พ.ศ. อัตโนมัติ
+                if (y < 2500) y += 543; // à¸£à¸­à¸‡à¸£à¸±à¸šà¸›à¸µ à¸„.à¸¨. à¹à¸›à¸¥à¸‡à¹€à¸›à¹‡à¸™ à¸ž.à¸¨. à¸­à¸±à¸•à¹‚à¸™à¸¡à¸±à¸•à¸´
                 return periodMonths.some(p => p.month === m && p.year === y);
             }
             return true; // Fallback if date is malformed
         });
         const lateCount = lateArrivals.length;
         if (lateCount > 0) {
-            const lateText = `มาสาย ${lateCount} ครั้ง`;
+            const lateText = `à¸¡à¸²à¸ªà¸²à¸¢ ${lateCount} à¸„à¸£à¸±à¹‰à¸‡`;
             if (remark) {
                 return `${remark} (${lateText})`;
             }
@@ -397,7 +397,7 @@ const LeaveTable = (() => {
     // --- Leave Modal ---
     function openLeaveModal(cell) {
         if (!App.isAdmin()) {
-            App.showToast('กรุณาเข้าสู่ระบบผู้ดูแลเพื่อแก้ไขข้อมูล', 'warning');
+            App.showToast('à¸à¸£à¸¸à¸“à¸²à¹€à¸‚à¹‰à¸²à¸ªà¸¹à¹ˆà¸£à¸°à¸šà¸šà¸œà¸¹à¹‰à¸”à¸¹à¹à¸¥à¹€à¸žà¸·à¹ˆà¸­à¹à¸à¹‰à¹„à¸‚à¸‚à¹‰à¸­à¸¡à¸¹à¸¥', 'warning');
             return;
         }
 
@@ -409,7 +409,7 @@ const LeaveTable = (() => {
         const teacher = DataManager.getTeachers().find(t => t.id === teacherId);
         const records = DataManager.getLeaveRecord(teacherId, month, year, type);
 
-        const typeLabels = { sick: 'ลาป่วย', personal: 'ลากิจส่วนตัว' };
+        const typeLabels = { sick: 'à¸¥à¸²à¸›à¹ˆà¸§à¸¢', personal: 'à¸¥à¸²à¸à¸´à¸ˆà¸ªà¹ˆà¸§à¸™à¸•à¸±à¸§' };
 
         document.getElementById('leave-teacher-name').textContent = teacher ? teacher.name : '';
         document.getElementById('leave-month-label').textContent = `${DataManager.getThaiMonthFull(month)} ${year}`;
@@ -427,8 +427,8 @@ const LeaveTable = (() => {
         if (deletedRecordsStack.length > 0) {
             html += `
                 <div style="background: rgba(239, 68, 68, 0.1); padding: 8px; border-bottom: 1px solid rgba(239, 68, 68, 0.2); font-size: 0.8rem; display: flex; justify-content: space-between; align-items: center;">
-                    <span style="color: var(--danger);">ลบรายการล่าสุดแล้ว</span>
-                    <button type="button" class="btn-undo-event" style="background: white; border: 1px solid var(--danger); color: var(--danger); border-radius: 4px; padding: 2px 8px; cursor: pointer; transition: all 0.2s;">ย้อนกลับ (Undo)</button>
+                    <span style="color: var(--danger);">à¸¥à¸šà¸£à¸²à¸¢à¸à¸²à¸£à¸¥à¹ˆà¸²à¸ªà¸¸à¸”à¹à¸¥à¹‰à¸§</span>
+                    <button type="button" class="btn-undo-event" style="background: white; border: 1px solid var(--danger); color: var(--danger); border-radius: 4px; padding: 2px 8px; cursor: pointer; transition: all 0.2s;">à¸¢à¹‰à¸­à¸™à¸à¸¥à¸±à¸š (Undo)</button>
                 </div>
             `;
         }
@@ -439,15 +439,15 @@ const LeaveTable = (() => {
                 html += `
                     <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid var(--border); font-size: 0.85rem;">
                         <div>
-                            <span style="font-weight: bold; color: var(--primary);">ครั้งที่ ${idx + 1}:</span> 
-                            ${r.times} ครั้ง / ${r.days} วัน 
+                            <span style="font-weight: bold; color: var(--primary);">à¸„à¸£à¸±à¹‰à¸‡à¸—à¸µà¹ˆ ${idx + 1}:</span> 
+                            ${r.times} à¸„à¸£à¸±à¹‰à¸‡ / ${r.days} à¸§à¸±à¸™ 
                             <span style="color: var(--text-secondary); margin-left: 5px;">${r.notes ? `(${r.notes})` : ''}</span>
                         </div>
                         <div style="display: flex; gap: 5px;">
-                            <button type="button" class="btn-icon-sm btn-edit-event" data-id="${r.id}" data-times="${r.times}" data-days="${r.days}" data-notes="${escapeHtml(r.notes || '')}" style="color: var(--primary); border: none; background: transparent; cursor: pointer;" title="แก้ไขรายการนี้">
+                            <button type="button" class="btn-icon-sm btn-edit-event" data-id="${r.id}" data-times="${r.times}" data-days="${r.days}" data-notes="${escapeHtml(r.notes || '')}" style="color: var(--primary); border: none; background: transparent; cursor: pointer;" title="à¹à¸à¹‰à¹„à¸‚à¸£à¸²à¸¢à¸à¸²à¸£à¸™à¸µà¹‰">
                                 <span class="material-icons-round" style="font-size: 16px;">edit</span>
                             </button>
-                            <button type="button" class="btn-icon-sm btn-delete-event" data-id="${r.id}" data-times="${r.times}" data-days="${r.days}" data-notes="${escapeHtml(r.notes || '')}" style="color: var(--danger); border: none; background: transparent; cursor: pointer;" title="ลบรายการนี้">
+                            <button type="button" class="btn-icon-sm btn-delete-event" data-id="${r.id}" data-times="${r.times}" data-days="${r.days}" data-notes="${escapeHtml(r.notes || '')}" style="color: var(--danger); border: none; background: transparent; cursor: pointer;" title="à¸¥à¸šà¸£à¸²à¸¢à¸à¸²à¸£à¸™à¸µà¹‰">
                                 <span class="material-icons-round" style="font-size: 16px;">delete</span>
                             </button>
                         </div>
@@ -457,9 +457,9 @@ const LeaveTable = (() => {
             historyList.innerHTML = html;
         } else {
             if (html === '') {
-                historyList.innerHTML = '<div style="padding: 10px; text-align: center; color: var(--text-muted); font-size: 0.85rem;">ยังไม่มีประวัติการลาในเดือนนี้</div>';
+                historyList.innerHTML = '<div style="padding: 10px; text-align: center; color: var(--text-muted); font-size: 0.85rem;">à¸¢à¸±à¸‡à¹„à¸¡à¹ˆà¸¡à¸µà¸›à¸£à¸°à¸§à¸±à¸•à¸´à¸à¸²à¸£à¸¥à¸²à¹ƒà¸™à¹€à¸”à¸·à¸­à¸™à¸™à¸µà¹‰</div>';
             } else {
-                historyList.innerHTML = html + '<div style="padding: 10px; text-align: center; color: var(--text-muted); font-size: 0.85rem;">ลบรายการทั้งหมดแล้ว</div>';
+                historyList.innerHTML = html + '<div style="padding: 10px; text-align: center; color: var(--text-muted); font-size: 0.85rem;">à¸¥à¸šà¸£à¸²à¸¢à¸à¸²à¸£à¸—à¸±à¹‰à¸‡à¸«à¸¡à¸”à¹à¸¥à¹‰à¸§</div>';
             }
         }
 
@@ -483,10 +483,10 @@ const LeaveTable = (() => {
 
         document.getElementById('leave-form-title').style.color = 'var(--primary)';
         document.getElementById('leave-form-icon').textContent = 'add_circle';
-        document.getElementById('leave-form-text').textContent = 'เพิ่มรายการลาใหม่';
+        document.getElementById('leave-form-text').textContent = 'à¹€à¸žà¸´à¹ˆà¸¡à¸£à¸²à¸¢à¸à¸²à¸£à¸¥à¸²à¹ƒà¸«à¸¡à¹ˆ';
         document.getElementById('btn-cancel-edit').style.display = 'none';
         document.getElementById('btn-save-icon').textContent = 'add';
-        document.getElementById('btn-save-text').textContent = 'เพิ่มรายการ';
+        document.getElementById('btn-save-text').textContent = 'à¹€à¸žà¸´à¹ˆà¸¡à¸£à¸²à¸¢à¸à¸²à¸£';
     }
 
     function saveLeave() {
@@ -497,17 +497,17 @@ const LeaveTable = (() => {
         const inputDays = parseFloat(document.getElementById('leave-days').value) || 0;
         const inputNotes = document.getElementById('leave-notes').value.trim();
         
-        if (inputTimes === 0 && inputDays === 0) {
-            App.showToast('กรุณาระบุจำนวนครั้ง หรือ วันที่ลา', 'warning');
+        if (inputTimes === 0 && inputDays === 0 || inputTimes < 0 || inputDays < 0) {
+            App.showToast('à¸à¸£à¸¸à¸“à¸²à¸£à¸°à¸šà¸¸à¸ˆà¸³à¸™à¸§à¸™à¸„à¸£à¸±à¹‰à¸‡ à¸«à¸£à¸·à¸­ à¸§à¸±à¸™à¸—à¸µà¹ˆà¸¥à¸²', 'warning');
             return;
         }
 
         if (editId) {
             DataManager.updateLeaveEvent(editId, inputTimes, inputDays, inputNotes);
-            App.showToast('อัปเดตข้อมูลการลาเรียบร้อย');
+            App.showToast('à¸­à¸±à¸›à¹€à¸”à¸•à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸à¸²à¸£à¸¥à¸²à¹€à¸£à¸µà¸¢à¸šà¸£à¹‰à¸­à¸¢');
         } else {
             DataManager.addLeaveEvent(currentEdit.teacherId, currentEdit.month, currentEdit.year, currentEdit.type, inputTimes, inputDays, inputNotes);
-            App.showToast('บันทึกข้อมูลการลาเรียบร้อย');
+            App.showToast('à¸šà¸±à¸™à¸—à¸¶à¸à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸à¸²à¸£à¸¥à¸²à¹€à¸£à¸µà¸¢à¸šà¸£à¹‰à¸­à¸¢');
         }
         
         App.hideModal('leave-modal');
@@ -518,7 +518,7 @@ const LeaveTable = (() => {
     // --- Remarks Modal ---
     function openRemarksModal(teacherId) {
         if (!App.isAdmin()) {
-            App.showToast('กรุณาเข้าสู่ระบบผู้ดูแลเพื่อแก้ไขหมายเหตุ', 'warning');
+            App.showToast('à¸à¸£à¸¸à¸“à¸²à¹€à¸‚à¹‰à¸²à¸ªà¸¹à¹ˆà¸£à¸°à¸šà¸šà¸œà¸¹à¹‰à¸”à¸¹à¹à¸¥à¹€à¸žà¸·à¹ˆà¸­à¹à¸à¹‰à¹„à¸‚à¸«à¸¡à¸²à¸¢à¹€à¸«à¸•à¸¸', 'warning');
             return;
         }
 
@@ -536,7 +536,7 @@ const LeaveTable = (() => {
         const text = document.getElementById('remarks-text').value;
         DataManager.setRemark(currentRemarkTeacherId, text);
         App.hideModal('remarks-modal');
-        App.showToast('บันทึกหมายเหตุเรียบร้อย');
+        App.showToast('à¸šà¸±à¸™à¸—à¸¶à¸à¸«à¸¡à¸²à¸¢à¹€à¸«à¸•à¸¸à¹€à¸£à¸µà¸¢à¸šà¸£à¹‰à¸­à¸¢');
         render();
         currentRemarkTeacherId = null;
     }
@@ -556,15 +556,15 @@ const LeaveTable = (() => {
         const settings = DataManager.getSettings();
 
         const leaveTypes = [
-            { key: 'sick', label: 'ป่วย' },
-            { key: 'personal', label: 'กิจ' }
+            { key: 'sick', label: 'à¸›à¹ˆà¸§à¸¢' },
+            { key: 'personal', label: 'à¸à¸´à¸ˆ' }
         ];
 
         const periodLabel = months.map(m => DataManager.getThaiMonth(m.month) + ' ' + m.year).join(' - ');
-        const sectionLabel = sectionFilter ? ` (กลุ่ม: ${sectionFilter})` : '';
+        const sectionLabel = sectionFilter ? ` (à¸à¸¥à¸¸à¹ˆà¸¡: ${sectionFilter})` : '';
 
         let html = `<!DOCTYPE html><html lang="th"><head><meta charset="UTF-8">
-        <title>ตารางบันทึกวันลา</title>
+        <title>à¸•à¸²à¸£à¸²à¸‡à¸šà¸±à¸™à¸—à¸¶à¸à¸§à¸±à¸™à¸¥à¸²</title>
         <style>
             @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap');
             * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -584,18 +584,18 @@ const LeaveTable = (() => {
                 body { padding: 0; }
             }
         </style></head><body>
-        <h2>ตารางบันทึกวันลาข้าราชการครู${sectionLabel}</h2>
-        <p class="subtitle">รอบ ${periodLabel}</p>
+        <h2>à¸•à¸²à¸£à¸²à¸‡à¸šà¸±à¸™à¸—à¸¶à¸à¸§à¸±à¸™à¸¥à¸²à¸‚à¹‰à¸²à¸£à¸²à¸Šà¸à¸²à¸£à¸„à¸£à¸¹${sectionLabel}</h2>
+        <p class="subtitle">à¸£à¸­à¸š ${periodLabel}</p>
         <table>`;
 
         // Header row 1
         html += '<thead><tr>';
-        html += '<th rowspan="2">ลำดับ</th><th rowspan="2">ชื่อ-สกุล</th>';
+        html += '<th rowspan="2">à¸¥à¸³à¸”à¸±à¸š</th><th rowspan="2">à¸Šà¸·à¹ˆà¸­-à¸ªà¸à¸¸à¸¥</th>';
         months.forEach(({ month, year }) => {
             html += `<th colspan="2" class="month-header">${DataManager.getThaiMonth(month)} ${year}</th>`;
         });
-        html += '<th colspan="4" class="summary-header">รวมทั้งหมด</th>';
-        html += '<th rowspan="2">หมายเหตุ</th>';
+        html += '<th colspan="4" class="summary-header">à¸£à¸§à¸¡à¸—à¸±à¹‰à¸‡à¸«à¸¡à¸”</th>';
+        html += '<th rowspan="2">à¸«à¸¡à¸²à¸¢à¹€à¸«à¸•à¸¸</th>';
         html += '</tr>';
 
         // Header row 2
@@ -603,7 +603,7 @@ const LeaveTable = (() => {
         months.forEach(() => {
             leaveTypes.forEach(lt => html += `<th>${lt.label}</th>`);
         });
-        html += '<th>ป่วย</th><th>กิจ</th><th>รวมครั้ง</th><th>รวมวัน</th>';
+        html += '<th>à¸›à¹ˆà¸§à¸¢</th><th>à¸à¸´à¸ˆ</th><th>à¸£à¸§à¸¡à¸„à¸£à¸±à¹‰à¸‡</th><th>à¸£à¸§à¸¡à¸§à¸±à¸™</th>';
         html += '</tr></thead>';
 
         // Body
@@ -651,7 +651,7 @@ const LeaveTable = (() => {
         const gd = schoolTotals.sick.days + schoolTotals.personal.days;
         const fmtT = (t) => (t.times || t.days) ? t.times + '/' + t.days : '-';
 
-        html += `<tr class="footer-row"><td></td><td class="name">รวม (${teachers.length} คน)</td>`;
+        html += `<tr class="footer-row"><td></td><td class="name">à¸£à¸§à¸¡ (${teachers.length} à¸„à¸™)</td>`;
         const teacherIds = teachers.map(t => t.id);
         months.forEach(({ month, year }) => {
             const key = `${month}-${year}`;
@@ -681,20 +681,20 @@ const LeaveTable = (() => {
         const months = DataManager.getPeriodMonths();
         const teachers = getFilteredTeachers();
         const leaveTypes = [
-            { key: 'sick', label: 'ป่วย' },
-            { key: 'personal', label: 'กิจส่วนตัว' }
+            { key: 'sick', label: 'à¸›à¹ˆà¸§à¸¢' },
+            { key: 'personal', label: 'à¸à¸´à¸ˆà¸ªà¹ˆà¸§à¸™à¸•à¸±à¸§' }
         ];
 
         // BOM for Thai encoding in Excel
         let csv = '\uFEFF';
 
         // Header row 1
-        let row1 = ['ลำดับ', 'ชื่อ-สกุล', 'กลุ่มสาระฯ'];
+        let row1 = ['à¸¥à¸³à¸”à¸±à¸š', 'à¸Šà¸·à¹ˆà¸­-à¸ªà¸à¸¸à¸¥', 'à¸à¸¥à¸¸à¹ˆà¸¡à¸ªà¸²à¸£à¸°à¸¯'];
         months.forEach(({ month, year }) => {
-            row1.push(`${DataManager.getThaiMonth(month)} ${year} ป่วย`);
-            row1.push(`${DataManager.getThaiMonth(month)} ${year} ลากิจ`);
+            row1.push(`${DataManager.getThaiMonth(month)} ${year} à¸›à¹ˆà¸§à¸¢`);
+            row1.push(`${DataManager.getThaiMonth(month)} ${year} à¸¥à¸²à¸à¸´à¸ˆ`);
         });
-        row1.push('รวม ป่วย', 'รวม กิจ', 'รวมทั้งหมด', 'รวม วัน', 'หมายเหตุ');
+        row1.push('à¸£à¸§à¸¡ à¸›à¹ˆà¸§à¸¢', 'à¸£à¸§à¸¡ à¸à¸´à¸ˆ', 'à¸£à¸§à¸¡à¸—à¸±à¹‰à¸‡à¸«à¸¡à¸”', 'à¸£à¸§à¸¡ à¸§à¸±à¸™', 'à¸«à¸¡à¸²à¸¢à¹€à¸«à¸•à¸¸');
         csv += row1.join(',') + '\n';
 
         const escapeCSV = (str) => {
@@ -738,12 +738,12 @@ const LeaveTable = (() => {
         a.href = url;
         const settings = DataManager.getSettings();
         const fileSec = sectionFilter ? `-${sectionFilter}` : '';
-        a.download = `ตารางวันลา-${settings.fiscalYear}${fileSec}.csv`;
+        a.download = `à¸•à¸²à¸£à¸²à¸‡à¸§à¸±à¸™à¸¥à¸²-${settings.fiscalYear}${fileSec}.csv`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-        App.showToast('ส่งออก CSV เรียบร้อย เปิดด้วย Excel ได้');
+        App.showToast('à¸ªà¹ˆà¸‡à¸­à¸­à¸ CSV à¹€à¸£à¸µà¸¢à¸šà¸£à¹‰à¸­à¸¢ à¹€à¸›à¸´à¸”à¸”à¹‰à¸§à¸¢ Excel à¹„à¸”à¹‰');
         
         // Close dropdown
         document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('show'));
@@ -756,3 +756,4 @@ const LeaveTable = (() => {
 
     return { init, render, resetFilters };
 })();
+

@@ -16,7 +16,7 @@
     <p>กำลังล้างแคชเก่า กรุณารอสักครู่</p>
 
     <script>
-        localStorage.clear();
+        // localStorage.clear(); // Removed to prevent data loss
         sessionStorage.clear();
 
         if ('serviceWorker' in navigator) {
@@ -45,3 +45,4 @@
     </script>
 </body>
 </html>
+

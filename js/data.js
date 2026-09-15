@@ -1,6 +1,6 @@
-/* ============================================
-   DataManager — Cloud Sync (Google Sheets) + LocalStorage Cache
-   (v2: Session Token auth — matches Code-api.js v2)
+﻿/* ============================================
+   DataManager â€” Cloud Sync (Google Sheets) + LocalStorage Cache
+   (v2: Session Token auth â€” matches Code-api.js v2)
    ============================================ */
 const DataManager = (() => {
     const KEYS = {
@@ -58,14 +58,14 @@ const DataManager = (() => {
         }
     }
 
-    // Pull data from Cloud into LocalStorage (On app start). Public endpoint — no token needed.
+    // Pull data from Cloud into LocalStorage (On app start). Public endpoint â€” no token needed.
     async function pullFromCloud() {
         const url = getCloudUrl();
         if (!url) return false; // No URL set, work offline
 
         try {
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 12000); // 12 วินาที Timeout
+            const timeoutId = setTimeout(() => controller.abort(), 12000); // 12 à¸§à¸´à¸™à¸²à¸—à¸µ Timeout
             
             const token = sessionStorage.getItem(SESSION_TOKEN_KEY) || '';
             const fetchUrl = url + '?t=' + Date.now() + (token ? '&token=' + encodeURIComponent(token) : '');
@@ -91,7 +91,7 @@ const DataManager = (() => {
                     localStorage.setItem(KEYS.lateArrivals, JSON.stringify(data.lateArrivals));
                 }
 
-                // NOTE: data.settings no longer contains adminPin/lateAdminPin — the server
+                // NOTE: data.settings no longer contains adminPin/lateAdminPin â€” the server
                 // strips those before responding. Any previously-cached PIN in localStorage
                 // gets overwritten here too, which is intentional: the PIN now only ever
                 // lives on the server, checked via the 'login' action below.
@@ -113,13 +113,13 @@ const DataManager = (() => {
 
         const token = getSessionToken();
         if (!token) {
-            // Logged in locally but no session token on file — most commonly this happens
+            // Logged in locally but no session token on file â€” most commonly this happens
             // the very first time a Cloud URL is saved (login happened before a URL existed),
             // or after a deploy of this new token-based version while an old session was
             // still marked "logged in" from before. Either way, syncing needs a fresh login.
             if (window.App && App.hideSyncIndicator) App.hideSyncIndicator();
             if (window.App && App.showToast) {
-                App.showToast('ยังไม่มีเซสชันสำหรับซิงค์ข้อมูล กรุณาออกจากระบบแล้วเข้าสู่ระบบใหม่อีกครั้ง', 'warning');
+                App.showToast('à¸¢à¸±à¸‡à¹„à¸¡à¹ˆà¸¡à¸µà¹€à¸‹à¸ªà¸Šà¸±à¸™à¸ªà¸³à¸«à¸£à¸±à¸šà¸‹à¸´à¸‡à¸„à¹Œà¸‚à¹‰à¸­à¸¡à¸¹à¸¥ à¸à¸£à¸¸à¸“à¸²à¸­à¸­à¸à¸ˆà¸²à¸à¸£à¸°à¸šà¸šà¹à¸¥à¹‰à¸§à¹€à¸‚à¹‰à¸²à¸ªà¸¹à¹ˆà¸£à¸°à¸šà¸šà¹ƒà¸«à¸¡à¹ˆà¸­à¸µà¸à¸„à¸£à¸±à¹‰à¸‡', 'warning');
             }
             return;
         }
@@ -144,7 +144,7 @@ const DataManager = (() => {
 
         try {
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 12000); // 12 วินาที Timeout
+            const timeoutId = setTimeout(() => controller.abort(), 12000); // 12 à¸§à¸´à¸™à¸²à¸—à¸µ Timeout
 
             const response = await fetch(url, {
                 method: 'POST',
@@ -162,16 +162,16 @@ const DataManager = (() => {
                 console.error('Cloud push error:', result.message);
 
                 const msg = result.message || '';
-                const looksExpired = msg.indexOf('หมดอายุ') !== -1 || msg.toLowerCase().indexOf('unauthorized') !== -1;
+                const looksExpired = msg.indexOf('à¸«à¸¡à¸”à¸­à¸²à¸¢à¸¸') !== -1 || msg.toLowerCase().indexOf('unauthorized') !== -1;
 
                 if (looksExpired) {
-                    // Server rejected the token — clear the local session too so the UI
+                    // Server rejected the token â€” clear the local session too so the UI
                     // immediately reflects "logged out" instead of silently failing to sync.
                     sessionStorage.removeItem('tla_is_admin');
                     sessionStorage.removeItem('tla_is_late_admin');
                     sessionStorage.removeItem(SESSION_TOKEN_KEY);
                     if (window.App && App.updateAuthUI) App.updateAuthUI();
-                    if (window.App && App.showToast) App.showToast('เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่เพื่อซิงค์ข้อมูล', 'warning');
+                    if (window.App && App.showToast) App.showToast('à¹€à¸‹à¸ªà¸Šà¸±à¸™à¸«à¸¡à¸”à¸­à¸²à¸¢à¸¸ à¸à¸£à¸¸à¸“à¸²à¹€à¸‚à¹‰à¸²à¸ªà¸¹à¹ˆà¸£à¸°à¸šà¸šà¹ƒà¸«à¸¡à¹ˆà¹€à¸žà¸·à¹ˆà¸­à¸‹à¸´à¸‡à¸„à¹Œà¸‚à¹‰à¸­à¸¡à¸¹à¸¥', 'warning');
                 }
             }
         } catch (error) {
@@ -184,11 +184,9 @@ const DataManager = (() => {
 
     // Debounce push to avoid spamming the cloud API
     function triggerCloudSync() {
-        // ให้ Super Admin ใช้ปุ่ม Force Sync เท่านั้น เพื่อจัดกลุ่มแจ้งเตือน
-        // แต่ให้ Late Admin (แอดมินครูเวร) Auto-sync ทันที เพราะไม่มีการแจ้งเตือนอยู่แล้ว
-        if (!isLateAdmin()) {
-            return;
-        }
+        // à¹ƒà¸«à¹‰ Super Admin à¹ƒà¸Šà¹‰à¸›à¸¸à¹ˆà¸¡ Force Sync à¹€à¸—à¹ˆà¸²à¸™à¸±à¹‰à¸™ à¹€à¸žà¸·à¹ˆà¸­à¸ˆà¸±à¸”à¸à¸¥à¸¸à¹ˆà¸¡à¹à¸ˆà¹‰à¸‡à¹€à¸•à¸·à¸­à¸™
+        // à¹à¸•à¹ˆà¹ƒà¸«à¹‰ Late Admin (à¹à¸­à¸”à¸¡à¸´à¸™à¸„à¸£à¸¹à¹€à¸§à¸£) Auto-sync à¸—à¸±à¸™à¸—à¸µ à¹€à¸žà¸£à¸²à¸°à¹„à¸¡à¹ˆà¸¡à¸µà¸à¸²à¸£à¹à¸ˆà¹‰à¸‡à¹€à¸•à¸·à¸­à¸™à¸­à¸¢à¸¹à¹ˆà¹à¸¥à¹‰à¸§
+        if (!isLateAdmin() && !isAdmin()) { return; }
 
         const url = getCloudUrl();
         if (!url) return;
@@ -221,12 +219,12 @@ const DataManager = (() => {
     }
 
     // login() is now async: when a Cloud URL is configured, the PIN is checked
-    // server-side and this device only ever receives a short-lived session token back —
+    // server-side and this device only ever receives a short-lived session token back â€”
     // the real PIN is never stored in or echoed back to the browser.
     async function login(pin) {
         const url = getCloudUrl();
 
-        // Offline fallback — only meaningful before a Cloud URL has ever been configured.
+        // Offline fallback â€” only meaningful before a Cloud URL has ever been configured.
         // Once connected to the cloud, pullFromCloud() overwrites local settings with the
         // server's PIN-stripped copy, so this branch naturally stops being able to see a
         // real custom PIN and instead falls back to the defaults below.
@@ -337,8 +335,8 @@ const DataManager = (() => {
     }
 
     // --- Thai Month Names ---
-    const THAI_MONTHS = ['', 'ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
-    const THAI_MONTHS_FULL = ['', 'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
+    const THAI_MONTHS = ['', 'à¸¡.à¸„.', 'à¸.à¸ž.', 'à¸¡à¸µ.à¸„.', 'à¹€à¸¡.à¸¢.', 'à¸ž.à¸„.', 'à¸¡à¸´.à¸¢.', 'à¸.à¸„.', 'à¸ª.à¸„.', 'à¸.à¸¢.', 'à¸•.à¸„.', 'à¸ž.à¸¢.', 'à¸˜.à¸„.'];
+    const THAI_MONTHS_FULL = ['', 'à¸¡à¸à¸£à¸²à¸„à¸¡', 'à¸à¸¸à¸¡à¸ à¸²à¸žà¸±à¸™à¸˜à¹Œ', 'à¸¡à¸µà¸™à¸²à¸„à¸¡', 'à¹€à¸¡à¸©à¸²à¸¢à¸™', 'à¸žà¸¤à¸©à¸ à¸²à¸„à¸¡', 'à¸¡à¸´à¸–à¸¸à¸™à¸²à¸¢à¸™', 'à¸à¸£à¸à¸Žà¸²à¸„à¸¡', 'à¸ªà¸´à¸‡à¸«à¸²à¸„à¸¡', 'à¸à¸±à¸™à¸¢à¸²à¸¢à¸™', 'à¸•à¸¸à¸¥à¸²à¸„à¸¡', 'à¸žà¸¤à¸¨à¸ˆà¸´à¸à¸²à¸¢à¸™', 'à¸˜à¸±à¸™à¸§à¸²à¸„à¸¡'];
 
     function getThaiMonth(m) { return THAI_MONTHS[m] || ''; }
     function getThaiMonthFull(m) { return THAI_MONTHS_FULL[m] || ''; }
@@ -370,14 +368,14 @@ const DataManager = (() => {
 
     function getSections() {
         const teachers = getTeachers();
-        const sections = [...new Set(teachers.map(t => t.section || 'ทั่วไป'))];
+        const sections = [...new Set(teachers.map(t => t.section || 'à¸—à¸±à¹ˆà¸§à¹„à¸›'))];
         return sections.sort();
     }
 
     function addTeacher(name, section, order, gender = '', title = '') {
         const teachers = load(KEYS.teachers, []);
         shiftOrdersFrom(teachers, order);
-        const teacher = { id: generateId(), name, section: section || 'ทั่วไป', order, gender, title };
+        const teacher = { id: generateId(), name, section: section || 'à¸—à¸±à¹ˆà¸§à¹„à¸›', order, gender, title };
         teachers.push(teacher);
         teachers.sort((a, b) => a.order - b.order);
         save(KEYS.teachers, teachers);
@@ -390,7 +388,7 @@ const DataManager = (() => {
         const added = [];
         items.forEach(item => {
             const name = (item.name || '').trim();
-            const section = (item.section || 'ทั่วไป').trim();
+            const section = (item.section || 'à¸—à¸±à¹ˆà¸§à¹„à¸›').trim();
             if (!name) return;
             const teacher = {
                 id: generateId(),
@@ -413,7 +411,7 @@ const DataManager = (() => {
         if (!teacher) return null;
 
         teacher.name = name;
-        teacher.section = section || 'ทั่วไป';
+        teacher.section = section || 'à¸—à¸±à¹ˆà¸§à¹„à¸›';
         teacher.gender = gender;
         teacher.title = title;
 
@@ -698,7 +696,7 @@ const DataManager = (() => {
         requests.push(newReq);
         save(KEYS.leaveRequests, requests);
 
-        // ส่งใบลาขึ้น Google Sheets ทันทีแม้จะไม่ใช่ Admin — เป็น public endpoint ไม่ต้องใช้ token
+        // à¸ªà¹ˆà¸‡à¹ƒà¸šà¸¥à¸²à¸‚à¸¶à¹‰à¸™ Google Sheets à¸—à¸±à¸™à¸—à¸µà¹à¸¡à¹‰à¸ˆà¸°à¹„à¸¡à¹ˆà¹ƒà¸Šà¹ˆ Admin â€” à¹€à¸›à¹‡à¸™ public endpoint à¹„à¸¡à¹ˆà¸•à¹‰à¸­à¸‡à¹ƒà¸Šà¹‰ token
         const url = getCloudUrl();
         if (url) {
             fetch(url, {
@@ -749,35 +747,35 @@ const DataManager = (() => {
     // =====================
     function loadDemoData() {
         const demoTeachers = [
-            { id: 't001', name: 'นายสมชาย ใจดี', section: 'สายชั้น ป.1-3', order: 1 },
-            { id: 't002', name: 'นางสาวสมหญิง รักเรียน', section: 'สายชั้น ป.1-3', order: 2 },
-            { id: 't003', name: 'นายวิชัย พัฒนา', section: 'สายชั้น ป.4-6', order: 3 },
-            { id: 't004', name: 'นางมาลี สุขสันต์', section: 'สายชั้น ป.4-6', order: 4 },
-            { id: 't005', name: 'นายประเสริฐ ดีเด่น', section: 'หมวดคณิตศาสตร์', order: 5 },
-            { id: 't006', name: 'นางสาวนภา ท้องฟ้า', section: 'หมวดวิทยาศาสตร์', order: 6 },
-            { id: 't007', name: 'นายอดุลย์ รักชาติ', section: 'หมวดภาษาต่างประเทศ', order: 7 },
-            { id: 't008', name: 'นางพรทิพย์ งามตา', section: 'หมวดภาษาต่างประเทศ', order: 8 },
-            { id: 't009', name: 'นายสุรชัย แกร่งกล้า', section: 'ทั่วไป', order: 9 },
-            { id: 't010', name: 'นางสาวจิราภรณ์ ศรีสะอาด', section: 'ทั่วไป', order: 10 }
+            { id: 't001', name: 'à¸™à¸²à¸¢à¸ªà¸¡à¸Šà¸²à¸¢ à¹ƒà¸ˆà¸”à¸µ', section: 'à¸ªà¸²à¸¢à¸Šà¸±à¹‰à¸™ à¸›.1-3', order: 1 },
+            { id: 't002', name: 'à¸™à¸²à¸‡à¸ªà¸²à¸§à¸ªà¸¡à¸«à¸à¸´à¸‡ à¸£à¸±à¸à¹€à¸£à¸µà¸¢à¸™', section: 'à¸ªà¸²à¸¢à¸Šà¸±à¹‰à¸™ à¸›.1-3', order: 2 },
+            { id: 't003', name: 'à¸™à¸²à¸¢à¸§à¸´à¸Šà¸±à¸¢ à¸žà¸±à¸’à¸™à¸²', section: 'à¸ªà¸²à¸¢à¸Šà¸±à¹‰à¸™ à¸›.4-6', order: 3 },
+            { id: 't004', name: 'à¸™à¸²à¸‡à¸¡à¸²à¸¥à¸µ à¸ªà¸¸à¸‚à¸ªà¸±à¸™à¸•à¹Œ', section: 'à¸ªà¸²à¸¢à¸Šà¸±à¹‰à¸™ à¸›.4-6', order: 4 },
+            { id: 't005', name: 'à¸™à¸²à¸¢à¸›à¸£à¸°à¹€à¸ªà¸£à¸´à¸ à¸”à¸µà¹€à¸”à¹ˆà¸™', section: 'à¸«à¸¡à¸§à¸”à¸„à¸“à¸´à¸•à¸¨à¸²à¸ªà¸•à¸£à¹Œ', order: 5 },
+            { id: 't006', name: 'à¸™à¸²à¸‡à¸ªà¸²à¸§à¸™à¸ à¸² à¸—à¹‰à¸­à¸‡à¸Ÿà¹‰à¸²', section: 'à¸«à¸¡à¸§à¸”à¸§à¸´à¸—à¸¢à¸²à¸¨à¸²à¸ªà¸•à¸£à¹Œ', order: 6 },
+            { id: 't007', name: 'à¸™à¸²à¸¢à¸­à¸”à¸¸à¸¥à¸¢à¹Œ à¸£à¸±à¸à¸Šà¸²à¸•à¸´', section: 'à¸«à¸¡à¸§à¸”à¸ à¸²à¸©à¸²à¸•à¹ˆà¸²à¸‡à¸›à¸£à¸°à¹€à¸—à¸¨', order: 7 },
+            { id: 't008', name: 'à¸™à¸²à¸‡à¸žà¸£à¸—à¸´à¸žà¸¢à¹Œ à¸‡à¸²à¸¡à¸•à¸²', section: 'à¸«à¸¡à¸§à¸”à¸ à¸²à¸©à¸²à¸•à¹ˆà¸²à¸‡à¸›à¸£à¸°à¹€à¸—à¸¨', order: 8 },
+            { id: 't009', name: 'à¸™à¸²à¸¢à¸ªà¸¸à¸£à¸Šà¸±à¸¢ à¹à¸à¸£à¹ˆà¸‡à¸à¸¥à¹‰à¸²', section: 'à¸—à¸±à¹ˆà¸§à¹„à¸›', order: 9 },
+            { id: 't010', name: 'à¸™à¸²à¸‡à¸ªà¸²à¸§à¸ˆà¸´à¸£à¸²à¸ à¸£à¸“à¹Œ à¸¨à¸£à¸µà¸ªà¸°à¸­à¸²à¸”', section: 'à¸—à¸±à¹ˆà¸§à¹„à¸›', order: 10 }
         ];
 
         localStorage.setItem(KEYS.teachers, JSON.stringify(demoTeachers));
         localStorage.setItem(KEYS.settings, JSON.stringify({ startMonth: 10, endMonth: 3, fiscalYear: 2568, adminPin: '1234' }));
 
         const demoRecords = [
-            { teacherId: 't001', month: 10, year: 2568, type: 'personal', times: 1, days: 2, notes: 'ลาวันที่ 10-11 ต.ค.' },
-            { teacherId: 't001', month: 11, year: 2568, type: 'sick', times: 1, days: 1, notes: 'ลาวันที่ 5 พ.ย.' },
-            { teacherId: 't002', month: 10, year: 2568, type: 'sick', times: 2, days: 3, notes: 'ลาวันที่ 3-4, 15 ต.ค.' },
-            { teacherId: 't002', month: 12, year: 2568, type: 'personal', times: 1, days: 1, notes: 'ลาวันที่ 20 ธ.ค.' },
-            { teacherId: 't003', month: 11, year: 2568, type: 'personal', times: 1, days: 1, notes: 'ลาวันที่ 8 พ.ย.' },
-            { teacherId: 't003', month: 1, year: 2569, type: 'sick', times: 1, days: 2, notes: 'ลาวันที่ 15-16 ม.ค.' }
+            { teacherId: 't001', month: 10, year: 2568, type: 'personal', times: 1, days: 2, notes: 'à¸¥à¸²à¸§à¸±à¸™à¸—à¸µà¹ˆ 10-11 à¸•.à¸„.' },
+            { teacherId: 't001', month: 11, year: 2568, type: 'sick', times: 1, days: 1, notes: 'à¸¥à¸²à¸§à¸±à¸™à¸—à¸µà¹ˆ 5 à¸ž.à¸¢.' },
+            { teacherId: 't002', month: 10, year: 2568, type: 'sick', times: 2, days: 3, notes: 'à¸¥à¸²à¸§à¸±à¸™à¸—à¸µà¹ˆ 3-4, 15 à¸•.à¸„.' },
+            { teacherId: 't002', month: 12, year: 2568, type: 'personal', times: 1, days: 1, notes: 'à¸¥à¸²à¸§à¸±à¸™à¸—à¸µà¹ˆ 20 à¸˜.à¸„.' },
+            { teacherId: 't003', month: 11, year: 2568, type: 'personal', times: 1, days: 1, notes: 'à¸¥à¸²à¸§à¸±à¸™à¸—à¸µà¹ˆ 8 à¸ž.à¸¢.' },
+            { teacherId: 't003', month: 1, year: 2569, type: 'sick', times: 1, days: 2, notes: 'à¸¥à¸²à¸§à¸±à¸™à¸—à¸µà¹ˆ 15-16 à¸¡.à¸„.' }
         ];
 
         localStorage.setItem(KEYS.leaveRecords, JSON.stringify(demoRecords));
 
         const demoRemarks = {
-            't004': 'ครูประจำชั้น ป.4/1',
-            't009': 'ย้ายมาจาก รร.อื่น'
+            't004': 'à¸„à¸£à¸¹à¸›à¸£à¸°à¸ˆà¸³à¸Šà¸±à¹‰à¸™ à¸›.4/1',
+            't009': 'à¸¢à¹‰à¸²à¸¢à¸¡à¸²à¸ˆà¸²à¸ à¸£à¸£.à¸­à¸·à¹ˆà¸™'
         };
         localStorage.setItem(KEYS.remarks, JSON.stringify(demoRemarks));
 
@@ -791,7 +789,7 @@ const DataManager = (() => {
 
     function clearAllData() {
         if (getCloudUrl()) {
-            App.showToast('ไม่สามารถล้างข้อมูลจากแอปได้ขณะเชื่อมต่อฐานข้อมูล (โปรดลบจาก Google Sheet แทน)', 'error');
+            App.showToast('à¹„à¸¡à¹ˆà¸ªà¸²à¸¡à¸²à¸£à¸–à¸¥à¹‰à¸²à¸‡à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸ˆà¸²à¸à¹à¸­à¸›à¹„à¸”à¹‰à¸‚à¸“à¸°à¹€à¸Šà¸·à¹ˆà¸­à¸¡à¸•à¹ˆà¸­à¸à¸²à¸™à¸‚à¹‰à¸­à¸¡à¸¹à¸¥ (à¹‚à¸›à¸£à¸”à¸¥à¸šà¸ˆà¸²à¸ Google Sheet à¹à¸—à¸™)', 'error');
             return;
         }
         localStorage.removeItem(KEYS.teachers);
@@ -804,7 +802,7 @@ const DataManager = (() => {
 
     function clearLeaveData() {
         if (getCloudUrl()) {
-            App.showToast('ไม่สามารถล้างข้อมูลจากแอปได้ขณะเชื่อมต่อฐานข้อมูล (โปรดลบจาก Google Sheet แทน)', 'error');
+            App.showToast('à¹„à¸¡à¹ˆà¸ªà¸²à¸¡à¸²à¸£à¸–à¸¥à¹‰à¸²à¸‡à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸ˆà¸²à¸à¹à¸­à¸›à¹„à¸”à¹‰à¸‚à¸“à¸°à¹€à¸Šà¸·à¹ˆà¸­à¸¡à¸•à¹ˆà¸­à¸à¸²à¸™à¸‚à¹‰à¸­à¸¡à¸¹à¸¥ (à¹‚à¸›à¸£à¸”à¸¥à¸šà¸ˆà¸²à¸ Google Sheet à¹à¸—à¸™)', 'error');
             return;
         }
         localStorage.removeItem(KEYS.leaveRecords);
@@ -842,3 +840,4 @@ const DataManager = (() => {
         loadDemoData, hasData, clearAllData, clearLeaveData, getLateArrivals, addLateArrival, deleteLateArrival
     };
 })();
+
