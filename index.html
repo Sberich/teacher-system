@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ระบบบันทึกข้อมูลวันลาข้าราชการครู v1.2.1</title>
-    <meta name="description" content="ระบบบันทึกและแสดงข้อมูลวันลาข้าราชการครู สำหรับสถานศึกษา">
+    <title>à¸£à¸°à¸šà¸šà¸šà¸±à¸™à¸—à¸¶à¸à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸§à¸±à¸™à¸¥à¸²à¸‚à¹‰à¸²à¸£à¸²à¸Šà¸à¸²à¸£à¸„à¸£à¸¹ v1.2.1</title>
+    <meta name="description" content="à¸£à¸°à¸šà¸šà¸šà¸±à¸™à¸—à¸¶à¸à¹à¸¥à¸°à¹à¸ªà¸”à¸‡à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸§à¸±à¸™à¸¥à¸²à¸‚à¹‰à¸²à¸£à¸²à¸Šà¸à¸²à¸£à¸„à¸£à¸¹ à¸ªà¸³à¸«à¸£à¸±à¸šà¸ªà¸–à¸²à¸™à¸¨à¸¶à¸à¸©à¸²">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%233b82f6'%3E%3Cpath d='M12 3L1 9L12 15L21 10.09V17H23V9M5 13.18V17.18C5 17.18 8.13 21 12 21C15.87 21 19 17.18 19 17.18V13.18C19 13.18 15.87 17 12 17C8.13 17 5 13.18 5 13.18Z'/%3E%3C/svg%3E">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
@@ -20,12 +20,12 @@
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="ระบบวันลา">
+    <meta name="apple-mobile-web-app-title" content="à¸£à¸°à¸šà¸šà¸§à¸±à¸™à¸¥à¸²">
     <link rel="apple-touch-icon" href="icon-app.png">
 
 
 <style>
-﻿/* --- Dynamic Calendar Logo --- */
+ï»¿/* --- Dynamic Calendar Logo --- */
 .dynamic-logo-wrapper {
     position: relative;
     width: 38px;
@@ -181,27 +181,28 @@ select.form-control option {
 
 
 </style>
+    <link rel="stylesheet" href="css/crystal-dropdown.css?v=2.0">
 </head>
 <body>
     <!-- Global Loader (For Initial Cloud Pull) -->
     <div id="global-loader" class="global-loader" style="display:none;">
         <div class="loader-spinner"></div>
-        <p>กำลังเชื่อมต่อฐานข้อมูล...</p>
+        <p>à¸à¸³à¸¥à¸±à¸‡à¹€à¸Šà¸·à¹ˆà¸­à¸¡à¸•à¹ˆà¸­à¸à¸²à¸™à¸‚à¹‰à¸­à¸¡à¸¹à¸¥...</p>
     </div>
 
     <!-- Background Sync Indicator -->
     <div id="sync-indicator" class="sync-indicator" style="display:none;">
         <span class="material-icons-round spinning">sync</span>
-        <span>กำลังซิงค์ข้อมูล...</span>
+        <span>à¸à¸³à¸¥à¸±à¸‡à¸‹à¸´à¸‡à¸„à¹Œà¸‚à¹‰à¸­à¸¡à¸¹à¸¥...</span>
     </div>
 
     <!-- Header / Navigation -->
     <header id="app-header">
         <div class="header-left">
-            <button id="hamburger-btn" class="hamburger" aria-label="เมนู">
+            <button id="hamburger-btn" class="hamburger" aria-label="à¹€à¸¡à¸™à¸¹">
                 <span class="material-icons-round">menu</span>
             </button>
-            <div class="logo" style="cursor:pointer;" onclick="openAbout()" title="เกี่ยวกับระบบ">
+            <div class="logo" style="cursor:pointer;" onclick="openAbout()" title="à¹€à¸à¸µà¹ˆà¸¢à¸§à¸à¸±à¸šà¸£à¸°à¸šà¸š">
                 <div class="dynamic-logo-wrapper" id="dynamic-logo-1">
                     <span class="material-icons-round dynamic-logo-cap">school</span>
                     <div class="dynamic-logo-cal">
@@ -211,8 +212,8 @@ select.form-control option {
                     </div>
                 </div>
                 <h1>
-                    <span class="desktop-title">ระบบบันทึกข้อมูลวันลาข้าราชการครู</span>
-                    <span class="mobile-title">ระบบวันลาครู</span>
+                    <span class="desktop-title">à¸£à¸°à¸šà¸šà¸šà¸±à¸™à¸—à¸¶à¸à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸§à¸±à¸™à¸¥à¸²à¸‚à¹‰à¸²à¸£à¸²à¸Šà¸à¸²à¸£à¸„à¸£à¸¹</span>
+                    <span class="mobile-title">à¸£à¸°à¸šà¸šà¸§à¸±à¸™à¸¥à¸²à¸„à¸£à¸¹</span>
                 </h1>
             </div>
         </div>
@@ -228,57 +229,57 @@ select.form-control option {
                         </div>
                     </div>
                     <div class="nav-header-text">
-                        <h2>ระบบแสดงข้อมูลวันลา</h2>
-                        <p id="nav-role-text">สำหรับสถานศึกษา</p>
+                        <h2>à¸£à¸°à¸šà¸šà¹à¸ªà¸”à¸‡à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸§à¸±à¸™à¸¥à¸²</h2>
+                        <p id="nav-role-text">à¸ªà¸³à¸«à¸£à¸±à¸šà¸ªà¸–à¸²à¸™à¸¨à¸¶à¸à¸©à¸²</p>
                     </div>
                 </div>
-                <button id="mobile-nav-close" class="btn-icon" aria-label="ปิดเมนู">
+                <button id="mobile-nav-close" class="btn-icon" aria-label="à¸›à¸´à¸”à¹€à¸¡à¸™à¸¹">
                     <span class="material-icons-round">close</span>
                 </button>
             </div>
             <a href="#" class="nav-item" data-page="leave-request" style="padding: 0 16px;">
-                <span class="nav-label" style="font-size: 1.15rem; font-weight: 800; color: var(--primary); letter-spacing: 0.5px;">ยื่นใบลา</span>
+                <span class="nav-label" style="font-size: 1.15rem; font-weight: 800; color: var(--primary); letter-spacing: 0.5px;">à¸¢à¸·à¹ˆà¸™à¹ƒà¸šà¸¥à¸²</span>
             </a>
             <a href="#" class="nav-item active" data-page="table">
                 <span class="material-icons-round">table_chart</span>
-                <span class="nav-label">ตารางวันลา</span>
+                <span class="nav-label">à¸•à¸²à¸£à¸²à¸‡à¸§à¸±à¸™à¸¥à¸²</span>
             </a>
             <a href="#" class="nav-item" data-page="dashboard">
                 <span class="material-icons-round">dashboard</span>
-                <span class="nav-label">แดชบอร์ด</span>
+                <span class="nav-label">à¹à¸”à¸Šà¸šà¸­à¸£à¹Œà¸”</span>
             </a>
             <a href="#" class="nav-item late-admin-only" data-page="late-arrival">
                 <span class="material-icons-round">schedule</span>
-                <span class="nav-label">บันทึกมาสาย</span>
+                <span class="nav-label">à¸šà¸±à¸™à¸—à¸¶à¸à¸¡à¸²à¸ªà¸²à¸¢</span>
             </a>
             <a href="#" class="nav-item" data-page="calendar">
                 <span class="material-icons-round">calendar_month</span>
-                <span class="nav-label">ปฏิทิน</span>
+                <span class="nav-label">à¸›à¸à¸´à¸—à¸´à¸™</span>
             </a>
             <a href="#" class="nav-item admin-only" data-page="manage-requests">
                 <span class="material-icons-round">fact_check</span>
-                <span class="nav-label">จัดการคำขอลา</span>
+                <span class="nav-label">à¸ˆà¸±à¸”à¸à¸²à¸£à¸„à¸³à¸‚à¸­à¸¥à¸²</span>
             </a>
             <a href="#" class="nav-item admin-only" data-page="teachers">
                 <span class="material-icons-round">people</span>
-                <span class="nav-label">รายชื่อครู</span>
+                <span class="nav-label">à¸£à¸²à¸¢à¸Šà¸·à¹ˆà¸­à¸„à¸£à¸¹</span>
             </a>
             <a href="#" class="nav-item admin-only" data-page="settings">
                 <span class="material-icons-round">settings</span>
-                <span class="nav-label">ตั้งค่า</span>
+                <span class="nav-label">à¸•à¸±à¹‰à¸‡à¸„à¹ˆà¸²</span>
             </a>
         </nav>
         <div class="header-right">
-            <button id="btn-refresh-data" class="btn-icon" aria-label="รีเฟรชข้อมูล" title="ดึงข้อมูลล่าสุด">
+            <button id="btn-refresh-data" class="btn-icon" aria-label="à¸£à¸µà¹€à¸Ÿà¸£à¸Šà¸‚à¹‰à¸­à¸¡à¸¹à¸¥" title="à¸”à¸¶à¸‡à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸¥à¹ˆà¸²à¸ªà¸¸à¸”">
                 <span class="material-icons-round">sync</span>
             </button>
-            <button id="btn-force-save" class="btn-icon admin-only" aria-label="บังคับบันทึกอัปข้อมูลขึ้นคลาวด์" title="บังคับบันทึกอัปข้อมูลขึ้นคลาวด์ทันที (ข้ามการรออัปเดตอัตโนมัติ)">
+            <button id="btn-force-save" class="btn-icon admin-only" aria-label="à¸šà¸±à¸‡à¸„à¸±à¸šà¸šà¸±à¸™à¸—à¸¶à¸à¸­à¸±à¸›à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸‚à¸¶à¹‰à¸™à¸„à¸¥à¸²à¸§à¸”à¹Œ" title="à¸šà¸±à¸‡à¸„à¸±à¸šà¸šà¸±à¸™à¸—à¸¶à¸à¸­à¸±à¸›à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸‚à¸¶à¹‰à¸™à¸„à¸¥à¸²à¸§à¸”à¹Œà¸—à¸±à¸™à¸—à¸µ (à¸‚à¹‰à¸²à¸¡à¸à¸²à¸£à¸£à¸­à¸­à¸±à¸›à¹€à¸”à¸•à¸­à¸±à¸•à¹‚à¸™à¸¡à¸±à¸•à¸´)">
                 <span class="material-icons-round">cloud_upload</span>
             </button>
-            <button id="auth-toggle" class="btn-icon" aria-label="เข้าสู่ระบบ" title="เข้าสู่ระบบผู้ดูแล">
+            <button id="auth-toggle" class="btn-icon" aria-label="à¹€à¸‚à¹‰à¸²à¸ªà¸¹à¹ˆà¸£à¸°à¸šà¸š" title="à¹€à¸‚à¹‰à¸²à¸ªà¸¹à¹ˆà¸£à¸°à¸šà¸šà¸œà¸¹à¹‰à¸”à¸¹à¹à¸¥">
                 <span class="material-icons-round">lock</span>
             </button>
-            <button id="theme-toggle" class="btn-icon" aria-label="สลับธีม">
+            <button id="theme-toggle" class="btn-icon" aria-label="à¸ªà¸¥à¸±à¸šà¸˜à¸µà¸¡">
                 <span class="material-icons-round">dark_mode</span>
             </button>
         </div>
@@ -297,21 +298,21 @@ select.form-control option {
                         <span class="material-icons-round" style="color:var(--danger);font-size:24px;">schedule</span>
                     </div>
                     <div>
-                        <h1 style="font-size: 1.4rem; font-weight: 700; color: var(--text); margin:0;">บันทึกมาสาย</h1>
-                        <p style="color: var(--text-secondary); font-size: 0.85rem; margin:0; margin-top:2px;">บันทึกเวลามาสายของบุคลากร</p>
+                        <h1 style="font-size: 1.4rem; font-weight: 700; color: var(--text); margin:0;">à¸šà¸±à¸™à¸—à¸¶à¸à¸¡à¸²à¸ªà¸²à¸¢</h1>
+                        <p style="color: var(--text-secondary); font-size: 0.85rem; margin:0; margin-top:2px;">à¸šà¸±à¸™à¸—à¸¶à¸à¹€à¸§à¸¥à¸²à¸¡à¸²à¸ªà¸²à¸¢à¸‚à¸­à¸‡à¸šà¸¸à¸„à¸¥à¸²à¸à¸£</p>
                     </div>
                 </div>
                 <div class="page-actions late-admin-only" style="display:flex; gap:8px;">
                     <div class="dropdown">
-                        <button class="btn-secondary dropdown-toggle" id="btn-export-late-menu" title="ส่งออกข้อมูล">
+                        <button class="btn-secondary dropdown-toggle" id="btn-export-late-menu" title="à¸ªà¹ˆà¸‡à¸­à¸­à¸à¸‚à¹‰à¸­à¸¡à¸¹à¸¥">
                             <span class="material-icons-round">ios_share</span>
                         </button>
                         <div class="dropdown-menu">
                             <button class="dropdown-item" id="btn-print-late-table">
-                                <span class="material-icons-round">print</span> พิมพ์ตาราง
+                                <span class="material-icons-round">print</span> à¸žà¸´à¸¡à¸žà¹Œà¸•à¸²à¸£à¸²à¸‡
                             </button>
                             <button class="dropdown-item" id="btn-export-late-csv">
-                                <span class="material-icons-round">download</span> ดาวน์โหลด CSV
+                                <span class="material-icons-round">download</span> à¸”à¸²à¸§à¸™à¹Œà¹‚à¸«à¸¥à¸” CSV
                             </button>
                         </div>
                     </div>
@@ -326,29 +327,29 @@ select.form-control option {
                     <div style="width:40px;height:40px;background:rgba(59, 130, 246, 0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;">
                         <span class="material-icons-round" style="color:var(--primary);font-size:24px;">date_range</span>
                     </div>
-                    <h2 style="font-size:1.4rem;font-weight:700;margin:0;">ตารางบันทึกวันลา</h2>
+                    <h2 style="font-size:1.4rem;font-weight:700;margin:0;">à¸•à¸²à¸£à¸²à¸‡à¸šà¸±à¸™à¸—à¸¶à¸à¸§à¸±à¸™à¸¥à¸²</h2>
                 </div>
                 <div class="page-actions admin-only admin-only-flex">
                     <div class="form-group" style="margin-bottom:0;">
                         <select id="table-section-filter" style="padding: 8px 12px; min-width: 140px;">
-                            <option value="">ทุกหมวดหมู่/กลุ่ม</option>
+                            <option value="">à¸—à¸¸à¸à¸«à¸¡à¸§à¸”à¸«à¸¡à¸¹à¹ˆ/à¸à¸¥à¸¸à¹ˆà¸¡</option>
                             <!-- Sections rendered by table.js -->
                         </select>
                     </div>
                     <div class="search-box">
                         <span class="material-icons-round">search</span>
-                        <input type="text" id="table-search" placeholder="ค้นหาชื่อครู...">
+                        <input type="text" id="table-search" placeholder="à¸„à¹‰à¸™à¸«à¸²à¸Šà¸·à¹ˆà¸­à¸„à¸£à¸¹...">
                     </div>
                     <div class="dropdown">
-                        <button class="btn-secondary dropdown-toggle" id="btn-export-menu" title="ส่งออกข้อมูล">
+                        <button class="btn-secondary dropdown-toggle" id="btn-export-menu" title="à¸ªà¹ˆà¸‡à¸­à¸­à¸à¸‚à¹‰à¸­à¸¡à¸¹à¸¥">
                             <span class="material-icons-round">ios_share</span>
                         </button>
                         <div class="dropdown-menu">
                             <button class="dropdown-item" id="btn-print-table">
-                                <span class="material-icons-round">print</span> พิมพ์ตาราง
+                                <span class="material-icons-round">print</span> à¸žà¸´à¸¡à¸žà¹Œà¸•à¸²à¸£à¸²à¸‡
                             </button>
                             <button class="dropdown-item" id="btn-export-csv">
-                                <span class="material-icons-round">download</span> ดาวน์โหลด CSV
+                                <span class="material-icons-round">download</span> à¸”à¸²à¸§à¸™à¹Œà¹‚à¸«à¸¥à¸” CSV
                             </button>
                         </div>
                     </div>
@@ -361,7 +362,7 @@ select.form-control option {
                     </div>
                 </div>
                 <div id="last-updated-text" style="text-align: right; margin-top: 8px; font-size: 0.85rem; color: var(--text-muted);">
-                    ข้อมูลอัปเดตล่าสุด: ยังไม่ระบุ
+                    à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸­à¸±à¸›à¹€à¸”à¸•à¸¥à¹ˆà¸²à¸ªà¸¸à¸”: à¸¢à¸±à¸‡à¹„à¸¡à¹ˆà¸£à¸°à¸šà¸¸
                 </div>
             </div>
         </section>
@@ -369,38 +370,38 @@ select.form-control option {
         <!-- Page: Dashboard -->
         <section id="page-dashboard" class="page">
             <div class="page-header">
-                <h2>📈 แดชบอร์ดสรุปสถิติ</h2>
+                <h2>ðŸ“ˆ à¹à¸”à¸Šà¸šà¸­à¸£à¹Œà¸”à¸ªà¸£à¸¸à¸›à¸ªà¸–à¸´à¸•à¸´</h2>
             </div>
             <div class="dashboard-cards" id="dashboard-cards">
                 <!-- Cards rendered by dashboard.js -->
             </div>
             <div class="dashboard-charts">
                 <div class="chart-card">
-                    <h3>สถิติการลารายเดือน</h3>
+                    <h3>à¸ªà¸–à¸´à¸•à¸´à¸à¸²à¸£à¸¥à¸²à¸£à¸²à¸¢à¹€à¸”à¸·à¸­à¸™</h3>
                     <div class="chart-wrapper">
                         <canvas id="chart-monthly"></canvas>
                     </div>
                 </div>
                 <div class="chart-card wide">
-                    <h3>สถิติการลารายกลุ่ม</h3>
+                    <h3>à¸ªà¸–à¸´à¸•à¸´à¸à¸²à¸£à¸¥à¸²à¸£à¸²à¸¢à¸à¸¥à¸¸à¹ˆà¸¡</h3>
                     <div class="chart-wrapper">
                         <canvas id="chart-section"></canvas>
                     </div>
                 </div>
                 <div class="chart-card">
-                    <h3>จำนวนบุคลากร (ตำแหน่ง)</h3>
+                    <h3>à¸ˆà¸³à¸™à¸§à¸™à¸šà¸¸à¸„à¸¥à¸²à¸à¸£ (à¸•à¸³à¹à¸«à¸™à¹ˆà¸‡)</h3>
                     <div class="chart-wrapper">
                         <canvas id="chart-position"></canvas>
                     </div>
                 </div>
                 <div class="chart-card">
-                    <h3>จำนวนบุคลากร (วิทยฐานะ)</h3>
+                    <h3>à¸ˆà¸³à¸™à¸§à¸™à¸šà¸¸à¸„à¸¥à¸²à¸à¸£ (à¸§à¸´à¸—à¸¢à¸à¸²à¸™à¸°)</h3>
                     <div class="chart-wrapper">
                         <canvas id="chart-title"></canvas>
                     </div>
                 </div>
                 <div class="chart-card">
-                    <h3>สัดส่วนบุคลากร (เพศ)</h3>
+                    <h3>à¸ªà¸±à¸”à¸ªà¹ˆà¸§à¸™à¸šà¸¸à¸„à¸¥à¸²à¸à¸£ (à¹€à¸žà¸¨)</h3>
                     <div class="chart-wrapper chart-wrapper-pie">
                         <canvas id="chart-gender"></canvas>
                     </div>
@@ -411,7 +412,7 @@ select.form-control option {
         <!-- Page: Calendar -->
         <section id="page-calendar" class="page">
             <div class="page-header">
-                <h2>📅 ปฏิทินวันลา</h2>
+                <h2>ðŸ“… à¸›à¸à¸´à¸—à¸´à¸™à¸§à¸±à¸™à¸¥à¸²</h2>
                 <div class="page-actions cal-nav">
                     <button id="cal-prev" class="btn-icon">
                         <span class="material-icons-round">chevron_left</span>
@@ -431,23 +432,23 @@ select.form-control option {
         <!-- Page: Teachers -->
         <section id="page-teachers" class="page">
             <div class="page-header">
-                <h2>👥 จัดการรายชื่อครู</h2>
+                <h2>ðŸ‘¥ à¸ˆà¸±à¸”à¸à¸²à¸£à¸£à¸²à¸¢à¸Šà¸·à¹ˆà¸­à¸„à¸£à¸¹</h2>
                 <div class="page-actions">
                     <div style="display: flex; align-items: center; gap: 8px; margin-right: auto; background: var(--bg-input); padding: 4px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
                         <span class="material-icons-round" style="font-size: 1.1rem; color: var(--text-muted);">sort</span>
                         <select id="teacher-sort" style="border: none; background: transparent; color: var(--text); font-family: inherit; font-size: 0.9rem; outline: none; cursor: pointer;">
-                            <option value="order">เรียงตาม ลำดับ</option>
-                            <option value="section">เรียงตาม กลุ่ม/หมวด</option>
-                            <option value="title">เรียงตาม วิทยฐานะ</option>
+                            <option value="order">à¹€à¸£à¸µà¸¢à¸‡à¸•à¸²à¸¡ à¸¥à¸³à¸”à¸±à¸š</option>
+                            <option value="section">à¹€à¸£à¸µà¸¢à¸‡à¸•à¸²à¸¡ à¸à¸¥à¸¸à¹ˆà¸¡/à¸«à¸¡à¸§à¸”</option>
+                            <option value="title">à¹€à¸£à¸µà¸¢à¸‡à¸•à¸²à¸¡ à¸§à¸´à¸—à¸¢à¸à¸²à¸™à¸°</option>
                         </select>
                     </div>
                     <button id="btn-import-teachers" class="btn-secondary">
                         <span class="material-icons-round">upload_file</span>
-                        <span>นำเข้ารายชื่อ</span>
+                        <span>à¸™à¸³à¹€à¸‚à¹‰à¸²à¸£à¸²à¸¢à¸Šà¸·à¹ˆà¸­</span>
                     </button>
                     <button id="btn-add-teacher" class="btn-primary">
                         <span class="material-icons-round">person_add</span>
-                        <span>เพิ่มครู</span>
+                        <span>à¹€à¸žà¸´à¹ˆà¸¡à¸„à¸£à¸¹</span>
                     </button>
                 </div>
             </div>
@@ -459,7 +460,7 @@ select.form-control option {
         <!-- Page: Settings -->
         <section id="page-settings" class="page">
             <div class="page-header">
-                <h2>⚙️ ตั้งค่า</h2>
+                <h2>âš™ï¸ à¸•à¸±à¹‰à¸‡à¸„à¹ˆà¸²</h2>
             </div>
             <div class="settings-container" id="settings-container">
                 <!-- Settings rendered by settings.js -->
@@ -468,45 +469,45 @@ select.form-control option {
     <!-- Page: Leave Request -->
     <section id="page-leave-request" class="page">
         <div class="page-header" style="max-width: 600px; margin: 0 auto; margin-bottom: 24px; text-align: center;">
-            <h1 style="font-size: 2.2rem; font-weight: 800; letter-spacing: 1px; color: var(--text); margin-bottom: 8px;">ยื่นใบลา</h1>
-            <p style="color: var(--text-secondary); font-size: 0.95rem;">กรอกข้อมูลเพื่อสร้างแบบฟอร์มใบลา</p>
+            <h1 style="font-size: 2.2rem; font-weight: 800; letter-spacing: 1px; color: var(--text); margin-bottom: 8px;">à¸¢à¸·à¹ˆà¸™à¹ƒà¸šà¸¥à¸²</h1>
+            <p style="color: var(--text-secondary); font-size: 0.95rem;">à¸à¸£à¸­à¸à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¹€à¸žà¸·à¹ˆà¸­à¸ªà¸£à¹‰à¸²à¸‡à¹à¸šà¸šà¸Ÿà¸­à¸£à¹Œà¸¡à¹ƒà¸šà¸¥à¸²</p>
         </div>
         <div class="form-card" style="max-width: 600px; margin: 0 auto; background: var(--bg-card); padding: 24px; border-radius: var(--radius); box-shadow: var(--shadow-md);">
             <div class="form-group" style="margin-bottom: 16px;">
-                <label for="lr-teacher">ผู้ขอลา</label>
+                <label for="lr-teacher">à¸œà¸¹à¹‰à¸‚à¸­à¸¥à¸²</label>
                 <select id="lr-teacher" class="form-control">
-                    <option value="">-- เลือกชื่อผู้ลา --</option>
+                    <option value="">-- à¹€à¸¥à¸·à¸­à¸à¸Šà¸·à¹ˆà¸­à¸œà¸¹à¹‰à¸¥à¸² --</option>
                 </select>
             </div>
             <div class="form-group" style="margin-bottom: 16px;">
-                <label for="lr-type">ประเภทการลา</label>
+                <label for="lr-type">à¸›à¸£à¸°à¹€à¸ à¸—à¸à¸²à¸£à¸¥à¸²</label>
                 <select id="lr-type" class="form-control">
-                    <option value="ป่วย">ลาป่วย</option>
-                    <option value="กิจส่วนตัว">ลากิจส่วนตัว</option>
-                    <option value="คลอดบุตร">ลาคลอดบุตร</option>
+                    <option value="à¸›à¹ˆà¸§à¸¢">à¸¥à¸²à¸›à¹ˆà¸§à¸¢</option>
+                    <option value="à¸à¸´à¸ˆà¸ªà¹ˆà¸§à¸™à¸•à¸±à¸§">à¸¥à¸²à¸à¸´à¸ˆà¸ªà¹ˆà¸§à¸™à¸•à¸±à¸§</option>
+                    <option value="à¸„à¸¥à¸­à¸”à¸šà¸¸à¸•à¸£">à¸¥à¸²à¸„à¸¥à¸­à¸”à¸šà¸¸à¸•à¸£</option>
                 </select>
             </div>
             <div class="form-group" style="margin-bottom: 16px;">
-                <label for="lr-reason">เนื่องจาก (สาเหตุ)</label>
-                <input type="text" id="lr-reason" placeholder="เช่น ป่วยเป็นไข้สูง" class="form-control">
+                <label for="lr-reason">à¹€à¸™à¸·à¹ˆà¸­à¸‡à¸ˆà¸²à¸ (à¸ªà¸²à¹€à¸«à¸•à¸¸)</label>
+                <input type="text" id="lr-reason" placeholder="à¹€à¸Šà¹ˆà¸™ à¸›à¹ˆà¸§à¸¢à¹€à¸›à¹‡à¸™à¹„à¸‚à¹‰à¸ªà¸¹à¸‡" class="form-control">
             </div>
             <div class="form-row" style="margin-bottom: 16px;">
                 <div class="form-group">
-                    <label for="lr-start-date">ตั้งแต่วันที่</label>
-                    <input type="text" id="lr-start-date" class="form-control flatpickr-date" placeholder="เลือกวันที่">
+                    <label for="lr-start-date">à¸•à¸±à¹‰à¸‡à¹à¸•à¹ˆà¸§à¸±à¸™à¸—à¸µà¹ˆ</label>
+                    <input type="text" id="lr-start-date" class="form-control flatpickr-date" placeholder="à¹€à¸¥à¸·à¸­à¸à¸§à¸±à¸™à¸—à¸µà¹ˆ">
                 </div>
                 <div class="form-group">
-                    <label for="lr-end-date">ถึงวันที่</label>
-                    <input type="text" id="lr-end-date" class="form-control flatpickr-date" placeholder="เลือกวันที่">
+                    <label for="lr-end-date">à¸–à¸¶à¸‡à¸§à¸±à¸™à¸—à¸µà¹ˆ</label>
+                    <input type="text" id="lr-end-date" class="form-control flatpickr-date" placeholder="à¹€à¸¥à¸·à¸­à¸à¸§à¸±à¸™à¸—à¸µà¹ˆ">
                 </div>
             </div>
             <div class="form-group" style="margin-bottom: 16px;">
-                <label for="lr-contact">ในระหว่างลาจะติดต่อข้าพเจ้าได้ที่</label>
-                <textarea id="lr-contact" rows="2" placeholder="เช่น 123 ม.1 ต.ธาตุพนม อ.ธาตุพนม จ.นครพนม 48110 เบอร์โทร..." class="form-control"></textarea>
+                <label for="lr-contact">à¹ƒà¸™à¸£à¸°à¸«à¸§à¹ˆà¸²à¸‡à¸¥à¸²à¸ˆà¸°à¸•à¸´à¸”à¸•à¹ˆà¸­à¸‚à¹‰à¸²à¸žà¹€à¸ˆà¹‰à¸²à¹„à¸”à¹‰à¸—à¸µà¹ˆ</label>
+                <textarea id="lr-contact" rows="2" placeholder="à¹€à¸Šà¹ˆà¸™ 123 à¸¡.1 à¸•.à¸˜à¸²à¸•à¸¸à¸žà¸™à¸¡ à¸­.à¸˜à¸²à¸•à¸¸à¸žà¸™à¸¡ à¸ˆ.à¸™à¸„à¸£à¸žà¸™à¸¡ 48110 à¹€à¸šà¸­à¸£à¹Œà¹‚à¸—à¸£..." class="form-control"></textarea>
             </div>
             <div style="display: flex; gap: 12px; margin-top: 24px;">
                 <button id="btn-submit-leave-request" class="btn-primary" style="flex: 1; padding: 12px; font-size: 1rem; justify-content: center;">
-                    <span class="material-icons-round">send</span> บันทึกและขอพิมพ์ใบลา
+                    <span class="material-icons-round">send</span> à¸šà¸±à¸™à¸—à¸¶à¸à¹à¸¥à¸°à¸‚à¸­à¸žà¸´à¸¡à¸žà¹Œà¹ƒà¸šà¸¥à¸²
                 </button>
             </div>
         </div>
@@ -515,11 +516,11 @@ select.form-control option {
     <!-- Page: Manage Requests -->
     <section id="page-manage-requests" class="page">
         <div class="page-header">
-            <h2>ตรวจสอบคำขอลา</h2>
+            <h2>à¸•à¸£à¸§à¸ˆà¸ªà¸­à¸šà¸„à¸³à¸‚à¸­à¸¥à¸²</h2>
             <div class="page-actions">
                 <button id="btn-clear-requests" class="btn-danger">
                     <span class="material-icons-round">delete_sweep</span>
-                    <span>ล้างรายการที่เสร็จแล้ว</span>
+                    <span>à¸¥à¹‰à¸²à¸‡à¸£à¸²à¸¢à¸à¸²à¸£à¸—à¸µà¹ˆà¹€à¸ªà¸£à¹‡à¸ˆà¹à¸¥à¹‰à¸§</span>
                 </button>
             </div>
         </div>
@@ -527,12 +528,12 @@ select.form-control option {
             <table class="leave-table" style="width: 100%;">
                 <thead>
                     <tr>
-                        <th style="width: 50px;">ลำดับ</th>
-                        <th>ผู้ขอลา</th>
-                        <th>ประเภท</th>
-                        <th>วันที่ลา</th>
-                        <th>สถานะ</th>
-                        <th style="width: 150px; text-align: right;">จัดการ</th>
+                        <th style="width: 50px;">à¸¥à¸³à¸”à¸±à¸š</th>
+                        <th>à¸œà¸¹à¹‰à¸‚à¸­à¸¥à¸²</th>
+                        <th>à¸›à¸£à¸°à¹€à¸ à¸—</th>
+                        <th>à¸§à¸±à¸™à¸—à¸µà¹ˆà¸¥à¸²</th>
+                        <th>à¸ªà¸–à¸²à¸™à¸°</th>
+                        <th style="width: 150px; text-align: right;">à¸ˆà¸±à¸”à¸à¸²à¸£</th>
                     </tr>
                 </thead>
                 <tbody id="manage-requests-tbody">
@@ -548,26 +549,26 @@ select.form-control option {
     <div id="leave-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="leave-modal-title">บันทึกการลา</h3>
+                <h3 id="leave-modal-title">à¸šà¸±à¸™à¸—à¸¶à¸à¸à¸²à¸£à¸¥à¸²</h3>
                 <button class="modal-close" data-close="leave-modal">
                     <span class="material-icons-round">close</span>
                 </button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label>ครู</label>
+                    <label>à¸„à¸£à¸¹</label>
                     <p id="leave-teacher-name" class="form-static"></p>
                 </div>
                 <div class="form-group">
-                    <label>เดือน</label>
+                    <label>à¹€à¸”à¸·à¸­à¸™</label>
                     <p id="leave-month-label" class="form-static"></p>
                 </div>
                 <div class="form-group">
-                    <label>ประเภทการลา</label>
+                    <label>à¸›à¸£à¸°à¹€à¸ à¸—à¸à¸²à¸£à¸¥à¸²</label>
                     <p id="leave-type-label" class="form-static"></p>
                 </div>
                 <div class="form-group" style="margin-bottom: 10px;">
-                    <label>ประวัติการลาในเดือนนี้</label>
+                    <label>à¸›à¸£à¸°à¸§à¸±à¸•à¸´à¸à¸²à¸£à¸¥à¸²à¹ƒà¸™à¹€à¸”à¸·à¸­à¸™à¸™à¸µà¹‰</label>
                     <div id="leave-history-list" style="border: 1px solid var(--border); border-radius: var(--radius-sm); max-height: 150px; overflow-y: auto; background: var(--bg-card); padding: 5px;">
                         <!-- History items rendered here -->
                     </div>
@@ -577,40 +578,40 @@ select.form-control option {
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                         <label id="leave-form-title" style="color: var(--primary); font-weight: 600; display: flex; align-items: center; gap: 5px; margin: 0;">
                             <span class="material-icons-round" id="leave-form-icon" style="font-size: 18px;">add_circle</span> 
-                            <span id="leave-form-text">เพิ่มรายการลาใหม่</span>
+                            <span id="leave-form-text">à¹€à¸žà¸´à¹ˆà¸¡à¸£à¸²à¸¢à¸à¸²à¸£à¸¥à¸²à¹ƒà¸«à¸¡à¹ˆ</span>
                         </label>
-                        <button type="button" id="btn-cancel-edit" class="btn-secondary" style="display: none; padding: 2px 8px; font-size: 0.75rem;">ยกเลิกการแก้ไข</button>
+                        <button type="button" id="btn-cancel-edit" class="btn-secondary" style="display: none; padding: 2px 8px; font-size: 0.75rem;">à¸¢à¸à¹€à¸¥à¸´à¸à¸à¸²à¸£à¹à¸à¹‰à¹„à¸‚</button>
                     </div>
                     <input type="hidden" id="leave-edit-id" value="">
                     
                     <div style="display: flex; gap: 15px; margin-bottom: 5px;">
                         <div class="form-group" style="width: 100px;">
-                            <label for="leave-times">จำนวนครั้ง</label>
+                            <label for="leave-times">à¸ˆà¸³à¸™à¸§à¸™à¸„à¸£à¸±à¹‰à¸‡</label>
                             <input type="number" id="leave-times" min="0" value="0">
                         </div>
                         <div class="form-group" style="width: 100px;">
-                            <label for="leave-days">จำนวนวัน</label>
+                            <label for="leave-days">à¸ˆà¸³à¸™à¸§à¸™à¸§à¸±à¸™</label>
                             <input type="number" id="leave-days" min="0" step="0.5" value="0">
                         </div>
                     </div>
                     <div class="form-group">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                            <label for="leave-notes" style="margin-bottom: 0;">โน้ต (วันที่ลา)</label>
+                            <label for="leave-notes" style="margin-bottom: 0;">à¹‚à¸™à¹‰à¸• (à¸§à¸±à¸™à¸—à¸µà¹ˆà¸¥à¸²)</label>
                             <button type="button" id="btn-pick-dates" class="btn-secondary" style="padding: 4px 8px; font-size: 0.75rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--bg-card); display: flex; align-items: center; gap: 4px;">
                                 <span class="material-icons-round" style="font-size: 14px; color: var(--primary);">calendar_month</span>
-                                เลือกจากปฏิทิน
+                                à¹€à¸¥à¸·à¸­à¸à¸ˆà¸²à¸à¸›à¸à¸´à¸—à¸´à¸™
                             </button>
                         </div>
-                        <textarea id="leave-notes" rows="2" placeholder="เช่น ลาวันที่ 10-12 พ.ค."></textarea>
+                        <textarea id="leave-notes" rows="2" placeholder="à¹€à¸Šà¹ˆà¸™ à¸¥à¸²à¸§à¸±à¸™à¸—à¸µà¹ˆ 10-12 à¸ž.à¸„."></textarea>
                         <!-- Hidden input for Flatpickr binding -->
                         <input type="text" id="leave-notes-picker" style="opacity: 0; position: absolute; width: 1px; height: 1px;">
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn-secondary" data-close="leave-modal">ปิด</button>
+                <button class="btn-secondary" data-close="leave-modal">à¸›à¸´à¸”</button>
                 <button class="btn-primary" id="btn-save-leave">
-                    <span class="material-icons-round" id="btn-save-icon">add</span> <span id="btn-save-text">เพิ่มรายการ</span>
+                    <span class="material-icons-round" id="btn-save-icon">add</span> <span id="btn-save-text">à¹€à¸žà¸´à¹ˆà¸¡à¸£à¸²à¸¢à¸à¸²à¸£</span>
                 </button>
             </div>
         </div>
@@ -620,59 +621,59 @@ select.form-control option {
     <div id="teacher-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="teacher-modal-title">เพิ่มครู</h3>
+                <h3 id="teacher-modal-title">à¹€à¸žà¸´à¹ˆà¸¡à¸„à¸£à¸¹</h3>
                 <button class="modal-close" data-close="teacher-modal">
                     <span class="material-icons-round">close</span>
                 </button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label for="teacher-name">ชื่อ-นามสกุล</label>
-                    <input type="text" id="teacher-name" placeholder="เช่น นายสมชาย ใจดี">
+                    <label for="teacher-name">à¸Šà¸·à¹ˆà¸­-à¸™à¸²à¸¡à¸ªà¸à¸¸à¸¥</label>
+                    <input type="text" id="teacher-name" placeholder="à¹€à¸Šà¹ˆà¸™ à¸™à¸²à¸¢à¸ªà¸¡à¸Šà¸²à¸¢ à¹ƒà¸ˆà¸”à¸µ">
                 </div>
                 <div class="form-group">
-                    <label for="teacher-section">หมวดหมู่ / กลุ่ม (Section)</label>
-                    <input type="text" id="teacher-section" placeholder="เช่น สายชั้น ป.1-3, หมวดวิทย์" list="section-suggestions">
+                    <label for="teacher-section">à¸«à¸¡à¸§à¸”à¸«à¸¡à¸¹à¹ˆ / à¸à¸¥à¸¸à¹ˆà¸¡ (Section)</label>
+                    <input type="text" id="teacher-section" placeholder="à¹€à¸Šà¹ˆà¸™ à¸ªà¸²à¸¢à¸Šà¸±à¹‰à¸™ à¸›.1-3, à¸«à¸¡à¸§à¸”à¸§à¸´à¸—à¸¢à¹Œ" list="section-suggestions">
                     <datalist id="section-suggestions"></datalist>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="teacher-gender">เพศ</label>
+                        <label for="teacher-gender">à¹€à¸žà¸¨</label>
                         <select id="teacher-gender">
-                            <option value="">-- ไม่ระบุ --</option>
-                            <option value="ชาย">ชาย</option>
-                            <option value="หญิง">หญิง</option>
+                            <option value="">-- à¹„à¸¡à¹ˆà¸£à¸°à¸šà¸¸ --</option>
+                            <option value="à¸Šà¸²à¸¢">à¸Šà¸²à¸¢</option>
+                            <option value="à¸«à¸à¸´à¸‡">à¸«à¸à¸´à¸‡</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="teacher-title">วิทยฐานะ</label>
+                        <label for="teacher-title">à¸§à¸´à¸—à¸¢à¸à¸²à¸™à¸°</label>
                         <select id="teacher-title">
-                            <option value="">(ไม่ระบุ)</option>
-                            <option value="ลูกจ้างฯ">ลูกจ้างฯ</option>
-                            <option value="ครูอัตราจ้าง">ครูอัตราจ้าง</option>
-                            <option value="พนักงานฯ">พนักงานฯ</option>
-                            <option value="ครูผู้ช่วย">ครูผู้ช่วย</option>
-                            <option value="คศ.1">คศ.1</option>
-                            <option value="คศ.2">คศ.2</option>
-                            <option value="คศ.3">คศ.3</option>
-                            <option value="คศ.4">คศ.4</option>
+                            <option value="">(à¹„à¸¡à¹ˆà¸£à¸°à¸šà¸¸)</option>
+                            <option value="à¸¥à¸¹à¸à¸ˆà¹‰à¸²à¸‡à¸¯">à¸¥à¸¹à¸à¸ˆà¹‰à¸²à¸‡à¸¯</option>
+                            <option value="à¸„à¸£à¸¹à¸­à¸±à¸•à¸£à¸²à¸ˆà¹‰à¸²à¸‡">à¸„à¸£à¸¹à¸­à¸±à¸•à¸£à¸²à¸ˆà¹‰à¸²à¸‡</option>
+                            <option value="à¸žà¸™à¸±à¸à¸‡à¸²à¸™à¸¯">à¸žà¸™à¸±à¸à¸‡à¸²à¸™à¸¯</option>
+                            <option value="à¸„à¸£à¸¹à¸œà¸¹à¹‰à¸Šà¹ˆà¸§à¸¢">à¸„à¸£à¸¹à¸œà¸¹à¹‰à¸Šà¹ˆà¸§à¸¢</option>
+                            <option value="à¸„à¸¨.1">à¸„à¸¨.1</option>
+                            <option value="à¸„à¸¨.2">à¸„à¸¨.2</option>
+                            <option value="à¸„à¸¨.3">à¸„à¸¨.3</option>
+                            <option value="à¸„à¸¨.4">à¸„à¸¨.4</option>
                         </select>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="teacher-order">ลำดับที่</label>
+                    <label for="teacher-order">à¸¥à¸³à¸”à¸±à¸šà¸—à¸µà¹ˆ</label>
                     <input type="number" id="teacher-order" min="1" value="1">
-                    <small class="form-hint">ถ้าลำดับซ้ำ ลำดับเดิมจะเลื่อนไปถัดไปอัตโนมัติ</small>
+                    <small class="form-hint">à¸–à¹‰à¸²à¸¥à¸³à¸”à¸±à¸šà¸‹à¹‰à¸³ à¸¥à¸³à¸”à¸±à¸šà¹€à¸”à¸´à¸¡à¸ˆà¸°à¹€à¸¥à¸·à¹ˆà¸­à¸™à¹„à¸›à¸–à¸±à¸”à¹„à¸›à¸­à¸±à¸•à¹‚à¸™à¸¡à¸±à¸•à¸´</small>
                 </div>
             </div>
             <div class="modal-footer" style="display: flex; justify-content: space-between;">
                 <button type="button" class="btn-danger" id="btn-reset-line" style="display: none;">
-                    <span class="material-icons-round">link_off</span> ปลดล็อก LINE
+                    <span class="material-icons-round">link_off</span> à¸›à¸¥à¸”à¸¥à¹‡à¸­à¸ LINE
                 </button>
                 <div style="display: flex; gap: 8px;">
-                    <button class="btn-secondary" data-close="teacher-modal">ยกเลิก</button>
+                    <button class="btn-secondary" data-close="teacher-modal">à¸¢à¸à¹€à¸¥à¸´à¸</button>
                     <button class="btn-primary" id="btn-save-teacher">
-                        <span class="material-icons-round">save</span> บันทึก
+                        <span class="material-icons-round">save</span> à¸šà¸±à¸™à¸—à¸¶à¸
                     </button>
                 </div>
             </div>
@@ -683,18 +684,18 @@ select.form-control option {
     <div id="confirm-modal" class="modal">
         <div class="modal-content modal-sm">
             <div class="modal-header">
-                <h3>ยืนยันการดำเนินการ</h3>
+                <h3>à¸¢à¸·à¸™à¸¢à¸±à¸™à¸à¸²à¸£à¸”à¸³à¹€à¸™à¸´à¸™à¸à¸²à¸£</h3>
                 <button class="modal-close" data-close="confirm-modal">
                     <span class="material-icons-round">close</span>
                 </button>
             </div>
             <div class="modal-body">
-                <p id="confirm-message">คุณต้องการดำเนินการนี้หรือไม่?</p>
+                <p id="confirm-message">à¸„à¸¸à¸“à¸•à¹‰à¸­à¸‡à¸à¸²à¸£à¸”à¸³à¹€à¸™à¸´à¸™à¸à¸²à¸£à¸™à¸µà¹‰à¸«à¸£à¸·à¸­à¹„à¸¡à¹ˆ?</p>
             </div>
             <div class="modal-footer">
-                <button class="btn-secondary" data-close="confirm-modal">ยกเลิก</button>
+                <button class="btn-secondary" data-close="confirm-modal">à¸¢à¸à¹€à¸¥à¸´à¸</button>
                 <button class="btn-danger" id="btn-confirm-yes">
-                    <span class="material-icons-round">check</span> ยืนยัน
+                    <span class="material-icons-round">check</span> à¸¢à¸·à¸™à¸¢à¸±à¸™
                 </button>
             </div>
         </div>
@@ -704,25 +705,25 @@ select.form-control option {
     <div id="remarks-modal" class="modal">
         <div class="modal-content modal-sm">
             <div class="modal-header">
-                <h3>หมายเหตุ</h3>
+                <h3>à¸«à¸¡à¸²à¸¢à¹€à¸«à¸•à¸¸</h3>
                 <button class="modal-close" data-close="remarks-modal">
                     <span class="material-icons-round">close</span>
                 </button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label>ครู</label>
+                    <label>à¸„à¸£à¸¹</label>
                     <p id="remarks-teacher-name" class="form-static"></p>
                 </div>
                 <div class="form-group">
-                    <label for="remarks-text">หมายเหตุ</label>
-                    <textarea id="remarks-text" rows="4" placeholder="พิมพ์หมายเหตุ..."></textarea>
+                    <label for="remarks-text">à¸«à¸¡à¸²à¸¢à¹€à¸«à¸•à¸¸</label>
+                    <textarea id="remarks-text" rows="4" placeholder="à¸žà¸´à¸¡à¸žà¹Œà¸«à¸¡à¸²à¸¢à¹€à¸«à¸•à¸¸..."></textarea>
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn-secondary" data-close="remarks-modal">ยกเลิก</button>
+                <button class="btn-secondary" data-close="remarks-modal">à¸¢à¸à¹€à¸¥à¸´à¸</button>
                 <button class="btn-primary" id="btn-save-remarks">
-                    <span class="material-icons-round">save</span> บันทึก
+                    <span class="material-icons-round">save</span> à¸šà¸±à¸™à¸—à¸¶à¸
                 </button>
             </div>
         </div>
@@ -732,28 +733,28 @@ select.form-control option {
     <div id="import-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>นำเข้ารายชื่อครู</h3>
+                <h3>à¸™à¸³à¹€à¸‚à¹‰à¸²à¸£à¸²à¸¢à¸Šà¸·à¹ˆà¸­à¸„à¸£à¸¹</h3>
                 <button class="modal-close" data-close="import-modal">
                     <span class="material-icons-round">close</span>
                 </button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label>เลือกไฟล์ (.txt หรือ .csv)</label>
+                    <label>à¹€à¸¥à¸·à¸­à¸à¹„à¸Ÿà¸¥à¹Œ (.txt à¸«à¸£à¸·à¸­ .csv)</label>
                     <input type="file" id="import-teachers-file" accept=".txt,.csv" class="file-input">
                 </div>
                 <div class="form-group">
-                    <label for="import-teachers-text">หรือพิมพ์/วางรายชื่อ (รูปแบบ: ชื่อ-สกุล, หมวดหมู่)</label>
-                    <textarea id="import-teachers-text" rows="8" placeholder="นายสมชาย ใจดี, สายชั้น ป.1&#10;นางสาวสมหญิง รักเรียน, หมวดวิทย์&#10;นายวิชัย พัฒนา&#10;..."></textarea>
+                    <label for="import-teachers-text">à¸«à¸£à¸·à¸­à¸žà¸´à¸¡à¸žà¹Œ/à¸§à¸²à¸‡à¸£à¸²à¸¢à¸Šà¸·à¹ˆà¸­ (à¸£à¸¹à¸›à¹à¸šà¸š: à¸Šà¸·à¹ˆà¸­-à¸ªà¸à¸¸à¸¥, à¸«à¸¡à¸§à¸”à¸«à¸¡à¸¹à¹ˆ)</label>
+                    <textarea id="import-teachers-text" rows="8" placeholder="à¸™à¸²à¸¢à¸ªà¸¡à¸Šà¸²à¸¢ à¹ƒà¸ˆà¸”à¸µ, à¸ªà¸²à¸¢à¸Šà¸±à¹‰à¸™ à¸›.1&#10;à¸™à¸²à¸‡à¸ªà¸²à¸§à¸ªà¸¡à¸«à¸à¸´à¸‡ à¸£à¸±à¸à¹€à¸£à¸µà¸¢à¸™, à¸«à¸¡à¸§à¸”à¸§à¸´à¸—à¸¢à¹Œ&#10;à¸™à¸²à¸¢à¸§à¸´à¸Šà¸±à¸¢ à¸žà¸±à¸’à¸™à¸²&#10;..."></textarea>
                 </div>
                 <div id="import-preview" style="display:none;">
                     <div id="import-preview-list"></div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn-secondary" data-close="import-modal">ยกเลิก</button>
+                <button class="btn-secondary" data-close="import-modal">à¸¢à¸à¹€à¸¥à¸´à¸</button>
                 <button class="btn-primary" id="btn-confirm-import">
-                    <span class="material-icons-round">upload</span> นำเข้า
+                    <span class="material-icons-round">upload</span> à¸™à¸³à¹€à¸‚à¹‰à¸²
                 </button>
             </div>
         </div>
@@ -763,21 +764,21 @@ select.form-control option {
     <div id="auth-modal" class="modal">
         <div class="modal-content modal-sm">
             <div class="modal-header">
-                <h3>เข้าสู่ระบบผู้ดูแล</h3>
+                <h3>à¹€à¸‚à¹‰à¸²à¸ªà¸¹à¹ˆà¸£à¸°à¸šà¸šà¸œà¸¹à¹‰à¸”à¸¹à¹à¸¥</h3>
                 <button class="modal-close" data-close="auth-modal">
                     <span class="material-icons-round">close</span>
                 </button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label for="auth-pin">รหัสผ่าน (PIN)</label>
+                    <label for="auth-pin">à¸£à¸«à¸±à¸ªà¸œà¹ˆà¸²à¸™ (PIN)</label>
                     <input type="password" id="auth-pin" placeholder="****" inputmode="numeric" style="letter-spacing:4px;font-size:1.2rem;text-align:center;">
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn-secondary" data-close="auth-modal">ยกเลิก</button>
+                <button class="btn-secondary" data-close="auth-modal">à¸¢à¸à¹€à¸¥à¸´à¸</button>
                 <button class="btn-primary" id="btn-login-submit">
-                    <span class="material-icons-round">login</span> เข้าสู่ระบบ
+                    <span class="material-icons-round">login</span> à¹€à¸‚à¹‰à¸²à¸ªà¸¹à¹ˆà¸£à¸°à¸šà¸š
                 </button>
             </div>
         </div>
@@ -800,58 +801,58 @@ select.form-control option {
                     </div>
                 </div>
             </div>
-            <h2 class="about-title">ระบบแสดงข้อมูลวันลา</h2>
+            <h2 class="about-title">à¸£à¸°à¸šà¸šà¹à¸ªà¸”à¸‡à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸§à¸±à¸™à¸¥à¸²</h2>
             <div class="about-version" id="global-visit-count">v1.0001</div>
             <div class="about-dev">
                 Developed by
-                <span class="premium-gold">KⓇU M00 ¥EO</span>
+                <span class="premium-gold">Kâ“‡U M00 Â¥EO</span>
             </div>
         </div>
     </div>
 
     <!-- A4 Print Form Template (Hidden by default, shown on print) -->
     <div id="print-leave-form" class="print-only" style="font-size: 14pt; line-height: 1.5;">
-        <h3 style="text-align: center; margin-bottom: 15px;">แบบใบลาป่วย ลากิจส่วนตัว ลาคลอดบุตร</h3>
-        <div style="text-align: right; margin-bottom: 5px;">เขียนที่ <span id="print-location">โรงเรียน....................................</span></div>
-        <div style="text-align: right; margin-bottom: 10px;">วันที่ <span id="print-date">......</span> เดือน <span id="print-month">......................</span> พ.ศ. <span id="print-year">............</span></div>
+        <h3 style="text-align: center; margin-bottom: 15px;">à¹à¸šà¸šà¹ƒà¸šà¸¥à¸²à¸›à¹ˆà¸§à¸¢ à¸¥à¸²à¸à¸´à¸ˆà¸ªà¹ˆà¸§à¸™à¸•à¸±à¸§ à¸¥à¸²à¸„à¸¥à¸­à¸”à¸šà¸¸à¸•à¸£</h3>
+        <div style="text-align: right; margin-bottom: 5px;">à¹€à¸‚à¸µà¸¢à¸™à¸—à¸µà¹ˆ <span id="print-location">à¹‚à¸£à¸‡à¹€à¸£à¸µà¸¢à¸™....................................</span></div>
+        <div style="text-align: right; margin-bottom: 10px;">à¸§à¸±à¸™à¸—à¸µà¹ˆ <span id="print-date">......</span> à¹€à¸”à¸·à¸­à¸™ <span id="print-month">......................</span> à¸ž.à¸¨. <span id="print-year">............</span></div>
         
-        <div style="margin-bottom: 5px;">เรื่อง <span id="print-subject">ขอลา..........................................</span></div>
-        <div style="margin-bottom: 10px;">เรียน <span id="print-director">ผู้อำนวยการโรงเรียน..........................................</span></div>
+        <div style="margin-bottom: 5px;">à¹€à¸£à¸·à¹ˆà¸­à¸‡ <span id="print-subject">à¸‚à¸­à¸¥à¸²..........................................</span></div>
+        <div style="margin-bottom: 10px;">à¹€à¸£à¸µà¸¢à¸™ <span id="print-director">à¸œà¸¹à¹‰à¸­à¸³à¸™à¸§à¸¢à¸à¸²à¸£à¹‚à¸£à¸‡à¹€à¸£à¸µà¸¢à¸™..........................................</span></div>
         
         <div style="display: flex; align-items: flex-end; margin-bottom: 5px;">
-            <span style="margin-left: 50px; margin-right: 10px;">ข้าพเจ้า</span>
+            <span style="margin-left: 50px; margin-right: 10px;">à¸‚à¹‰à¸²à¸žà¹€à¸ˆà¹‰à¸²</span>
             <span id="print-name" style="flex: 1; text-align: center; margin-right: 10px;"></span>
-            <span style="margin-right: 10px;">ตำแหน่ง</span>
+            <span style="margin-right: 10px;">à¸•à¸³à¹à¸«à¸™à¹ˆà¸‡</span>
             <span id="print-position" style="flex: 0.5; text-align: center; margin-right: 10px;"></span>
-            <span>สังกัด <span id="print-dept">สำนักงานเขตพื้นที่การศึกษามัธยมศึกษานครพนม</span></span>
+            <span>à¸ªà¸±à¸‡à¸à¸±à¸” <span id="print-dept">à¸ªà¸³à¸™à¸±à¸à¸‡à¸²à¸™à¹€à¸‚à¸•à¸žà¸·à¹‰à¸™à¸—à¸µà¹ˆà¸à¸²à¸£à¸¨à¸¶à¸à¸©à¸²à¸¡à¸±à¸˜à¸¢à¸¡à¸¨à¸¶à¸à¸©à¸²à¸™à¸„à¸£à¸žà¸™à¸¡</span></span>
         </div>
         
         <div style="margin-bottom: 5px; line-height: 1.6;">
-            <span style="margin-right: 20px;">ขอลา</span>
-            <span style="margin-right: 15px; font-size: 1.2em;"><span id="print-cb-sick">☐</span> ป่วย</span>
-            <span style="margin-right: 15px; font-size: 1.2em;"><span id="print-cb-personal">☐</span> กิจส่วนตัว</span>
-            <span style="margin-right: 15px; font-size: 1.2em;"><span id="print-cb-maternity">☐</span> คลอดบุตร</span>
-            <span>เนื่องจาก</span><span id="print-reason" style="margin-left: 10px;"></span>
+            <span style="margin-right: 20px;">à¸‚à¸­à¸¥à¸²</span>
+            <span style="margin-right: 15px; font-size: 1.2em;"><span id="print-cb-sick">â˜</span> à¸›à¹ˆà¸§à¸¢</span>
+            <span style="margin-right: 15px; font-size: 1.2em;"><span id="print-cb-personal">â˜</span> à¸à¸´à¸ˆà¸ªà¹ˆà¸§à¸™à¸•à¸±à¸§</span>
+            <span style="margin-right: 15px; font-size: 1.2em;"><span id="print-cb-maternity">â˜</span> à¸„à¸¥à¸­à¸”à¸šà¸¸à¸•à¸£</span>
+            <span>à¹€à¸™à¸·à¹ˆà¸­à¸‡à¸ˆà¸²à¸</span><span id="print-reason" style="margin-left: 10px;"></span>
         </div>
         
         <div style="display: flex; align-items: flex-end; margin-bottom: 5px;">
-            <span style="margin-right: 10px;">ตั้งแต่วันที่</span>
+            <span style="margin-right: 10px;">à¸•à¸±à¹‰à¸‡à¹à¸•à¹ˆà¸§à¸±à¸™à¸—à¸µà¹ˆ</span>
             <span style="flex: 1; text-align: center; margin-right: 10px;"><span id="print-start-d"></span> <span id="print-start-m"></span> <span id="print-start-y"></span></span>
-            <span style="margin-right: 10px;">ถึงวันที่</span>
+            <span style="margin-right: 10px;">à¸–à¸¶à¸‡à¸§à¸±à¸™à¸—à¸µà¹ˆ</span>
             <span style="flex: 1; text-align: center; margin-right: 10px;"><span id="print-end-d"></span> <span id="print-end-m"></span> <span id="print-end-y"></span></span>
-            <span style="margin-right: 10px;">มีกำหนด</span>
+            <span style="margin-right: 10px;">à¸¡à¸µà¸à¸³à¸«à¸™à¸”</span>
             <span id="print-days" style="width: 60px; text-align: center; margin-right: 10px;"></span>
-            <span>วัน</span>
+            <span>à¸§à¸±à¸™</span>
         </div>
         
         <div style="margin-bottom: 10px; line-height: 1.6;">
-            <span style="margin-right: 20px;">ข้าพเจ้าได้ลา</span>
-            <span style="margin-right: 15px; font-size: 1.2em;"><span id="print-last-cb-sick">☐</span> ป่วย</span>
-            <span style="margin-right: 15px; font-size: 1.2em;"><span id="print-last-cb-personal">☐</span> กิจส่วนตัว</span>
-            <span style="margin-right: 15px; font-size: 1.2em;"><span id="print-last-cb-maternity">☐</span> คลอดบุตร</span>
-            <span>ครั้งสุดท้ายตั้งแต่วันที่</span><span id="print-last-start" style="margin-left: 10px; margin-right: 10px;"></span>
-            <span>มีกำหนด</span><span id="print-last-days" style="margin-left: 10px; margin-right: 10px;"></span><span>วัน</span>
-            <span style="margin-left: 10px;">ในระหว่างลาจะติดต่อข้าพเจ้าได้ที่</span><span id="print-contact" style="margin-left: 10px;"></span>
+            <span style="margin-right: 20px;">à¸‚à¹‰à¸²à¸žà¹€à¸ˆà¹‰à¸²à¹„à¸”à¹‰à¸¥à¸²</span>
+            <span style="margin-right: 15px; font-size: 1.2em;"><span id="print-last-cb-sick">â˜</span> à¸›à¹ˆà¸§à¸¢</span>
+            <span style="margin-right: 15px; font-size: 1.2em;"><span id="print-last-cb-personal">â˜</span> à¸à¸´à¸ˆà¸ªà¹ˆà¸§à¸™à¸•à¸±à¸§</span>
+            <span style="margin-right: 15px; font-size: 1.2em;"><span id="print-last-cb-maternity">â˜</span> à¸„à¸¥à¸­à¸”à¸šà¸¸à¸•à¸£</span>
+            <span>à¸„à¸£à¸±à¹‰à¸‡à¸ªà¸¸à¸”à¸—à¹‰à¸²à¸¢à¸•à¸±à¹‰à¸‡à¹à¸•à¹ˆà¸§à¸±à¸™à¸—à¸µà¹ˆ</span><span id="print-last-start" style="margin-left: 10px; margin-right: 10px;"></span>
+            <span>à¸¡à¸µà¸à¸³à¸«à¸™à¸”</span><span id="print-last-days" style="margin-left: 10px; margin-right: 10px;"></span><span>à¸§à¸±à¸™</span>
+            <span style="margin-left: 10px;">à¹ƒà¸™à¸£à¸°à¸«à¸§à¹ˆà¸²à¸‡à¸¥à¸²à¸ˆà¸°à¸•à¸´à¸”à¸•à¹ˆà¸­à¸‚à¹‰à¸²à¸žà¹€à¸ˆà¹‰à¸²à¹„à¸”à¹‰à¸—à¸µà¹ˆ</span><span id="print-contact" style="margin-left: 10px;"></span>
         </div>
         
         <div style="display: flex; margin-top: 10px;">
@@ -859,27 +860,27 @@ select.form-control option {
                 <table class="print-stats-table">
                     <thead>
                         <tr>
-                            <th>ประเภทลา</th>
-                            <th>ลามาแล้ว<br>(วันทำการ)</th>
-                            <th>ลาครั้งนี้<br>(วันทำการ)</th>
-                            <th>รวมเป็น<br>(วันทำการ)</th>
+                            <th>à¸›à¸£à¸°à¹€à¸ à¸—à¸¥à¸²</th>
+                            <th>à¸¥à¸²à¸¡à¸²à¹à¸¥à¹‰à¸§<br>(à¸§à¸±à¸™à¸—à¸³à¸à¸²à¸£)</th>
+                            <th>à¸¥à¸²à¸„à¸£à¸±à¹‰à¸‡à¸™à¸µà¹‰<br>(à¸§à¸±à¸™à¸—à¸³à¸à¸²à¸£)</th>
+                            <th>à¸£à¸§à¸¡à¹€à¸›à¹‡à¸™<br>(à¸§à¸±à¸™à¸—à¸³à¸à¸²à¸£)</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td style="text-align:center;">ป่วย</td>
+                            <td style="text-align:center;">à¸›à¹ˆà¸§à¸¢</td>
                             <td style="text-align:center;" id="print-stat-sick-past"></td>
                             <td style="text-align:center;" id="print-stat-sick-now"></td>
                             <td style="text-align:center;" id="print-stat-sick-total"></td>
                         </tr>
                         <tr>
-                            <td style="text-align:center;">กิจส่วนตัว</td>
+                            <td style="text-align:center;">à¸à¸´à¸ˆà¸ªà¹ˆà¸§à¸™à¸•à¸±à¸§</td>
                             <td style="text-align:center;" id="print-stat-pers-past"></td>
                             <td style="text-align:center;" id="print-stat-pers-now"></td>
                             <td style="text-align:center;" id="print-stat-pers-total"></td>
                         </tr>
                         <tr>
-                            <td style="text-align:center;">คลอดบุตร</td>
+                            <td style="text-align:center;">à¸„à¸¥à¸­à¸”à¸šà¸¸à¸•à¸£</td>
                             <td style="text-align:center;" id="print-stat-mat-past"></td>
                             <td style="text-align:center;" id="print-stat-mat-now"></td>
                             <td style="text-align:center;" id="print-stat-mat-total"></td>
@@ -888,82 +889,82 @@ select.form-control option {
                 </table>
                 
                 <div style="margin-top: 15px; text-align: center;">
-                    <div>(ลงชื่อ).......................................................ผู้ตรวจสอบ</div>
-                    <div style="margin-top: 5px;">ตำแหน่ง.......................................................</div>
-                    <div style="margin-top: 5px;">วันที่.........../.........../...........</div>
+                    <div>(à¸¥à¸‡à¸Šà¸·à¹ˆà¸­).......................................................à¸œà¸¹à¹‰à¸•à¸£à¸§à¸ˆà¸ªà¸­à¸š</div>
+                    <div style="margin-top: 5px;">à¸•à¸³à¹à¸«à¸™à¹ˆà¸‡.......................................................</div>
+                    <div style="margin-top: 5px;">à¸§à¸±à¸™à¸—à¸µà¹ˆ.........../.........../...........</div>
                 </div>
                 
                 <div style="margin-top: 15px; text-align: center;">
-                    <div style="margin-bottom: 5px;">(ลงชื่อ).......................................................</div>
+                    <div style="margin-bottom: 5px;">(à¸¥à¸‡à¸Šà¸·à¹ˆà¸­).......................................................</div>
                     <div>( <span id="print-hr-name">.......................................................</span> )</div>
-                    <div style="margin-top: 2px;">ตำแหน่ง หัวหน้ากลุ่มบริหารงานบุคคล</div>
-                    <div style="margin-top: 2px;">วันที่.........../.........../...........</div>
+                    <div style="margin-top: 2px;">à¸•à¸³à¹à¸«à¸™à¹ˆà¸‡ à¸«à¸±à¸§à¸«à¸™à¹‰à¸²à¸à¸¥à¸¸à¹ˆà¸¡à¸šà¸£à¸´à¸«à¸²à¸£à¸‡à¸²à¸™à¸šà¸¸à¸„à¸„à¸¥</div>
+                    <div style="margin-top: 2px;">à¸§à¸±à¸™à¸—à¸µà¹ˆ.........../.........../...........</div>
                 </div>
                 
                 <div style="margin-top: 15px; text-align: center;">
-                    <div>ความเห็นผู้อำนวยการกลุ่มบริหารงานบุคคล</div>
-                    <div style="margin-top: 10px;">(ลงชื่อ).......................................................</div>
+                    <div>à¸„à¸§à¸²à¸¡à¹€à¸«à¹‡à¸™à¸œà¸¹à¹‰à¸­à¸³à¸™à¸§à¸¢à¸à¸²à¸£à¸à¸¥à¸¸à¹ˆà¸¡à¸šà¸£à¸´à¸«à¸²à¸£à¸‡à¸²à¸™à¸šà¸¸à¸„à¸„à¸¥</div>
+                    <div style="margin-top: 10px;">(à¸¥à¸‡à¸Šà¸·à¹ˆà¸­).......................................................</div>
                     <div style="margin-top: 2px;">( <span id="print-deputy-name">.......................................................</span> )</div>
-                    <div style="margin-top: 2px;">ตำแหน่ง รองผู้อำนวยการกลุ่มบริหารงานบุคคล</div>
-                    <div style="margin-top: 2px;">วันที่.........../.........../...........</div>
+                    <div style="margin-top: 2px;">à¸•à¸³à¹à¸«à¸™à¹ˆà¸‡ à¸£à¸­à¸‡à¸œà¸¹à¹‰à¸­à¸³à¸™à¸§à¸¢à¸à¸²à¸£à¸à¸¥à¸¸à¹ˆà¸¡à¸šà¸£à¸´à¸«à¸²à¸£à¸‡à¸²à¸™à¸šà¸¸à¸„à¸„à¸¥</div>
+                    <div style="margin-top: 2px;">à¸§à¸±à¸™à¸—à¸µà¹ˆ.........../.........../...........</div>
                 </div>
             </div>
             
             <div style="width: 50%; padding-left: 40px; text-align: center;">
-                <div style="margin-bottom: 15px;">ขอแสดงความนับถือ</div>
-                <div style="margin-bottom: 5px;">(ลงชื่อ).......................................................</div>
+                <div style="margin-bottom: 15px;">à¸‚à¸­à¹à¸ªà¸”à¸‡à¸„à¸§à¸²à¸¡à¸™à¸±à¸šà¸–à¸·à¸­</div>
+                <div style="margin-bottom: 5px;">(à¸¥à¸‡à¸Šà¸·à¹ˆà¸­).......................................................</div>
                 <div style="margin-bottom: 15px;">( <span id="print-sign-name">.......................................................</span> )</div>
                 
                 <div style="margin-top: 15px;">
-                    <div>ความเห็นหัวหน้ากลุ่มสาระการเรียนรู้</div>
-                    <div style="margin-top: 10px;">(ลงชื่อ).......................................................</div>
+                    <div>à¸„à¸§à¸²à¸¡à¹€à¸«à¹‡à¸™à¸«à¸±à¸§à¸«à¸™à¹‰à¸²à¸à¸¥à¸¸à¹ˆà¸¡à¸ªà¸²à¸£à¸°à¸à¸²à¸£à¹€à¸£à¸µà¸¢à¸™à¸£à¸¹à¹‰</div>
+                    <div style="margin-top: 10px;">(à¸¥à¸‡à¸Šà¸·à¹ˆà¸­).......................................................</div>
                     <div style="margin-top: 2px;">( ....................................................... )</div>
-                    <div style="margin-top: 2px;">ตำแหน่ง.......................................................</div>
-                    <div style="margin-top: 2px;">วันที่.........../.........../...........</div>
+                    <div style="margin-top: 2px;">à¸•à¸³à¹à¸«à¸™à¹ˆà¸‡.......................................................</div>
+                    <div style="margin-top: 2px;">à¸§à¸±à¸™à¸—à¸µà¹ˆ.........../.........../...........</div>
                 </div>
                 
                 <div style="margin-top: 15px;">
-                    <div>ความเห็นผู้บังคับบัญชา</div>
-                    <div style="text-align: left; padding-left: 20px; margin-top: 5px;"><u>คำสั่ง</u></div>
+                    <div>à¸„à¸§à¸²à¸¡à¹€à¸«à¹‡à¸™à¸œà¸¹à¹‰à¸šà¸±à¸‡à¸„à¸±à¸šà¸šà¸±à¸à¸Šà¸²</div>
+                    <div style="text-align: left; padding-left: 20px; margin-top: 5px;"><u>à¸„à¸³à¸ªà¸±à¹ˆà¸‡</u></div>
                     <div style="margin-top: 5px;">
-                        <span style="margin-right: 20px;">☐ อนุญาต</span>
-                        <span>☐ ไม่อนุญาต</span>
+                        <span style="margin-right: 20px;">â˜ à¸­à¸™à¸¸à¸à¸²à¸•</span>
+                        <span>â˜ à¹„à¸¡à¹ˆà¸­à¸™à¸¸à¸à¸²à¸•</span>
                     </div>
-                    <div style="margin-top: 10px;">(ลงชื่อ).......................................................</div>
+                    <div style="margin-top: 10px;">(à¸¥à¸‡à¸Šà¸·à¹ˆà¸­).......................................................</div>
                     <div style="margin-top: 2px;">( <span id="print-director-name">.......................................................</span> )</div>
-                    <div style="margin-top: 2px;" id="print-director-pos">ผู้อำนวยการโรงเรียน....................................</div>
-                    <div style="margin-top: 2px;">วันที่.........../.........../...........</div>
+                    <div style="margin-top: 2px;" id="print-director-pos">à¸œà¸¹à¹‰à¸­à¸³à¸™à¸§à¸¢à¸à¸²à¸£à¹‚à¸£à¸‡à¹€à¸£à¸µà¸¢à¸™....................................</div>
+                    <div style="margin-top: 2px;">à¸§à¸±à¸™à¸—à¸µà¹ˆ.........../.........../...........</div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // กำหนด URL ของ Google Apps Script ที่ Deploy แล้ว
+        // à¸à¸³à¸«à¸™à¸” URL à¸‚à¸­à¸‡ Google Apps Script à¸—à¸µà¹ˆ Deploy à¹à¸¥à¹‰à¸§
         window.API_URL = "https://script.google.com/macros/s/AKfycbzGw57Iv1jgcFyP9IRcPdT6xbGkLkYjHEr3tWzYY5bq4WYEhUyvWV9L8we0Rkdq7Kwt/exec";
     </script>
     <!-- Modal: LIFF PDF Guide -->
     <div id="liff-pdf-guide-modal" class="modal">
         <div class="modal-content modal-sm">
             <div class="modal-header">
-                <h3>ข้อมูลถูกส่งเข้าระบบแล้ว!</h3>
+                <h3>à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸–à¸¹à¸à¸ªà¹ˆà¸‡à¹€à¸‚à¹‰à¸²à¸£à¸°à¸šà¸šà¹à¸¥à¹‰à¸§!</h3>
                 <button class="modal-close" data-close="liff-pdf-guide-modal">
                     <span class="material-icons-round">close</span>
                 </button>
             </div>
             <div class="modal-body" style="text-align: center;">
                 <span class="material-icons-round" style="font-size: 48px; color: #10b981; margin-bottom: 16px;">check_circle</span>
-                <p style="font-size: 1.1rem; font-weight: 600; margin-bottom: 16px;">ระบบได้รับข้อมูลใบลาของคุณเรียบร้อยแล้ว</p>
+                <p style="font-size: 1.1rem; font-weight: 600; margin-bottom: 16px;">à¸£à¸°à¸šà¸šà¹„à¸”à¹‰à¸£à¸±à¸šà¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¹ƒà¸šà¸¥à¸²à¸‚à¸­à¸‡à¸„à¸¸à¸“à¹€à¸£à¸µà¸¢à¸šà¸£à¹‰à¸­à¸¢à¹à¸¥à¹‰à¸§</p>
                 <div style="background: #fffbeb; border: 1px solid #f59e0b; padding: 16px; border-radius: 8px; text-align: left; font-size: 0.95rem;">
-                    <p style="font-weight: 600; color: #b45309; margin-bottom: 8px;">📖 วิธีดาวน์โหลดใบลาเป็น PDF</p>
-                    <p style="color: #78350f; margin-bottom: 8px;">เนื่องจากคุณกำลังใช้งานผ่านแอป LINE จะไม่สามารถบันทึก PDF ได้โดยตรง ให้กดปุ่มด้านล่างเพื่อเปิดหน้าเว็บและโหลด PDF ครับ</p>
+                    <p style="font-weight: 600; color: #b45309; margin-bottom: 8px;">ðŸ“– à¸§à¸´à¸˜à¸µà¸”à¸²à¸§à¸™à¹Œà¹‚à¸«à¸¥à¸”à¹ƒà¸šà¸¥à¸²à¹€à¸›à¹‡à¸™ PDF</p>
+                    <p style="color: #78350f; margin-bottom: 8px;">à¹€à¸™à¸·à¹ˆà¸­à¸‡à¸ˆà¸²à¸à¸„à¸¸à¸“à¸à¸³à¸¥à¸±à¸‡à¹ƒà¸Šà¹‰à¸‡à¸²à¸™à¸œà¹ˆà¸²à¸™à¹à¸­à¸› LINE à¸ˆà¸°à¹„à¸¡à¹ˆà¸ªà¸²à¸¡à¸²à¸£à¸–à¸šà¸±à¸™à¸—à¸¶à¸ PDF à¹„à¸”à¹‰à¹‚à¸”à¸¢à¸•à¸£à¸‡ à¹ƒà¸«à¹‰à¸à¸”à¸›à¸¸à¹ˆà¸¡à¸”à¹‰à¸²à¸™à¸¥à¹ˆà¸²à¸‡à¹€à¸žà¸·à¹ˆà¸­à¹€à¸›à¸´à¸”à¸«à¸™à¹‰à¸²à¹€à¸§à¹‡à¸šà¹à¸¥à¸°à¹‚à¸«à¸¥à¸” PDF à¸„à¸£à¸±à¸š</p>
                 </div>
             </div>
             <div class="modal-footer" style="flex-direction: column; gap: 8px;">
                 <button class="btn-primary" id="btn-liff-open-external" style="width: 100%; justify-content: center;">
-                    <span class="material-icons-round">open_in_browser</span> เปิดเบราว์เซอร์เพื่อโหลด PDF
+                    <span class="material-icons-round">open_in_browser</span> à¹€à¸›à¸´à¸”à¹€à¸šà¸£à¸²à¸§à¹Œà¹€à¸‹à¸­à¸£à¹Œà¹€à¸žà¸·à¹ˆà¸­à¹‚à¸«à¸¥à¸” PDF
                 </button>
-                <button class="btn-secondary" data-close="liff-pdf-guide-modal" style="width: 100%; justify-content: center;">ปิดหน้าต่าง</button>
+                <button class="btn-secondary" data-close="liff-pdf-guide-modal" style="width: 100%; justify-content: center;">à¸›à¸´à¸”à¸«à¸™à¹‰à¸²à¸•à¹ˆà¸²à¸‡</button>
             </div>
         </div>
     </div>
@@ -990,5 +991,7 @@ select.form-control option {
             });
         }
     </script>
+    <script src="js/crystal-dropdown.js?v=2.0"></script>
 </body>
 </html>
+

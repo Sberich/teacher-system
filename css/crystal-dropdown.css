@@ -1,0 +1,124 @@
+﻿.crystal-dropdown-wrapper {
+    position: relative;
+    width: 100%;
+    font-family: inherit;
+    user-select: none;
+}
+.crystal-dropdown-display {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 18px;
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03), inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: var(--text);
+    font-size: 1rem;
+}
+[data-theme='dark'] .crystal-dropdown-display {
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+.crystal-dropdown-wrapper:not(.disabled):hover .crystal-dropdown-display {
+    background: rgba(255, 255, 255, 0.6);
+    border-color: rgba(255, 255, 255, 0.8);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+}
+[data-theme='dark'] .crystal-dropdown-wrapper:not(.disabled):hover .crystal-dropdown-display {
+    background: rgba(30, 41, 59, 0.7);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+.crystal-dropdown-wrapper.open .crystal-dropdown-display {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+}
+.crystal-dropdown-wrapper.disabled .crystal-dropdown-display {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: rgba(200, 200, 200, 0.2);
+}
+.crystal-arrow {
+    font-size: 20px;
+    color: var(--text-muted);
+    transition: transform 0.3s ease;
+}
+.crystal-dropdown-wrapper.open .crystal-arrow {
+    transform: rotate(180deg);
+}
+.crystal-text.placeholder {
+    color: var(--text-muted);
+}
+.crystal-dropdown-list {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    width: 100%;
+    max-height: 280px;
+    overflow-y: auto;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    padding: 8px;
+    animation: crystalFadeIn 0.2s ease forwards;
+}
+[data-theme='dark'] .crystal-dropdown-list {
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+.crystal-dropdown-list::-webkit-scrollbar {
+    width: 6px;
+}
+.crystal-dropdown-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+.crystal-dropdown-list::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 4px;
+}
+[data-theme='dark'] .crystal-dropdown-list::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+}
+.crystal-optgroup {
+    padding: 10px 14px 4px 14px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.crystal-option {
+    padding: 12px 14px;
+    margin-bottom: 2px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--text);
+    font-size: 0.95rem;
+}
+.crystal-option:hover {
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--primary);
+}
+.crystal-option.selected {
+    background: var(--primary);
+    color: white;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+@keyframes crystalFadeIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
