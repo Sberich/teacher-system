@@ -260,11 +260,15 @@ const Settings = (() => {
             btn.disabled = true;
             btn.innerHTML = '<span class="material-icons-round spinning">sync</span> กำลังซิงค์...';
 
-            await DataManager.forceSyncToCloud();
+            const success = await DataManager.forceSyncToCloud();
 
             btn.disabled = false;
             btn.innerHTML = '<span class="material-icons-round">backup</span> ส่งข้อมูลทั้งหมดขึ้น Cloud ทันที';
-            App.showToast('ซิงค์ข้อมูลขึ้น Cloud เรียบร้อย', 'success');
+            if (success) {
+                App.showToast('ซิงค์ข้อมูลขึ้น Cloud เรียบร้อย', 'success');
+            } else {
+                App.showToast('ซิงค์ข้อมูลไม่สำเร็จ โปรดตรวจสอบการเชื่อมต่อ', 'error');
+            }
         });
     }
 

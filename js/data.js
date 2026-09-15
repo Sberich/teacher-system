@@ -66,7 +66,7 @@ const DataManager = (() => {
         try {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 20000); // 12 วินาที Timeout
-            
+
             const token = sessionStorage.getItem(SESSION_TOKEN_KEY) || '';
             const fetchUrl = url + '?t=' + Date.now() + (token ? '&token=' + encodeURIComponent(token) : '');
 
@@ -90,7 +90,7 @@ const DataManager = (() => {
                 if (data.lateArrivals !== undefined) {
                     localStorage.setItem(KEYS.lateArrivals, JSON.stringify(data.lateArrivals));
                 }
-                
+
                 if (data.visitCount !== undefined) {
                     localStorage.setItem('tla_visit_count', data.visitCount.toString());
                 }
@@ -110,22 +110,18 @@ const DataManager = (() => {
 
     // Push all local data to Cloud
     async function pushToCloud() {
-        if (!isAdmin() && !isLateAdmin()) { if (window.App && App.hideSyncIndicator) App.hideSyncIndicator(); return; }
+        if (!isAdmin() && !isLateAdmin()) { if (window.App && App.hideSyncIndicator) App.hideSyncIndicator(); return false; }
 
         const url = getCloudUrl();
-        if (!url) return;
+        if (!url) return false;
 
         const token = getSessionToken();
         if (!token) {
-            // Logged in locally but no session token on file — most commonly this happens
-            // the very first time a Cloud URL is saved (login happened before a URL existed),
-            // or after a deploy of this new token-based version while an old session was
-            // still marked "logged in" from before. Either way, syncing needs a fresh login.
             if (window.App && App.hideSyncIndicator) App.hideSyncIndicator();
             if (window.App && App.showToast) {
                 App.showToast('ยังไม่มีเซสชันสำหรับซิงค์ข้อมูล กรุณาออกจากระบบแล้วเข้าสู่ระบบใหม่อีกครั้ง', 'warning');
             }
-            return;
+            return false;
         }
 
         isSyncing = true;
@@ -146,9 +142,12 @@ const DataManager = (() => {
             }
         };
 
+        // ⭐ FIX: ใช้ตัวแปรนี้เก็บผลจริง แทนการสมมติว่าสำเร็จเสมอ
+        let success = false;
+
         try {
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 20000); // 12 วินาที Timeout
+            const timeoutId = setTimeout(() => controller.abort(), 20000);
 
             const response = await fetch(url, {
                 method: 'POST',
@@ -162,15 +161,16 @@ const DataManager = (() => {
 
             if (!response.ok) throw new Error('Network error');
             const result = await response.json();
-            if (result.status !== 'success') {
+
+            if (result.status === 'success') {
+                success = true;
+            } else {
                 console.error('Cloud push error:', result.message);
 
                 const msg = result.message || '';
                 const looksExpired = msg.indexOf('หมดอายุ') !== -1 || msg.toLowerCase().indexOf('unauthorized') !== -1;
 
                 if (looksExpired) {
-                    // Server rejected the token — clear the local session too so the UI
-                    // immediately reflects "logged out" instead of silently failing to sync.
                     sessionStorage.removeItem('tla_is_admin');
                     sessionStorage.removeItem('tla_is_late_admin');
                     sessionStorage.removeItem(SESSION_TOKEN_KEY);
@@ -180,16 +180,17 @@ const DataManager = (() => {
             }
         } catch (error) {
             console.error('Cloud push failed:', error);
+            success = false;
         } finally {
             isSyncing = false;
             if (window.App && App.hideSyncIndicator) App.hideSyncIndicator();
         }
+
+        return success;
     }
 
     // Debounce push to avoid spamming the cloud API
     function triggerCloudSync() {
-        // ให้ Super Admin ใช้ปุ่ม Force Sync เท่านั้น เพื่อจัดกลุ่มแจ้งเตือน
-        // แต่ให้ Late Admin (แอดมินครูเวร) Auto-sync ทันที เพราะไม่มีการแจ้งเตือนอยู่แล้ว
         if (!isLateAdmin() && !isAdmin()) {
             return;
         }
@@ -200,15 +201,16 @@ const DataManager = (() => {
         if (syncTimeout) clearTimeout(syncTimeout);
         syncTimeout = setTimeout(() => {
             pushToCloud();
-        }, 2000); 
+        }, 2000);
     }
 
     // Force an immediate sync (for settings page button)
     async function forceSyncToCloud() {
         if (!getCloudUrl()) return false;
         if (window.App && App.showSyncIndicator) App.showSyncIndicator();
-        await pushToCloud();
-        return true;
+        // ⭐ FIX: คืนค่าผลจริงจาก pushToCloud() แทนการ return true ตายตัว
+        const success = await pushToCloud();
+        return success;
     }
 
     // --- Auth (Session based) ---
