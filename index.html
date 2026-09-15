@@ -1,15 +1,20 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ระบบบันทึกข้อมูลวันลาข้าราชการครู v1.2.1</title>
     <meta name="description" content="ระบบบันทึกและแสดงข้อมูลวันลาข้าราชการครู สำหรับสถานศึกษา">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%233b82f6'%3E%3Cpath d='M12 3L1 9L12 15L21 10.09V17H23V9M5 13.18V17.18C5 17.18 8.13 21 12 21C15.87 21 19 17.18 19 17.18V13.18C19 13.18 15.87 17 12 17C8.13 17 5 13.18 5 13.18Z'/%3E%3C/svg%3E">
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%233b82f6'%3E%3Cpath d='M12 3L1 9L12 15L21 10.09V17H23V9M5 13.18V17.18C5 17.18 8.13 21 12 21C15.87 21 19 17.18 19 17.18V13.18C19 13.18 15.87 17 12 17C8.13 17 5 13.18 5 13.18Z'/%3E%3C/svg%3E">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Kanit:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
     <!-- Flatpickr for Date Picker -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/airbnb.css">
@@ -24,174 +29,261 @@
     <link rel="apple-touch-icon" href="icon-app.png">
 
 
-<style>
-﻿/* --- Dynamic Calendar Logo --- */
-.dynamic-logo-wrapper {
-    position: relative;
-    width: 38px;
-    height: 42px;
-    margin-right: 12px;
-    display: flex;
-    align-items: flex-end;
-    flex-shrink: 0;
-}
-.dynamic-logo-cal {
-    position: relative;
-    width: 36px;
-    height: 32px;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.5) 100%);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    border-top: 1px solid rgba(255, 255, 255, 0.5);
-    border-left: 1px solid rgba(255, 255, 255, 0.5);
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1), inset 0 2px 10px rgba(255,255,255,0.2);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-end;
-    padding-bottom: 2px;
-    z-index: 1;
-}
-[data-theme='dark'] .dynamic-logo-cal {
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.4) 0%, rgba(139, 92, 246, 0.3) 100%);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-top: 1px solid rgba(255, 255, 255, 0.3);
-    border-left: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 2px 10px rgba(255,255,255,0.05);
-}
-.dynamic-logo-header {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 11px;
-    background: var(--primary-gradient);
-    border-radius: 7px 7px 0 0;
-    opacity: 0.95;
-    border-bottom: 1px solid rgba(0,0,0,0.1);
-}
-.dynamic-logo-month {
-    position: absolute;
-    top: 1px;
-    width: 100%;
-    text-align: center;
-    font-size: 0.45rem;
-    font-weight: 800;
-    color: white !important;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    z-index: 2;
-    line-height: 1;
-    -webkit-text-fill-color: white !important;
-}
-.dynamic-logo-day {
-    font-size: 1.1rem;
-    font-weight: 800;
-    color: var(--text);
-    z-index: 2;
-    background: var(--primary-gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    line-height: 1;
-    margin-bottom: 2px;
-}
-.dynamic-logo-cap {
-    position: absolute;
-    top: -8px;
-    left: -4px;
-    font-size: 26px;
-    transform: rotate(-15deg);
-    text-shadow: -2px 3px 5px rgba(0,0,0,0.25);
-    z-index: 3;
-    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-[data-theme='dark'] .dynamic-logo-cap {
-    background: linear-gradient(135deg, #60a5fa, #c084fc);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-/* --- Premium Native Select --- */
-select.form-control, select#lr-teacher, select#lr-type {
-    appearance: none;
-    -webkit-appearance: none;
-    background-color: var(--bg-input);
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 12px center;
-    background-size: 16px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    padding: 12px 40px 12px 16px;
-    font-size: 1rem;
-    color: var(--text);
-    width: 100%;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.02) inset, 0 1px 2px rgba(0,0,0,0.05);
-    transition: all 0.3s ease;
-    cursor: pointer;
-}
-[data-theme='dark'] select.form-control, [data-theme='dark'] select#lr-teacher, [data-theme='dark'] select#lr-type {
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1) inset, 0 1px 3px rgba(0,0,0,0.2);
-}
-select.form-control:focus, select#lr-teacher:focus, select#lr-type:focus {
-    border-color: var(--primary);
-    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
-    outline: none;
-}
-select.form-control:disabled, select#lr-teacher:disabled, select#lr-type:disabled {
-    background-color: var(--bg-hover);
-    color: var(--text-muted);
-    cursor: not-allowed;
-    opacity: 0.8;
-}
-select.form-control optgroup {
-    font-weight: 700;
-    color: var(--primary);
-    background: var(--bg);
-}
-select.form-control option {
-    font-weight: normal;
-    color: var(--text);
-    background: var(--bg-card);
-    padding: 8px;
-}
-.main-logo { width: 56px; height: 56px; border-radius: 8px; object-fit: contain; margin-right: 12px; flex-shrink: 0; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.2)); } 
-.main-logo-large { width: 96px; height: 96px; border-radius: 16px; object-fit: contain; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3)); }
-.dynamic-image-logo { position: relative; display: inline-block; flex-shrink: 0; }
-.logo-text-overlay { position: absolute; top: 43%; left: 0%; width: 100%; text-align: center; pointer-events: none; padding-right: 12px; filter: drop-shadow(0px 1px 2px rgba(0,0,0,0.5)); }
-.dynamic-image-logo.large .logo-text-overlay { top: 43%; padding-right: 0;}
-.logo-text-overlay .logo-month-text { font-size: 0.5rem; font-weight: 900; line-height: 1; text-transform: uppercase; letter-spacing: 0.5px; background: linear-gradient(90deg, #ff3366, #ff9933, #33cc33, #3399ff, #cc33ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-.dynamic-image-logo.large .logo-text-overlay .logo-month-text { font-size: 0.8rem; }
-.logo-text-overlay .logo-day-text { font-size: 1.1rem; font-weight: 900; line-height: 1; margin-top: 1px; background: linear-gradient(90deg, #ff3366, #ff9933, #33cc33, #3399ff, #cc33ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-.dynamic-image-logo.large .logo-text-overlay .logo-day-text { font-size: 1.8rem; margin-top: 3px; }
-/* --- Responsive Logo Title --- */
-.desktop-title {
-    display: inline;
-    font-size: 1.35rem; /* Larger font for PC */
-    font-weight: 800;
-}
-.mobile-title {
-    display: none;
-}
-@media (max-width: 768px) {
-    .desktop-title {
-        display: none;
-    }
-    .mobile-title {
-        display: inline;
-        font-size: 1.15rem; /* Better size for mobile */
-        font-weight: 700;
-    }
-}
+    <style>
+        /* --- Dynamic Calendar Logo --- */
+        .dynamic-logo-wrapper {
+            position: relative;
+            width: 38px;
+            height: 42px;
+            margin-right: 12px;
+            display: flex;
+            align-items: flex-end;
+            flex-shrink: 0;
+        }
 
+        .dynamic-logo-cal {
+            position: relative;
+            width: 36px;
+            height: 32px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.5) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-top: 1px solid rgba(255, 255, 255, 0.5);
+            border-left: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1), inset 0 2px 10px rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            padding-bottom: 2px;
+            z-index: 1;
+        }
 
-</style>
+        [data-theme='dark'] .dynamic-logo-cal {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.4) 0%, rgba(139, 92, 246, 0.3) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+            border-left: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 2px 10px rgba(255, 255, 255, 0.05);
+        }
+
+        .dynamic-logo-header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 11px;
+            background: var(--primary-gradient);
+            border-radius: 7px 7px 0 0;
+            opacity: 0.95;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .dynamic-logo-month {
+            position: absolute;
+            top: 1px;
+            width: 100%;
+            text-align: center;
+            font-size: 0.45rem;
+            font-weight: 800;
+            color: white !important;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            z-index: 2;
+            line-height: 1;
+            -webkit-text-fill-color: white !important;
+        }
+
+        .dynamic-logo-day {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--text);
+            z-index: 2;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+            margin-bottom: 2px;
+        }
+
+        .dynamic-logo-cap {
+            position: absolute;
+            top: -8px;
+            left: -4px;
+            font-size: 26px;
+            transform: rotate(-15deg);
+            text-shadow: -2px 3px 5px rgba(0, 0, 0, 0.25);
+            z-index: 3;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        [data-theme='dark'] .dynamic-logo-cap {
+            background: linear-gradient(135deg, #60a5fa, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* --- Premium Native Select --- */
+        select.form-control,
+        select#lr-teacher,
+        select#lr-type {
+            appearance: none;
+            -webkit-appearance: none;
+            background-color: var(--bg-input);
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 12px 40px 12px 16px;
+            font-size: 1rem;
+            color: var(--text);
+            width: 100%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02) inset, 0 1px 2px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        [data-theme='dark'] select.form-control,
+        [data-theme='dark'] select#lr-teacher,
+        [data-theme='dark'] select#lr-type {
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) inset, 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        select.form-control:focus,
+        select#lr-teacher:focus,
+        select#lr-type:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+            outline: none;
+        }
+
+        select.form-control:disabled,
+        select#lr-teacher:disabled,
+        select#lr-type:disabled {
+            background-color: var(--bg-hover);
+            color: var(--text-muted);
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+
+        select.form-control optgroup {
+            font-weight: 700;
+            color: var(--primary);
+            background: var(--bg);
+        }
+
+        select.form-control option {
+            font-weight: normal;
+            color: var(--text);
+            background: var(--bg-card);
+            padding: 8px;
+        }
+
+        .main-logo {
+            width: 56px;
+            height: 56px;
+            border-radius: 8px;
+            object-fit: contain;
+            margin-right: 12px;
+            flex-shrink: 0;
+            filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.2));
+        }
+
+        .main-logo-large {
+            width: 96px;
+            height: 96px;
+            border-radius: 16px;
+            object-fit: contain;
+            filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+        }
+
+        .dynamic-image-logo {
+            position: relative;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+
+        .logo-text-overlay {
+            position: absolute;
+            top: 43%;
+            left: 0%;
+            width: 100%;
+            text-align: center;
+            pointer-events: none;
+            padding-right: 12px;
+            filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.5));
+        }
+
+        .dynamic-image-logo.large .logo-text-overlay {
+            top: 43%;
+            padding-right: 0;
+        }
+
+        .logo-text-overlay .logo-month-text {
+            font-size: 0.5rem;
+            font-weight: 900;
+            line-height: 1;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: linear-gradient(90deg, #ff3366, #ff9933, #33cc33, #3399ff, #cc33ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .dynamic-image-logo.large .logo-text-overlay .logo-month-text {
+            font-size: 0.8rem;
+        }
+
+        .logo-text-overlay .logo-day-text {
+            font-size: 1.1rem;
+            font-weight: 900;
+            line-height: 1;
+            margin-top: 1px;
+            background: linear-gradient(90deg, #ff3366, #ff9933, #33cc33, #3399ff, #cc33ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .dynamic-image-logo.large .logo-text-overlay .logo-day-text {
+            font-size: 1.8rem;
+            margin-top: 3px;
+        }
+
+        /* --- Responsive Logo Title --- */
+        .desktop-title {
+            display: inline;
+            font-size: 1.35rem;
+            /* Larger font for PC */
+            font-weight: 800;
+        }
+
+        .mobile-title {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .desktop-title {
+                display: none;
+            }
+
+            .mobile-title {
+                display: inline;
+                font-size: 1.15rem;
+                /* Better size for mobile */
+                font-weight: 700;
+            }
+        }
+    </style>
     <link rel="stylesheet" href="css/crystal-dropdown.css?v=2.0">
 </head>
+
 <body>
     <!-- Global Loader (For Initial Cloud Pull) -->
     <div id="global-loader" class="global-loader" style="display:none;">
@@ -212,7 +304,8 @@ select.form-control option {
                 <span class="material-icons-round">menu</span>
             </button>
             <div class="logo" style="cursor:pointer;" onclick="openAbout()" title="เกี่ยวกับระบบ">
-                                <span class="material-icons-round" style="font-size: 60px; line-height: 1; color: #3b82f6; margin-right: 12px;">school</span>
+                <span class="material-icons-round"
+                    style="font-size: 60px; line-height: 1; color: #3b82f6; margin-right: 12px;">school</span>
                 <h1>
                     <span class="desktop-title">ระบบบันทึกข้อมูลวันลาข้าราชการครู</span>
                     <span class="mobile-title">ระบบวันลาครู</span>
@@ -222,7 +315,8 @@ select.form-control option {
         <nav id="main-nav">
             <div class="mobile-nav-header">
                 <div class="nav-header-info">
-                                    <span class="material-icons-round" style="font-size: 60px; line-height: 1; color: #3b82f6; margin-right: 12px;">school</span>
+                    <span class="material-icons-round"
+                        style="font-size: 60px; line-height: 1; color: #3b82f6; margin-right: 12px;">school</span>
                     <div class="nav-header-text">
                         <h2>ระบบแสดงข้อมูลวันลา</h2>
                         <p id="nav-role-text">สำหรับสถานศึกษา</p>
@@ -233,7 +327,8 @@ select.form-control option {
                 </button>
             </div>
             <a href="#" class="nav-item" data-page="leave-request" style="padding: 0 16px;">
-                <span class="nav-label" style="font-size: 1.15rem; font-weight: 800; color: var(--primary); letter-spacing: 0.5px;">ยื่นใบลา</span>
+                <span class="nav-label"
+                    style="font-size: 1.15rem; font-weight: 800; color: var(--primary); letter-spacing: 0.5px;">ยื่นใบลา</span>
             </a>
             <a href="#" class="nav-item active" data-page="table">
                 <span class="material-icons-round">table_chart</span>
@@ -268,7 +363,8 @@ select.form-control option {
             <button id="btn-refresh-data" class="btn-icon" aria-label="รีเฟรชข้อมูล" title="ดึงข้อมูลล่าสุด">
                 <span class="material-icons-round">sync</span>
             </button>
-            <button id="btn-force-save" class="btn-icon admin-only" aria-label="บังคับบันทึกอัปข้อมูลขึ้นคลาวด์" title="บังคับบันทึกอัปข้อมูลขึ้นคลาวด์ทันที (ข้ามการรออัปเดตอัตโนมัติ)">
+            <button id="btn-force-save" class="btn-icon admin-only" aria-label="บังคับบันทึกอัปข้อมูลขึ้นคลาวด์"
+                title="บังคับบันทึกอัปข้อมูลขึ้นคลาวด์ทันที (ข้ามการรออัปเดตอัตโนมัติ)">
                 <span class="material-icons-round">cloud_upload</span>
             </button>
             <button id="auth-toggle" class="btn-icon" aria-label="เข้าสู่ระบบ" title="เข้าสู่ระบบผู้ดูแล">
@@ -287,27 +383,33 @@ select.form-control option {
     <main id="app-content">
         <!-- Page: Late Arrival -->
         <section id="page-late-arrival" class="page">
-            <div class="page-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; margin-bottom: 24px;">
+            <div class="page-header"
+                style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; margin-bottom: 24px;">
                 <div style="display:flex; align-items:center; gap:12px;">
-                    <div style="display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; background:rgba(239, 68, 68, 0.15); border-radius:10px;">
+                    <div
+                        style="display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; background:rgba(239, 68, 68, 0.15); border-radius:10px;">
                         <span class="material-icons-round" style="color:var(--danger);font-size:24px;">schedule</span>
                     </div>
                     <div>
                         <h1 style="font-size: 1.4rem; font-weight: 700; color: var(--text); margin:0;">บันทึกมาสาย</h1>
-                        <p style="color: var(--text-secondary); font-size: 0.85rem; margin:0; margin-top:2px;">บันทึกเวลามาสายของบุคลากร</p>
+                        <p style="color: var(--text-secondary); font-size: 0.85rem; margin:0; margin-top:2px;">
+                            บันทึกเวลามาสายของบุคลากร</p>
                     </div>
                 </div>
                 <div class="page-actions late-admin-only" style="display:flex; gap:8px;">
                     <div class="dropdown">
-                        <button class="btn-secondary dropdown-toggle" id="btn-export-late-menu" title="ส่งออกข้อมูล">
+                        <button class="btn-secondary dropdown-toggle" id="btn-export-menu" title="ส่งออกข้อมูล">
                             <span class="material-icons-round">ios_share</span>
                         </button>
                         <div class="dropdown-menu">
-                            <button class="dropdown-item" id="btn-print-late-table">
+                            <button class="dropdown-item" id="btn-print-table">
                                 <span class="material-icons-round">print</span> พิมพ์ตาราง
                             </button>
-                            <button class="dropdown-item" id="btn-export-late-csv">
+                            <button class="dropdown-item" id="btn-export-csv">
                                 <span class="material-icons-round">download</span> ดาวน์โหลด CSV
+                            </button>
+                            <button class="dropdown-item" id="btn-send-leave-notify">
+                                <span class="material-icons-round">notifications_active</span> ส่งแจ้งเตือน LINE ให้ครู
                             </button>
                         </div>
                     </div>
@@ -319,8 +421,10 @@ select.form-control option {
         <section id="page-table" class="page active">
             <div class="page-header">
                 <div style="display:flex; align-items:center; gap:12px;">
-                    <div style="width:40px;height:40px;background:rgba(59, 130, 246, 0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;">
-                        <span class="material-icons-round" style="color:var(--primary);font-size:24px;">date_range</span>
+                    <div
+                        style="width:40px;height:40px;background:rgba(59, 130, 246, 0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;">
+                        <span class="material-icons-round"
+                            style="color:var(--primary);font-size:24px;">date_range</span>
                     </div>
                     <h2 style="font-size:1.4rem;font-weight:700;margin:0;">ตารางบันทึกวันลา</h2>
                 </div>
@@ -356,7 +460,8 @@ select.form-control option {
                         <!-- Table rendered by table.js -->
                     </div>
                 </div>
-                <div id="last-updated-text" style="text-align: right; margin-top: 8px; font-size: 0.85rem; color: var(--text-muted);">
+                <div id="last-updated-text"
+                    style="text-align: right; margin-top: 8px; font-size: 0.85rem; color: var(--text-muted);">
                     ข้อมูลอัปเดตล่าสุด: ยังไม่ระบุ
                 </div>
             </div>
@@ -429,9 +534,12 @@ select.form-control option {
             <div class="page-header">
                 <h2>👥 จัดการรายชื่อครู</h2>
                 <div class="page-actions">
-                    <div style="display: flex; align-items: center; gap: 8px; margin-right: auto; background: var(--bg-input); padding: 4px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
-                        <span class="material-icons-round" style="font-size: 1.1rem; color: var(--text-muted);">sort</span>
-                        <select id="teacher-sort" style="border: none; background: transparent; color: var(--text); font-family: inherit; font-size: 0.9rem; outline: none; cursor: pointer;">
+                    <div
+                        style="display: flex; align-items: center; gap: 8px; margin-right: auto; background: var(--bg-input); padding: 4px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                        <span class="material-icons-round"
+                            style="font-size: 1.1rem; color: var(--text-muted);">sort</span>
+                        <select id="teacher-sort"
+                            style="border: none; background: transparent; color: var(--text); font-family: inherit; font-size: 0.9rem; outline: none; cursor: pointer;">
                             <option value="order">เรียงตาม ลำดับ</option>
                             <option value="section">เรียงตาม กลุ่ม/หมวด</option>
                             <option value="title">เรียงตาม วิทยฐานะ</option>
@@ -461,82 +569,90 @@ select.form-control option {
                 <!-- Settings rendered by settings.js -->
             </div>
         </section>
-    <!-- Page: Leave Request -->
-    <section id="page-leave-request" class="page">
-        <div class="page-header" style="max-width: 600px; margin: 0 auto; margin-bottom: 24px; text-align: center;">
-            <h1 style="font-size: 2.2rem; font-weight: 800; letter-spacing: 1px; color: var(--text); margin-bottom: 8px;">ยื่นใบลา</h1>
-            <p style="color: var(--text-secondary); font-size: 0.95rem;">กรอกข้อมูลเพื่อสร้างแบบฟอร์มใบลา</p>
-        </div>
-        <div class="form-card" style="max-width: 600px; margin: 0 auto; background: var(--bg-card); padding: 24px; border-radius: var(--radius); box-shadow: var(--shadow-md);">
-            <div class="form-group" style="margin-bottom: 16px;">
-                <label for="lr-teacher">ผู้ขอลา</label>
-                <select id="lr-teacher" class="form-control">
-                    <option value="">-- เลือกชื่อผู้ลา --</option>
-                </select>
+        <!-- Page: Leave Request -->
+        <section id="page-leave-request" class="page">
+            <div class="page-header" style="max-width: 600px; margin: 0 auto; margin-bottom: 24px; text-align: center;">
+                <h1
+                    style="font-size: 2.2rem; font-weight: 800; letter-spacing: 1px; color: var(--text); margin-bottom: 8px;">
+                    ยื่นใบลา</h1>
+                <p style="color: var(--text-secondary); font-size: 0.95rem;">กรอกข้อมูลเพื่อสร้างแบบฟอร์มใบลา</p>
             </div>
-            <div class="form-group" style="margin-bottom: 16px;">
-                <label for="lr-type">ประเภทการลา</label>
-                <select id="lr-type" class="form-control">
-                    <option value="ป่วย">ลาป่วย</option>
-                    <option value="กิจส่วนตัว">ลากิจส่วนตัว</option>
-                    <option value="คลอดบุตร">ลาคลอดบุตร</option>
-                </select>
-            </div>
-            <div class="form-group" style="margin-bottom: 16px;">
-                <label for="lr-reason">เนื่องจาก (สาเหตุ)</label>
-                <input type="text" id="lr-reason" placeholder="เช่น ป่วยเป็นไข้สูง" class="form-control">
-            </div>
-            <div class="form-row" style="margin-bottom: 16px;">
-                <div class="form-group">
-                    <label for="lr-start-date">ตั้งแต่วันที่</label>
-                    <input type="text" id="lr-start-date" class="form-control flatpickr-date" placeholder="เลือกวันที่">
+            <div class="form-card"
+                style="max-width: 600px; margin: 0 auto; background: var(--bg-card); padding: 24px; border-radius: var(--radius); box-shadow: var(--shadow-md);">
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label for="lr-teacher">ผู้ขอลา</label>
+                    <select id="lr-teacher" class="form-control">
+                        <option value="">-- เลือกชื่อผู้ลา --</option>
+                    </select>
                 </div>
-                <div class="form-group">
-                    <label for="lr-end-date">ถึงวันที่</label>
-                    <input type="text" id="lr-end-date" class="form-control flatpickr-date" placeholder="เลือกวันที่">
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label for="lr-type">ประเภทการลา</label>
+                    <select id="lr-type" class="form-control">
+                        <option value="ป่วย">ลาป่วย</option>
+                        <option value="กิจส่วนตัว">ลากิจส่วนตัว</option>
+                        <option value="คลอดบุตร">ลาคลอดบุตร</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label for="lr-reason">เนื่องจาก (สาเหตุ)</label>
+                    <input type="text" id="lr-reason" placeholder="เช่น ป่วยเป็นไข้สูง" class="form-control">
+                </div>
+                <div class="form-row" style="margin-bottom: 16px;">
+                    <div class="form-group">
+                        <label for="lr-start-date">ตั้งแต่วันที่</label>
+                        <input type="text" id="lr-start-date" class="form-control flatpickr-date"
+                            placeholder="เลือกวันที่">
+                    </div>
+                    <div class="form-group">
+                        <label for="lr-end-date">ถึงวันที่</label>
+                        <input type="text" id="lr-end-date" class="form-control flatpickr-date"
+                            placeholder="เลือกวันที่">
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label for="lr-contact">ในระหว่างลาจะติดต่อข้าพเจ้าได้ที่</label>
+                    <textarea id="lr-contact" rows="2"
+                        placeholder="เช่น 123 ม.1 ต.ธาตุพนม อ.ธาตุพนม จ.นครพนม 48110 เบอร์โทร..."
+                        class="form-control"></textarea>
+                </div>
+                <div style="display: flex; gap: 12px; margin-top: 24px;">
+                    <button id="btn-submit-leave-request" class="btn-primary"
+                        style="flex: 1; padding: 12px; font-size: 1rem; justify-content: center;">
+                        <span class="material-icons-round">send</span> บันทึกและขอพิมพ์ใบลา
+                    </button>
                 </div>
             </div>
-            <div class="form-group" style="margin-bottom: 16px;">
-                <label for="lr-contact">ในระหว่างลาจะติดต่อข้าพเจ้าได้ที่</label>
-                <textarea id="lr-contact" rows="2" placeholder="เช่น 123 ม.1 ต.ธาตุพนม อ.ธาตุพนม จ.นครพนม 48110 เบอร์โทร..." class="form-control"></textarea>
-            </div>
-            <div style="display: flex; gap: 12px; margin-top: 24px;">
-                <button id="btn-submit-leave-request" class="btn-primary" style="flex: 1; padding: 12px; font-size: 1rem; justify-content: center;">
-                    <span class="material-icons-round">send</span> บันทึกและขอพิมพ์ใบลา
-                </button>
-            </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Page: Manage Requests -->
-    <section id="page-manage-requests" class="page">
-        <div class="page-header">
-            <h2>ตรวจสอบคำขอลา</h2>
-            <div class="page-actions">
-                <button id="btn-clear-requests" class="btn-danger">
-                    <span class="material-icons-round">delete_sweep</span>
-                    <span>ล้างรายการที่เสร็จแล้ว</span>
-                </button>
+        <!-- Page: Manage Requests -->
+        <section id="page-manage-requests" class="page">
+            <div class="page-header">
+                <h2>ตรวจสอบคำขอลา</h2>
+                <div class="page-actions">
+                    <button id="btn-clear-requests" class="btn-danger">
+                        <span class="material-icons-round">delete_sweep</span>
+                        <span>ล้างรายการที่เสร็จแล้ว</span>
+                    </button>
+                </div>
             </div>
-        </div>
-        <div class="table-container">
-            <table class="leave-table" style="width: 100%;">
-                <thead>
-                    <tr>
-                        <th style="width: 50px;">ลำดับ</th>
-                        <th>ผู้ขอลา</th>
-                        <th>ประเภท</th>
-                        <th>วันที่ลา</th>
-                        <th>สถานะ</th>
-                        <th style="width: 150px; text-align: right;">จัดการ</th>
-                    </tr>
-                </thead>
-                <tbody id="manage-requests-tbody">
-                    <!-- Rows populated by JS -->
-                </tbody>
-            </table>
-        </div>
-    </section>
+            <div class="table-container">
+                <table class="leave-table" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">ลำดับ</th>
+                            <th>ผู้ขอลา</th>
+                            <th>ประเภท</th>
+                            <th>วันที่ลา</th>
+                            <th>สถานะ</th>
+                            <th style="width: 150px; text-align: right;">จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="manage-requests-tbody">
+                        <!-- Rows populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
     </main>
 
@@ -564,21 +680,26 @@ select.form-control option {
                 </div>
                 <div class="form-group" style="margin-bottom: 10px;">
                     <label>ประวัติการลาในเดือนนี้</label>
-                    <div id="leave-history-list" style="border: 1px solid var(--border); border-radius: var(--radius-sm); max-height: 150px; overflow-y: auto; background: var(--bg-card); padding: 5px;">
+                    <div id="leave-history-list"
+                        style="border: 1px solid var(--border); border-radius: var(--radius-sm); max-height: 150px; overflow-y: auto; background: var(--bg-card); padding: 5px;">
                         <!-- History items rendered here -->
                     </div>
                 </div>
 
                 <div style="border-top: 1px dashed var(--border); margin: 10px 0; padding-top: 10px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                        <label id="leave-form-title" style="color: var(--primary); font-weight: 600; display: flex; align-items: center; gap: 5px; margin: 0;">
-                            <span class="material-icons-round" id="leave-form-icon" style="font-size: 18px;">add_circle</span> 
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <label id="leave-form-title"
+                            style="color: var(--primary); font-weight: 600; display: flex; align-items: center; gap: 5px; margin: 0;">
+                            <span class="material-icons-round" id="leave-form-icon"
+                                style="font-size: 18px;">add_circle</span>
                             <span id="leave-form-text">เพิ่มรายการลาใหม่</span>
                         </label>
-                        <button type="button" id="btn-cancel-edit" class="btn-secondary" style="display: none; padding: 2px 8px; font-size: 0.75rem;">ยกเลิกการแก้ไข</button>
+                        <button type="button" id="btn-cancel-edit" class="btn-secondary"
+                            style="display: none; padding: 2px 8px; font-size: 0.75rem;">ยกเลิกการแก้ไข</button>
                     </div>
                     <input type="hidden" id="leave-edit-id" value="">
-                    
+
                     <div style="display: flex; gap: 15px; margin-bottom: 5px;">
                         <div class="form-group" style="width: 100px;">
                             <label for="leave-times">จำนวนครั้ง</label>
@@ -590,23 +711,28 @@ select.form-control option {
                         </div>
                     </div>
                     <div class="form-group">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                             <label for="leave-notes" style="margin-bottom: 0;">โน้ต (วันที่ลา)</label>
-                            <button type="button" id="btn-pick-dates" class="btn-secondary" style="padding: 4px 8px; font-size: 0.75rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--bg-card); display: flex; align-items: center; gap: 4px;">
-                                <span class="material-icons-round" style="font-size: 14px; color: var(--primary);">calendar_month</span>
+                            <button type="button" id="btn-pick-dates" class="btn-secondary"
+                                style="padding: 4px 8px; font-size: 0.75rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--bg-card); display: flex; align-items: center; gap: 4px;">
+                                <span class="material-icons-round"
+                                    style="font-size: 14px; color: var(--primary);">calendar_month</span>
                                 เลือกจากปฏิทิน
                             </button>
                         </div>
                         <textarea id="leave-notes" rows="2" placeholder="เช่น ลาวันที่ 10-12 พ.ค."></textarea>
                         <!-- Hidden input for Flatpickr binding -->
-                        <input type="text" id="leave-notes-picker" style="opacity: 0; position: absolute; width: 1px; height: 1px;">
+                        <input type="text" id="leave-notes-picker"
+                            style="opacity: 0; position: absolute; width: 1px; height: 1px;">
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
                 <button class="btn-secondary" data-close="leave-modal">ปิด</button>
                 <button class="btn-primary" id="btn-save-leave">
-                    <span class="material-icons-round" id="btn-save-icon">add</span> <span id="btn-save-text">เพิ่มรายการ</span>
+                    <span class="material-icons-round" id="btn-save-icon">add</span> <span
+                        id="btn-save-text">เพิ่มรายการ</span>
                 </button>
             </div>
         </div>
@@ -628,7 +754,8 @@ select.form-control option {
                 </div>
                 <div class="form-group">
                     <label for="teacher-section">หมวดหมู่ / กลุ่ม (Section)</label>
-                    <input type="text" id="teacher-section" placeholder="เช่น สายชั้น ป.1-3, หมวดวิทย์" list="section-suggestions">
+                    <input type="text" id="teacher-section" placeholder="เช่น สายชั้น ป.1-3, หมวดวิทย์"
+                        list="section-suggestions">
                     <datalist id="section-suggestions"></datalist>
                 </div>
                 <div class="form-row">
@@ -740,7 +867,8 @@ select.form-control option {
                 </div>
                 <div class="form-group">
                     <label for="import-teachers-text">หรือพิมพ์/วางรายชื่อ (รูปแบบ: ชื่อ-สกุล, หมวดหมู่)</label>
-                    <textarea id="import-teachers-text" rows="8" placeholder="นายสมชาย ใจดี, สายชั้น ป.1&#10;นางสาวสมหญิง รักเรียน, หมวดวิทย์&#10;นายวิชัย พัฒนา&#10;..."></textarea>
+                    <textarea id="import-teachers-text" rows="8"
+                        placeholder="นายสมชาย ใจดี, สายชั้น ป.1&#10;นางสาวสมหญิง รักเรียน, หมวดวิทย์&#10;นายวิชัย พัฒนา&#10;..."></textarea>
                 </div>
                 <div id="import-preview" style="display:none;">
                     <div id="import-preview-list"></div>
@@ -767,7 +895,8 @@ select.form-control option {
             <div class="modal-body">
                 <div class="form-group">
                     <label for="auth-pin">รหัสผ่าน (PIN)</label>
-                    <input type="password" id="auth-pin" placeholder="****" inputmode="numeric" style="letter-spacing:4px;font-size:1.2rem;text-align:center;">
+                    <input type="password" id="auth-pin" placeholder="****" inputmode="numeric"
+                        style="letter-spacing:4px;font-size:1.2rem;text-align:center;">
                 </div>
             </div>
             <div class="modal-footer">
@@ -785,10 +914,12 @@ select.form-control option {
     <!-- About Modal -->
     <div class="about-overlay" id="about-modal">
         <div class="about-box">
-            <button class="about-close-abs" onclick="closeAbout()"><span class="material-icons-round">close</span></button>
+            <button class="about-close-abs" onclick="closeAbout()"><span
+                    class="material-icons-round">close</span></button>
             <div class="about-logo" style="background: none; width: auto; height: auto;">
-                
-                                <span class="material-icons-round" style="font-size: 128px; line-height: 1; color: #3b82f6; margin-bottom: 16px;">school</span>
+
+                <span class="material-icons-round"
+                    style="font-size: 128px; line-height: 1; color: #3b82f6; margin-bottom: 16px;">school</span>
             </div>
             <h2 class="about-title">ระบบแสดงข้อมูลวันลา</h2>
             <div class="about-version" id="global-visit-count">v1.0001</div>
@@ -802,12 +933,16 @@ select.form-control option {
     <!-- A4 Print Form Template (Hidden by default, shown on print) -->
     <div id="print-leave-form" class="print-only" style="font-size: 14pt; line-height: 1.5;">
         <h3 style="text-align: center; margin-bottom: 15px;">แบบใบลาป่วย ลากิจส่วนตัว ลาคลอดบุตร</h3>
-        <div style="text-align: right; margin-bottom: 5px;">เขียนที่ <span id="print-location">โรงเรียน....................................</span></div>
-        <div style="text-align: right; margin-bottom: 10px;">วันที่ <span id="print-date">......</span> เดือน <span id="print-month">......................</span> พ.ศ. <span id="print-year">............</span></div>
-        
-        <div style="margin-bottom: 5px;">เรื่อง <span id="print-subject">ขอลา..........................................</span></div>
-        <div style="margin-bottom: 10px;">เรียน <span id="print-director">ผู้อำนวยการโรงเรียน..........................................</span></div>
-        
+        <div style="text-align: right; margin-bottom: 5px;">เขียนที่ <span
+                id="print-location">โรงเรียน....................................</span></div>
+        <div style="text-align: right; margin-bottom: 10px;">วันที่ <span id="print-date">......</span> เดือน <span
+                id="print-month">......................</span> พ.ศ. <span id="print-year">............</span></div>
+
+        <div style="margin-bottom: 5px;">เรื่อง <span
+                id="print-subject">ขอลา..........................................</span></div>
+        <div style="margin-bottom: 10px;">เรียน <span
+                id="print-director">ผู้อำนวยการโรงเรียน..........................................</span></div>
+
         <div style="display: flex; align-items: flex-end; margin-bottom: 5px;">
             <span style="margin-left: 50px; margin-right: 10px;">ข้าพเจ้า</span>
             <span id="print-name" style="flex: 1; text-align: center; margin-right: 10px;"></span>
@@ -815,7 +950,7 @@ select.form-control option {
             <span id="print-position" style="flex: 0.5; text-align: center; margin-right: 10px;"></span>
             <span>สังกัด <span id="print-dept">สำนักงานเขตพื้นที่การศึกษามัธยมศึกษานครพนม</span></span>
         </div>
-        
+
         <div style="margin-bottom: 5px; line-height: 1.6;">
             <span style="margin-right: 20px;">ขอลา</span>
             <span style="margin-right: 15px; font-size: 1.2em;"><span id="print-cb-sick">☐</span> ป่วย</span>
@@ -823,27 +958,34 @@ select.form-control option {
             <span style="margin-right: 15px; font-size: 1.2em;"><span id="print-cb-maternity">☐</span> คลอดบุตร</span>
             <span>เนื่องจาก</span><span id="print-reason" style="margin-left: 10px;"></span>
         </div>
-        
+
         <div style="display: flex; align-items: flex-end; margin-bottom: 5px;">
             <span style="margin-right: 10px;">ตั้งแต่วันที่</span>
-            <span style="flex: 1; text-align: center; margin-right: 10px;"><span id="print-start-d"></span> <span id="print-start-m"></span> <span id="print-start-y"></span></span>
+            <span style="flex: 1; text-align: center; margin-right: 10px;"><span id="print-start-d"></span> <span
+                    id="print-start-m"></span> <span id="print-start-y"></span></span>
             <span style="margin-right: 10px;">ถึงวันที่</span>
-            <span style="flex: 1; text-align: center; margin-right: 10px;"><span id="print-end-d"></span> <span id="print-end-m"></span> <span id="print-end-y"></span></span>
+            <span style="flex: 1; text-align: center; margin-right: 10px;"><span id="print-end-d"></span> <span
+                    id="print-end-m"></span> <span id="print-end-y"></span></span>
             <span style="margin-right: 10px;">มีกำหนด</span>
             <span id="print-days" style="width: 60px; text-align: center; margin-right: 10px;"></span>
             <span>วัน</span>
         </div>
-        
+
         <div style="margin-bottom: 10px; line-height: 1.6;">
             <span style="margin-right: 20px;">ข้าพเจ้าได้ลา</span>
             <span style="margin-right: 15px; font-size: 1.2em;"><span id="print-last-cb-sick">☐</span> ป่วย</span>
-            <span style="margin-right: 15px; font-size: 1.2em;"><span id="print-last-cb-personal">☐</span> กิจส่วนตัว</span>
-            <span style="margin-right: 15px; font-size: 1.2em;"><span id="print-last-cb-maternity">☐</span> คลอดบุตร</span>
-            <span>ครั้งสุดท้ายตั้งแต่วันที่</span><span id="print-last-start" style="margin-left: 10px; margin-right: 10px;"></span>
-            <span>มีกำหนด</span><span id="print-last-days" style="margin-left: 10px; margin-right: 10px;"></span><span>วัน</span>
-            <span style="margin-left: 10px;">ในระหว่างลาจะติดต่อข้าพเจ้าได้ที่</span><span id="print-contact" style="margin-left: 10px;"></span>
+            <span style="margin-right: 15px; font-size: 1.2em;"><span id="print-last-cb-personal">☐</span>
+                กิจส่วนตัว</span>
+            <span style="margin-right: 15px; font-size: 1.2em;"><span id="print-last-cb-maternity">☐</span>
+                คลอดบุตร</span>
+            <span>ครั้งสุดท้ายตั้งแต่วันที่</span><span id="print-last-start"
+                style="margin-left: 10px; margin-right: 10px;"></span>
+            <span>มีกำหนด</span><span id="print-last-days"
+                style="margin-left: 10px; margin-right: 10px;"></span><span>วัน</span>
+            <span style="margin-left: 10px;">ในระหว่างลาจะติดต่อข้าพเจ้าได้ที่</span><span id="print-contact"
+                style="margin-left: 10px;"></span>
         </div>
-        
+
         <div style="display: flex; margin-top: 10px;">
             <div style="width: 50%;">
                 <table class="print-stats-table">
@@ -876,34 +1018,39 @@ select.form-control option {
                         </tr>
                     </tbody>
                 </table>
-                
+
                 <div style="margin-top: 15px; text-align: center;">
                     <div>(ลงชื่อ).......................................................ผู้ตรวจสอบ</div>
                     <div style="margin-top: 5px;">ตำแหน่ง.......................................................</div>
                     <div style="margin-top: 5px;">วันที่.........../.........../...........</div>
                 </div>
-                
+
                 <div style="margin-top: 15px; text-align: center;">
-                    <div style="margin-bottom: 5px;">(ลงชื่อ).......................................................</div>
-                    <div>( <span id="print-hr-name">.......................................................</span> )</div>
+                    <div style="margin-bottom: 5px;">(ลงชื่อ).......................................................
+                    </div>
+                    <div>( <span id="print-hr-name">.......................................................</span> )
+                    </div>
                     <div style="margin-top: 2px;">ตำแหน่ง หัวหน้ากลุ่มบริหารงานบุคคล</div>
                     <div style="margin-top: 2px;">วันที่.........../.........../...........</div>
                 </div>
-                
+
                 <div style="margin-top: 15px; text-align: center;">
                     <div>ความเห็นผู้อำนวยการกลุ่มบริหารงานบุคคล</div>
                     <div style="margin-top: 10px;">(ลงชื่อ).......................................................</div>
-                    <div style="margin-top: 2px;">( <span id="print-deputy-name">.......................................................</span> )</div>
+                    <div style="margin-top: 2px;">( <span
+                            id="print-deputy-name">.......................................................</span> )
+                    </div>
                     <div style="margin-top: 2px;">ตำแหน่ง รองผู้อำนวยการกลุ่มบริหารงานบุคคล</div>
                     <div style="margin-top: 2px;">วันที่.........../.........../...........</div>
                 </div>
             </div>
-            
+
             <div style="width: 50%; padding-left: 40px; text-align: center;">
                 <div style="margin-bottom: 15px;">ขอแสดงความนับถือ</div>
                 <div style="margin-bottom: 5px;">(ลงชื่อ).......................................................</div>
-                <div style="margin-bottom: 15px;">( <span id="print-sign-name">.......................................................</span> )</div>
-                
+                <div style="margin-bottom: 15px;">( <span
+                        id="print-sign-name">.......................................................</span> )</div>
+
                 <div style="margin-top: 15px;">
                     <div>ความเห็นหัวหน้ากลุ่มสาระการเรียนรู้</div>
                     <div style="margin-top: 10px;">(ลงชื่อ).......................................................</div>
@@ -911,7 +1058,7 @@ select.form-control option {
                     <div style="margin-top: 2px;">ตำแหน่ง.......................................................</div>
                     <div style="margin-top: 2px;">วันที่.........../.........../...........</div>
                 </div>
-                
+
                 <div style="margin-top: 15px;">
                     <div>ความเห็นผู้บังคับบัญชา</div>
                     <div style="text-align: left; padding-left: 20px; margin-top: 5px;"><u>คำสั่ง</u></div>
@@ -920,8 +1067,11 @@ select.form-control option {
                         <span>☐ ไม่อนุญาต</span>
                     </div>
                     <div style="margin-top: 10px;">(ลงชื่อ).......................................................</div>
-                    <div style="margin-top: 2px;">( <span id="print-director-name">.......................................................</span> )</div>
-                    <div style="margin-top: 2px;" id="print-director-pos">ผู้อำนวยการโรงเรียน....................................</div>
+                    <div style="margin-top: 2px;">( <span
+                            id="print-director-name">.......................................................</span> )
+                    </div>
+                    <div style="margin-top: 2px;" id="print-director-pos">
+                        ผู้อำนวยการโรงเรียน....................................</div>
                     <div style="margin-top: 2px;">วันที่.........../.........../...........</div>
                 </div>
             </div>
@@ -942,18 +1092,23 @@ select.form-control option {
                 </button>
             </div>
             <div class="modal-body" style="text-align: center;">
-                <span class="material-icons-round" style="font-size: 48px; color: #10b981; margin-bottom: 16px;">check_circle</span>
-                <p style="font-size: 1.1rem; font-weight: 600; margin-bottom: 16px;">ระบบได้รับข้อมูลใบลาของคุณเรียบร้อยแล้ว</p>
-                <div style="background: #fffbeb; border: 1px solid #f59e0b; padding: 16px; border-radius: 8px; text-align: left; font-size: 0.95rem;">
+                <span class="material-icons-round"
+                    style="font-size: 48px; color: #10b981; margin-bottom: 16px;">check_circle</span>
+                <p style="font-size: 1.1rem; font-weight: 600; margin-bottom: 16px;">
+                    ระบบได้รับข้อมูลใบลาของคุณเรียบร้อยแล้ว</p>
+                <div
+                    style="background: #fffbeb; border: 1px solid #f59e0b; padding: 16px; border-radius: 8px; text-align: left; font-size: 0.95rem;">
                     <p style="font-weight: 600; color: #b45309; margin-bottom: 8px;">📖 วิธีดาวน์โหลดใบลาเป็น PDF</p>
-                    <p style="color: #78350f; margin-bottom: 8px;">เนื่องจากคุณกำลังใช้งานผ่านแอป LINE จะไม่สามารถบันทึก PDF ได้โดยตรง ให้กดปุ่มด้านล่างเพื่อเปิดหน้าเว็บและโหลด PDF ครับ</p>
+                    <p style="color: #78350f; margin-bottom: 8px;">เนื่องจากคุณกำลังใช้งานผ่านแอป LINE จะไม่สามารถบันทึก
+                        PDF ได้โดยตรง ให้กดปุ่มด้านล่างเพื่อเปิดหน้าเว็บและโหลด PDF ครับ</p>
                 </div>
             </div>
             <div class="modal-footer" style="flex-direction: column; gap: 8px;">
                 <button class="btn-primary" id="btn-liff-open-external" style="width: 100%; justify-content: center;">
                     <span class="material-icons-round">open_in_browser</span> เปิดเบราว์เซอร์เพื่อโหลด PDF
                 </button>
-                <button class="btn-secondary" data-close="liff-pdf-guide-modal" style="width: 100%; justify-content: center;">ปิดหน้าต่าง</button>
+                <button class="btn-secondary" data-close="liff-pdf-guide-modal"
+                    style="width: 100%; justify-content: center;">ปิดหน้าต่าง</button>
             </div>
         </div>
     </div>
@@ -982,4 +1137,5 @@ select.form-control option {
     </script>
     <script src="js/crystal-dropdown.js?v=2.0"></script>
 </body>
+
 </html>

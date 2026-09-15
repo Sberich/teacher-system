@@ -785,9 +785,36 @@ const DataManager = (() => {
         save(KEYS.lateArrivals, list);
     }
 
+    async function sendLeaveNotifications() {
+        const url = getCloudUrl();
+        if (!url) return { status: 'error', message: 'ยังไม่ได้ตั้งค่า Cloud URL' };
+
+        const token = getSessionToken();
+        if (!token) return { status: 'error', message: 'ยังไม่มีเซสชัน กรุณาเข้าสู่ระบบใหม่' };
+
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 20000);
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ action: 'sendLeaveNotifications', token: token }),
+                signal: controller.signal
+            });
+            clearTimeout(timeoutId);
+
+            if (!response.ok) throw new Error('Network error');
+            return await response.json();
+        } catch (error) {
+            console.error('sendLeaveNotifications failed:', error);
+            return { status: 'error', message: 'เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ' };
+        }
+    }
+
     return {
         isAdmin, isLateAdmin, login, logout, verifyAdminPin,
-        getCloudUrl, setCloudUrl, pullFromCloud, forceSyncToCloud,
+        getCloudUrl, setCloudUrl, pullFromCloud, forceSyncToCloud, sendLeaveNotifications,
         getTeachers, getSections, addTeacher, addTeachersBulk, updateTeacher, deleteTeacher, getNextOrder,
         getLeaveRecords, addLeaveEvent, updateLeaveEvent, getLeaveRecord, getTeacherLeaveForPeriod, deleteLeaveEvent,
         getLeaveRequests, addLeaveRequest, updateLeaveRequestStatus, deleteLeaveRequest, clearCompletedLeaveRequests,

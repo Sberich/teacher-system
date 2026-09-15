@@ -28,6 +28,9 @@ const LeaveTable = (() => {
         document.getElementById('btn-print-table').addEventListener('click', printTable);
         document.getElementById('btn-export-csv').addEventListener('click', exportCSV);
 
+        const btnSendNotify = document.getElementById('btn-send-leave-notify');
+        if (btnSendNotify) btnSendNotify.addEventListener('click', sendLeaveNotifications);
+
         // Event delegation for edit/delete buttons in history list
         document.getElementById('leave-history-list').addEventListener('click', (e) => {
             const btnDelete = e.target.closest('.btn-delete-event');
@@ -40,7 +43,7 @@ const LeaveTable = (() => {
                 const times = parseFloat(btnDelete.dataset.times) || 0;
                 const days = parseFloat(btnDelete.dataset.days) || 0;
                 const notes = btnDelete.dataset.notes || '';
-                
+
                 deletedRecordsStack.push({
                     teacherId: currentEdit.teacherId,
                     month: currentEdit.month,
@@ -51,7 +54,7 @@ const LeaveTable = (() => {
 
                 DataManager.deleteLeaveEvent(id);
                 App.showToast('ลบรายการแล้ว (สามารถกดย้อนกลับได้)', 'info');
-                
+
                 const mockCell = {
                     dataset: {
                         teacher: currentEdit.teacherId,
@@ -120,7 +123,7 @@ const LeaveTable = (() => {
             locale: "th",
             dateFormat: "Y-m-d",
             positionElement: btnPick,
-            onClose: function(selectedDates, dateStr, instance) {
+            onClose: function (selectedDates, dateStr, instance) {
                 if (selectedDates.length === 0) return;
 
                 // Sort dates
@@ -274,7 +277,7 @@ const LeaveTable = (() => {
                     const record = data[lt.key];
                     const hasData = record && (record.times > 0 || record.days > 0);
                     const cellValue = hasData ? `${record.times}/${record.days}` : '-';
-                    
+
                     // Show tooltip only for Admins
                     let tooltip = '';
                     if (App.isAdmin() && record && record.notes) {
@@ -314,7 +317,7 @@ const LeaveTable = (() => {
             html += '</tr>';
 
             for (const type of ['sick', 'personal']) {
-                if(!schoolTotals[type]) continue;
+                if (!schoolTotals[type]) continue;
                 schoolTotals[type].times += tTotals[type].times;
                 schoolTotals[type].days += tTotals[type].days;
             }
@@ -421,7 +424,7 @@ const LeaveTable = (() => {
         if (!currentEdit || currentEdit.teacherId !== teacherId || currentEdit.month !== month || currentEdit.type !== type) {
             deletedRecordsStack = [];
         }
-        
+
         let html = '';
         // Show Undo banner if something was deleted
         if (deletedRecordsStack.length > 0) {
@@ -491,12 +494,12 @@ const LeaveTable = (() => {
 
     function saveLeave() {
         if (!currentEdit) return;
-        
+
         const editId = document.getElementById('leave-edit-id').value;
         const inputTimes = parseInt(document.getElementById('leave-times').value) || 0;
         const inputDays = parseFloat(document.getElementById('leave-days').value) || 0;
         const inputNotes = document.getElementById('leave-notes').value.trim();
-        
+
         if (inputTimes === 0 && inputDays === 0 || inputTimes < 0 || inputDays < 0) {
             App.showToast('กรุณาระบุจำนวนครั้ง หรือ วันที่ลา', 'warning');
             return;
@@ -509,7 +512,7 @@ const LeaveTable = (() => {
             DataManager.addLeaveEvent(currentEdit.teacherId, currentEdit.month, currentEdit.year, currentEdit.type, inputTimes, inputDays, inputNotes);
             App.showToast('บันทึกข้อมูลการลาเรียบร้อย');
         }
-        
+
         App.hideModal('leave-modal');
         render();
         currentEdit = null;
@@ -640,7 +643,7 @@ const LeaveTable = (() => {
             html += '</tr>';
 
             for (const t of ['sick', 'personal']) {
-                if(!schoolTotals[t]) continue;
+                if (!schoolTotals[t]) continue;
                 schoolTotals[t].times += tTotals[t].times;
                 schoolTotals[t].days += tTotals[t].days;
             }
@@ -671,7 +674,7 @@ const LeaveTable = (() => {
         printWindow.document.write(html);
         printWindow.document.close();
         setTimeout(() => printWindow.print(), 500);
-        
+
         // Close dropdown
         document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('show'));
     }
@@ -701,6 +704,41 @@ const LeaveTable = (() => {
             if (!str) return '';
             return str.toString().replace(/"/g, '""');
         };
+        async function sendLeaveNotifications() {
+            if (!App.isAdmin()) {
+                App.showToast('เฉพาะผู้ดูแลระบบเท่านั้น', 'warning');
+                return;
+            }
+            if (!DataManager.getCloudUrl()) {
+                App.showToast('ยังไม่ได้ตั้งค่า Cloud URL', 'warning');
+                return;
+            }
+
+            document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('show'));
+
+            App.confirm('ต้องการส่งแจ้งเตือน LINE สรุปวันลาให้ครูที่มีรายการค้างส่งหรือไม่?', async () => {
+                App.showToast('กำลังบันทึกข้อมูลล่าสุดขึ้นคลาวด์...', 'info');
+                const syncOk = await DataManager.forceSyncToCloud();
+                if (!syncOk) {
+                    App.showToast('บันทึกข้อมูลขึ้นคลาวด์ไม่สำเร็จ ยกเลิกการส่งแจ้งเตือน', 'error');
+                    return;
+                }
+
+                App.showToast('กำลังส่งแจ้งเตือน LINE...', 'info');
+                const result = await DataManager.sendLeaveNotifications();
+
+                if (result && result.status === 'success') {
+                    const d = result.detail || {};
+                    if (d.sent > 0) {
+                        App.showToast(`ส่งแจ้งเตือนสำเร็จ ${d.sent} คน`, 'success');
+                    } else {
+                        App.showToast('ไม่มีรายการใหม่ที่ต้องแจ้งเตือน', 'info');
+                    }
+                } else {
+                    App.showToast((result && result.message) || 'ส่งแจ้งเตือนไม่สำเร็จ', 'error');
+                }
+            });
+        }
 
         // Data rows
         teachers.forEach(teacher => {
@@ -744,7 +782,7 @@ const LeaveTable = (() => {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
         App.showToast('ส่งออก CSV เรียบร้อย เปิดด้วย Excel ได้');
-        
+
         // Close dropdown
         document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('show'));
     }
