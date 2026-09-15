@@ -16,9 +16,9 @@
     <script
         src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
     <!-- Flatpickr for Date Picker -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/airbnb.css">
-    <link rel="stylesheet" href="css/style.css?v=31.1">
+    <link rel="stylesheet" href="vendor/flatpickr.min.css">
+    <link rel="stylesheet" type="text/css" href="vendor/airbnb.css">
+    <link rel="stylesheet" href="css/style.css?v=31.2">
 
     <!-- Web App Manifest (Android & iOS) -->
     <meta name="theme-color" content="#0f172a">
@@ -409,7 +409,7 @@
                                 <span class="material-icons-round">download</span> ดาวน์โหลด CSV
                             </button>
                             <button class="dropdown-item" id="btn-send-leave-notify">
-                                <span class="material-icons-round">notifications_active</span> ส่งแจ้งเตือน LINE
+                                <span class="material-icons-round">notifications_active</span> ส่งแจ้งเตือน LINE ให้ครู
                             </button>
                         </div>
                     </div>
@@ -1114,18 +1114,18 @@
     </div>
 
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/th.js"></script>
+    <script src="vendor/flatpickr.min.js"></script>
+    <script src="vendor/th.js"></script>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-    <script src="js/data.js?v=31.1"></script>
-    <script src="js/app.js?v=31.1"></script>
-    <script src="js/leave-request.js?v=31.1"></script>
-    <script src="js/late-arrival.js?v=31.1"></script>
-    <script src="js/table.js?v=31.1"></script>
-    <script src="js/dashboard.js?v=31.1"></script>
-    <script src="js/calendar.js?v=31.1"></script>
-    <script src="js/teachers.js?v=31.1"></script>
-    <script src="js/settings.js?v=31.1"></script>
+    <script src="js/data.js?v=31.2"></script>
+    <script src="js/app.js?v=31.2"></script>
+    <script src="js/leave-request.js?v=31.2"></script>
+    <script src="js/late-arrival.js?v=31.2"></script>
+    <script src="js/table.js?v=31.2"></script>
+    <script src="js/dashboard.js?v=31.2"></script>
+    <script src="js/calendar.js?v=31.2"></script>
+    <script src="js/teachers.js?v=31.2"></script>
+    <script src="js/settings.js?v=31.2"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -1139,4 +1139,5 @@
 </body>
 
 </html>
+
 

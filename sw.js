@@ -1,8 +1,12 @@
-﻿const CACHE_NAME = 'tla-cache-v174';
+﻿const CACHE_NAME = 'tla-cache-v175';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
     './css/style.css',
+  './vendor/flatpickr.min.css',
+  './vendor/airbnb.css',
+  './vendor/flatpickr.min.js',
+  './vendor/th.js',
     './js/app.js',
     './js/data.js',
     './js/calendar.js',
@@ -64,5 +68,6 @@ self.addEventListener('fetch', event => {
         })
     );
 });
+
 
 
