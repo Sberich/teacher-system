@@ -325,7 +325,7 @@ const App = (() => {
         });
 
         loginBtn.addEventListener('click', async () => {
-            const pin = pinInput.value;
+            const pin = pinInput.value.trim();
             if (!pin) {
                 showToast('กรุณากรอกรหัสผ่าน', 'warning');
                 return;
