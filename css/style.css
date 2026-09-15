@@ -116,7 +116,7 @@ html {
 }
 
 body {
-    font-family: 'Noto Sans Thai', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: 'Prompt', -apple-system, BlinkMacSystemFont, sans-serif;
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
@@ -950,8 +950,8 @@ th.type-days { color: var(--color-total); font-weight: 700; padding: 4px 2px !im
 .card-all .stat-icon { background: linear-gradient(135deg, #10b981, #059669); }
 
 .stat-value {
-    font-size: 2.2rem;
-    font-weight: 500;
+    font-size: 1.7rem;
+    font-weight: 600;
     line-height: 1;
     color: var(--text);
     letter-spacing: -0.5px;
@@ -959,7 +959,7 @@ th.type-days { color: var(--color-total); font-weight: 700; padding: 4px 2px !im
 }
 
 .stat-label {
-    font-size: 0.82rem;
+    font-size: 0.9rem;
     color: var(--text-secondary);
     margin-top: 4px;
 }
@@ -1953,7 +1953,7 @@ th.type-days { color: var(--color-total); font-weight: 700; padding: 4px 2px !im
 
     .print-only {
         display: block !important;
-        font-family: 'Sarabun', 'TH Sarabun New', 'Noto Sans Thai', serif;
+        font-family: 'Sarabun', 'TH Sarabun New', 'Prompt', serif;
         font-size: 16pt;
         line-height: 1.5;
         padding: 0 1cm; /* Margins are handled by printer settings */

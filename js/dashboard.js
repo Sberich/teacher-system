@@ -11,14 +11,15 @@ const Dashboard = (() => {
     let positionChart = null;
 
     function init() {
+        Chart.defaults.font.family = "'Prompt', sans-serif";
         if (typeof ChartDataLabels !== 'undefined') {
             Chart.register(ChartDataLabels);
             Chart.defaults.set('plugins.datalabels', {
                 color: '#ffffff',
-                font: { family: "'Noto Sans Thai', sans-serif", weight: 'bold', size: 12 },
-                anchor: 'start',
+                font: { family: "'Prompt', sans-serif", weight: 'bold', size: 12 },
+                anchor: 'end',
                 align: 'top',
-                offset: 4,
+                offset: 2,
                 formatter: function(value) { return value > 0 ? value : ''; }
             });
         }
@@ -63,21 +64,21 @@ const Dashboard = (() => {
             <div class="stat-card card-all">
                 <div class="stat-icon"><span class="material-icons-round">summarize</span></div>
                 <div class="stat-info">
-                    <div class="stat-value">${timesAll}<small style="font-size:0.55em;color:var(--text-secondary);"> ครั้ง</small> / ${totalAll}<small style="font-size:0.55em;color:var(--text-secondary);"> วัน</small></div>
+                    <div class="stat-value">${timesAll}<small style="font-size:0.65em;color:var(--text-secondary);"> ครั้ง</small> / ${totalAll}<small style="font-size:0.65em;color:var(--text-secondary);"> วัน</small></div>
                     <div class="stat-label">รวมทุกประเภท</div>
                 </div>
             </div>
             <div class="stat-card card-sick">
                 <div class="stat-icon"><span class="material-icons-round">local_hospital</span></div>
                 <div class="stat-info">
-                    <div class="stat-value">${timesSick}<small style="font-size:0.55em;color:var(--text-secondary);"> ครั้ง</small> / ${totalSick}<small style="font-size:0.55em;color:var(--text-secondary);"> วัน</small></div>
+                    <div class="stat-value">${timesSick}<small style="font-size:0.65em;color:var(--text-secondary);"> ครั้ง</small> / ${totalSick}<small style="font-size:0.65em;color:var(--text-secondary);"> วัน</small></div>
                     <div class="stat-label">ลาป่วย</div>
                 </div>
             </div>
             <div class="stat-card card-personal">
                 <div class="stat-icon"><span class="material-icons-round">event_note</span></div>
                 <div class="stat-info">
-                    <div class="stat-value">${timesPersonal}<small style="font-size:0.55em;color:var(--text-secondary);"> ครั้ง</small> / ${totalPersonal}<small style="font-size:0.55em;color:var(--text-secondary);"> วัน</small></div>
+                    <div class="stat-value">${timesPersonal}<small style="font-size:0.65em;color:var(--text-secondary);"> ครั้ง</small> / ${totalPersonal}<small style="font-size:0.65em;color:var(--text-secondary);"> วัน</small></div>
                     <div class="stat-label">ลากิจส่วนตัว</div>
                 </div>
             </div>
@@ -138,18 +139,16 @@ const Dashboard = (() => {
                     legend: {
                         labels: {
                             color: textColor,
-                            font: { family: "'Noto Sans Thai', sans-serif", size: 13 },
+                            font: { family: "'Prompt', sans-serif", size: 13 },
                             padding: 16
                         }
                     },
                     tooltip: {
-                        titleFont: { family: "'Noto Sans Thai', sans-serif" },
-                        bodyFont: { family: "'Noto Sans Thai', sans-serif" }
+                        titleFont: { family: "'Prompt', sans-serif" },
+                        bodyFont: { family: "'Prompt', sans-serif" }
                     },
-                    datalabels: {
-                        display: true,
-                        color: 'white',
-                        font: { family: "'Noto Sans Thai', sans-serif", size: 11, weight: 'bold' },
+                    datalabels: { display: true, color: textColor,
+                        font: { family: "'Prompt', sans-serif", size: 11, weight: 'bold' },
                         formatter: (val) => val > 0 ? val : ''
                     }
                 },
@@ -157,7 +156,7 @@ const Dashboard = (() => {
                     x: {
                         ticks: { 
                             color: textColor, 
-                            font: { family: "'Noto Sans Thai', sans-serif" },
+                            font: { family: "'Prompt', sans-serif" },
                             maxRotation: 45,
                             minRotation: 45
                         },
@@ -170,7 +169,7 @@ const Dashboard = (() => {
                     },
                     y: {
                         beginAtZero: true,
-                        ticks: { color: textColor, stepSize: 1, font: { family: "'Noto Sans Thai', sans-serif" } },
+                        ticks: { color: textColor, stepSize: 1, font: { family: "'Prompt', sans-serif" } },
                         grid: { display: false },
                         border: { display: false }
                     }
@@ -241,18 +240,16 @@ const Dashboard = (() => {
                     legend: {
                         labels: {
                             color: textColor,
-                            font: { family: "'Noto Sans Thai', sans-serif", size: 13 },
+                            font: { family: "'Prompt', sans-serif", size: 13 },
                             padding: 16
                         }
                     },
                     tooltip: {
-                        titleFont: { family: "'Noto Sans Thai', sans-serif" },
-                        bodyFont: { family: "'Noto Sans Thai', sans-serif" }
+                        titleFont: { family: "'Prompt', sans-serif" },
+                        bodyFont: { family: "'Prompt', sans-serif" }
                     },
-                    datalabels: {
-                        display: true,
-                        color: 'white',
-                        font: { family: "'Noto Sans Thai', sans-serif", size: 11, weight: 'bold' },
+                    datalabels: { display: true, color: textColor,
+                        font: { family: "'Prompt', sans-serif", size: 11, weight: 'bold' },
                         formatter: (val) => val > 0 ? val : ''
                     }
                 },
@@ -260,7 +257,7 @@ const Dashboard = (() => {
                     x: {
                         ticks: { 
                             color: textColor, 
-                            font: { family: "'Noto Sans Thai', sans-serif" },
+                            font: { family: "'Prompt', sans-serif" },
                             maxRotation: 45,
                             minRotation: 45
                         },
@@ -274,7 +271,7 @@ const Dashboard = (() => {
                     y: {
                         beginAtZero: true,
                         grace: '15%',
-                        ticks: { color: textColor, stepSize: 1, font: { family: "'Noto Sans Thai', sans-serif" } },
+                        ticks: { color: textColor, stepSize: 1, font: { family: "'Prompt', sans-serif" } },
                         grid: { display: false },
                         border: { display: false }
                     }
@@ -328,14 +325,14 @@ const Dashboard = (() => {
                         position: 'bottom',
                         labels: {
                             color: textColor,
-                            font: { family: "'Noto Sans Thai', sans-serif", size: 13 },
+                            font: { family: "'Prompt', sans-serif", size: 13 },
                             padding: 20
                         }
                     },
                     tooltip: {
                         enabled: hasData,
-                        titleFont: { family: "'Noto Sans Thai', sans-serif" },
-                        bodyFont: { family: "'Noto Sans Thai', sans-serif" },
+                        titleFont: { family: "'Prompt', sans-serif" },
+                        bodyFont: { family: "'Prompt', sans-serif" },
                         callbacks: {
                             label: (ctx) => `${ctx.label}: ${ctx.parsed} วัน`
                         }
@@ -399,22 +396,19 @@ const Dashboard = (() => {
                         position: 'bottom',
                         labels: {
                             color: textColor,
-                            font: { family: "'Noto Sans Thai', sans-serif", size: 13 },
+                            font: { family: "'Prompt', sans-serif", size: 13 },
                             padding: 20
                         }
                     },
                     tooltip: {
                         enabled: hasData,
-                        titleFont: { family: "'Noto Sans Thai', sans-serif" },
-                        bodyFont: { family: "'Noto Sans Thai', sans-serif" },
+                        titleFont: { family: "'Prompt', sans-serif" },
+                        bodyFont: { family: "'Prompt', sans-serif" },
                         callbacks: {
                             label: (ctx) => `${ctx.label}: ${ctx.parsed} คน`
                         }
                     },
-                    datalabels: {
-                        display: hasData,
-                        formatter: (val) => val + ' คน'
-                    }
+                    datalabels: { display: hasData, formatter: (val) => val + ' คน', anchor: 'center', align: 'center', color: '#ffffff' }
                 }
             }
         });
@@ -473,12 +467,9 @@ const Dashboard = (() => {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: {
-                        display: false
-                    },
-                    tooltip: {
-                        titleFont: { family: "'Noto Sans Thai', sans-serif" },
-                        bodyFont: { family: "'Noto Sans Thai', sans-serif" },
+                    legend: { display: false }, datalabels: { display: true, color: textColor }, tooltip: {
+                        titleFont: { family: "'Prompt', sans-serif" },
+                        bodyFont: { family: "'Prompt', sans-serif" },
                         callbacks: {
                             label: (ctx) => ` ${ctx.parsed.y} คน`
                         }
@@ -486,13 +477,13 @@ const Dashboard = (() => {
                 },
                 scales: {
                     x: {
-                        ticks: { color: textColor, font: { family: "'Noto Sans Thai', sans-serif" } },
+                        ticks: { color: textColor, font: { family: "'Prompt', sans-serif" } },
                         grid: { display: false }
                     },
                     y: {
                         beginAtZero: true,
                         grace: '15%',
-                        ticks: { color: textColor, stepSize: 1, font: { family: "'Noto Sans Thai', sans-serif" } },
+                        ticks: { color: textColor, stepSize: 1, font: { family: "'Prompt', sans-serif" } },
                         grid: { display: false },
                         border: { display: false }
                     }
@@ -581,11 +572,11 @@ const Dashboard = (() => {
                 plugins: {
                     legend: {
                         position: 'bottom',
-                        labels: { color: textColor, font: { family: "'Noto Sans Thai', sans-serif" } }
+                        labels: { color: textColor, font: { family: "'Prompt', sans-serif" } }
                     },
                     tooltip: {
-                        titleFont: { family: "'Noto Sans Thai', sans-serif" },
-                        bodyFont: { family: "'Noto Sans Thai', sans-serif" },
+                        titleFont: { family: "'Prompt', sans-serif" },
+                        bodyFont: { family: "'Prompt', sans-serif" },
                         callbacks: {
                             label: (ctx) => ` ${ctx.dataset.label}: ${ctx.parsed.y} คน`
                         }
@@ -601,13 +592,13 @@ const Dashboard = (() => {
                 },
                 scales: {
                     x: {
-                        ticks: { color: textColor, font: { family: "'Noto Sans Thai', sans-serif" } },
+                        ticks: { color: textColor, font: { family: "'Prompt', sans-serif" } },
                         grid: { display: false }
                     },
                     y: {
                         beginAtZero: true,
                         grace: '15%',
-                        ticks: { color: textColor, stepSize: 1, font: { family: "'Noto Sans Thai', sans-serif" } },
+                        ticks: { color: textColor, stepSize: 1, font: { family: "'Prompt', sans-serif" } },
                         grid: { display: false },
                         border: { display: false }
                     }

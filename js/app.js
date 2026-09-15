@@ -54,6 +54,7 @@ const App = (() => {
             if (success) {
                 showToast('อัปเดตข้อมูลจากฐานข้อมูลแล้ว', 'info');
                 updateLastUpdatedText();
+                updateGlobalVisitCount();
             } else {
                 showToast('ไม่สามารถเชื่อมต่อฐานข้อมูลได้ ทำงานในโหมดออฟไลน์', 'warning');
             }
@@ -141,21 +142,16 @@ const App = (() => {
 
         // Initial text update
         updateLastUpdatedText();
+        updateGlobalVisitCount();
 
-        // Global Visit Counter (as Version)
-        fetch('https://api.counterapi.dev/v1/teacher_leave_app_v1/visits/up')
-            .then(res => res.json())
-            .then(data => {
-                let count = data.count || 1;
-                let v = Math.floor(count / 10000) + 1;
-                let rem = (count % 10000).toString().padStart(4, '0');
-                const vEl = document.getElementById('global-visit-count');
-                if (vEl) vEl.textContent = `v${v}.${rem}`;
-            })
-            .catch(err => {
-                const vEl = document.getElementById('global-visit-count');
-                if (vEl) vEl.textContent = `v1.0001`;
-            });
+    }
+
+    function updateGlobalVisitCount() {
+        let count = parseInt(localStorage.getItem('tla_visit_count')) || 10001;
+        let v = Math.floor(count / 10000);
+        let rem = (count % 10000).toString().padStart(4, '0');
+        const vEl = document.getElementById('global-visit-count');
+        if (vEl) vEl.textContent = `v${v}.${rem}`;
     }
 
     async function handleManualRefresh(e) {

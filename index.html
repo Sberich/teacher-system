@@ -6,7 +6,7 @@
     <title>ระบบบันทึกข้อมูลวันลาข้าราชการครู v1.2.1</title>
     <meta name="description" content="ระบบบันทึกและแสดงข้อมูลวันลาข้าราชการครู สำหรับสถานศึกษา">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%233b82f6'%3E%3Cpath d='M12 3L1 9L12 15L21 10.09V17H23V9M5 13.18V17.18C5 17.18 8.13 21 12 21C15.87 21 19 17.18 19 17.18V13.18C19 13.18 15.87 17 12 17C8.13 17 5 13.18 5 13.18Z'/%3E%3C/svg%3E">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
@@ -159,14 +159,15 @@ select.form-control option {
     background: var(--bg-card);
     padding: 8px;
 }
-.main-logo { width: 42px; height: 42px; border-radius: 8px; object-fit: contain; margin-right: 12px; flex-shrink: 0; } .main-logo-large { width: 64px; height: 64px; border-radius: 12px; object-fit: contain; }
+.main-logo { width: 56px; height: 56px; border-radius: 8px; object-fit: contain; margin-right: 12px; flex-shrink: 0; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.2)); } 
+.main-logo-large { width: 96px; height: 96px; border-radius: 16px; object-fit: contain; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3)); }
 .dynamic-image-logo { position: relative; display: inline-block; flex-shrink: 0; }
-.logo-text-overlay { position: absolute; top: 40%; left: 0%; width: 100%; text-align: center; pointer-events: none; padding-right: 12px; }
-.dynamic-image-logo.large .logo-text-overlay { top: 40%; padding-right: 0;}
-.logo-text-overlay .logo-month-text { font-size: 0.38rem; font-weight: 800; color: white; line-height: 1; text-transform: uppercase; letter-spacing: 0.5px; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
-.dynamic-image-logo.large .logo-text-overlay .logo-month-text { font-size: 0.5rem; }
-.logo-text-overlay .logo-day-text { font-size: 0.8rem; font-weight: 800; color: white; line-height: 1; margin-top: 1px; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
-.dynamic-image-logo.large .logo-text-overlay .logo-day-text { font-size: 1.3rem; margin-top: 2px; }
+.logo-text-overlay { position: absolute; top: 43%; left: 0%; width: 100%; text-align: center; pointer-events: none; padding-right: 12px; filter: drop-shadow(0px 1px 2px rgba(0,0,0,0.5)); }
+.dynamic-image-logo.large .logo-text-overlay { top: 43%; padding-right: 0;}
+.logo-text-overlay .logo-month-text { font-size: 0.5rem; font-weight: 900; line-height: 1; text-transform: uppercase; letter-spacing: 0.5px; background: linear-gradient(90deg, #ff3366, #ff9933, #33cc33, #3399ff, #cc33ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.dynamic-image-logo.large .logo-text-overlay .logo-month-text { font-size: 0.8rem; }
+.logo-text-overlay .logo-day-text { font-size: 1.1rem; font-weight: 900; line-height: 1; margin-top: 1px; background: linear-gradient(90deg, #ff3366, #ff9933, #33cc33, #3399ff, #cc33ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.dynamic-image-logo.large .logo-text-overlay .logo-day-text { font-size: 1.8rem; margin-top: 3px; }
 /* --- Responsive Logo Title --- */
 .desktop-title {
     display: inline;
@@ -211,21 +212,7 @@ select.form-control option {
                 <span class="material-icons-round">menu</span>
             </button>
             <div class="logo" style="cursor:pointer;" onclick="openAbout()" title="เกี่ยวกับระบบ">
-                
-                <div class="dynamic-image-logo">
-                    
-                <div class="dynamic-image-logo">
-                    <img src="logo.png" alt="Logo" class="main-logo" onerror="this.src='icon-app.png'">
-                    <div class="logo-text-overlay">
-                        <div class="logo-month-text">OCT</div>
-                        <div class="logo-day-text">26</div>
-                    </div>
-                </div>
-                    <div class="logo-text-overlay">
-                        <div class="logo-month-text">OCT</div>
-                        <div class="logo-day-text">26</div>
-                    </div>
-                </div>
+                                <span class="material-icons-round" style="font-size: 60px; line-height: 1; color: #3b82f6; margin-right: 12px;">school</span>
                 <h1>
                     <span class="desktop-title">ระบบบันทึกข้อมูลวันลาข้าราชการครู</span>
                     <span class="mobile-title">ระบบวันลาครู</span>
@@ -235,7 +222,7 @@ select.form-control option {
         <nav id="main-nav">
             <div class="mobile-nav-header">
                 <div class="nav-header-info">
-                    <img src="logo.png" alt="Logo" class="main-logo" onerror="this.src='icon-app.png'">
+                                    <span class="material-icons-round" style="font-size: 60px; line-height: 1; color: #3b82f6; margin-right: 12px;">school</span>
                     <div class="nav-header-text">
                         <h2>ระบบแสดงข้อมูลวันลา</h2>
                         <p id="nav-role-text">สำหรับสถานศึกษา</p>
@@ -801,13 +788,7 @@ select.form-control option {
             <button class="about-close-abs" onclick="closeAbout()"><span class="material-icons-round">close</span></button>
             <div class="about-logo" style="background: none; width: auto; height: auto;">
                 
-                <div class="dynamic-image-logo large">
-                    <img src="logo.png" alt="Logo" class="main-logo-large" onerror="this.src='icon-app.png'">
-                    <div class="logo-text-overlay">
-                        <div class="logo-month-text">OCT</div>
-                        <div class="logo-day-text">26</div>
-                    </div>
-                </div>
+                                <span class="material-icons-round" style="font-size: 128px; line-height: 1; color: #3b82f6; margin-bottom: 16px;">school</span>
             </div>
             <h2 class="about-title">ระบบแสดงข้อมูลวันลา</h2>
             <div class="about-version" id="global-visit-count">v1.0001</div>

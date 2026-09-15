@@ -65,7 +65,7 @@ const DataManager = (() => {
 
         try {
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 12000); // 12 วินาที Timeout
+            const timeoutId = setTimeout(() => controller.abort(), 20000); // 12 วินาที Timeout
             
             const token = sessionStorage.getItem(SESSION_TOKEN_KEY) || '';
             const fetchUrl = url + '?t=' + Date.now() + (token ? '&token=' + encodeURIComponent(token) : '');
@@ -89,6 +89,10 @@ const DataManager = (() => {
 
                 if (data.lateArrivals !== undefined) {
                     localStorage.setItem(KEYS.lateArrivals, JSON.stringify(data.lateArrivals));
+                }
+                
+                if (data.visitCount !== undefined) {
+                    localStorage.setItem('tla_visit_count', data.visitCount.toString());
                 }
 
                 // NOTE: data.settings no longer contains adminPin/lateAdminPin — the server
@@ -144,7 +148,7 @@ const DataManager = (() => {
 
         try {
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 12000); // 12 วินาที Timeout
+            const timeoutId = setTimeout(() => controller.abort(), 20000); // 12 วินาที Timeout
 
             const response = await fetch(url, {
                 method: 'POST',
@@ -251,7 +255,7 @@ const DataManager = (() => {
 
         try {
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 12000);
+            const timeoutId = setTimeout(() => controller.abort(), 20000);
 
             const response = await fetch(url, {
                 method: 'POST',
@@ -297,7 +301,7 @@ const DataManager = (() => {
 
         try {
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 12000);
+            const timeoutId = setTimeout(() => controller.abort(), 20000);
 
             const response = await fetch(url, {
                 method: 'POST',
