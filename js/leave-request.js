@@ -90,23 +90,27 @@ const LeaveRequest = (() => {
             locale: "th",
             dateFormat: "Y-m-d",
             altInput: true,
-            altFormat: "j F Y",
+            altFormat: "thai-date",
             allowInput: false,
             clickOpens: true,
             disableMobile: true, // บังคับใช้ Flatpickr แม้บนมือถือ (ไม่ใช้ native picker)
             animate: true,
-            formatDate: (date, format) => {
+            formatDate: (date, format, locale) => {
                 if (format === "Y-m-d") {
                     const y = date.getFullYear();
                     const m = String(date.getMonth() + 1).padStart(2, '0');
                     const d = String(date.getDate()).padStart(2, '0');
                     return `${y}-${m}-${d}`;
                 }
-                // Display format: แสดงเป็น พ.ศ.
-                const y = date.getFullYear() + 543;
-                const m = DataManager.THAI_MONTHS[date.getMonth() + 1];
-                const d = date.getDate();
-                return `${d} ${m} ${y}`;
+                if (format === "thai-date") {
+                    // Display format: แสดงเป็น พ.ศ.
+                    const y = date.getFullYear() + 543;
+                    const m = DataManager.THAI_MONTHS[date.getMonth() + 1];
+                    const d = date.getDate();
+                    return `${d} ${m} ${y}`;
+                }
+                // Fallback to default flatpickr formatter
+                return flatpickr.formatDate(date, format);
             },
             onReady: function(selectedDates, dateStr, instance) {
                 // แสดงปี พ.ศ. ใน header ของปฏิทิน
