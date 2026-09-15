@@ -159,6 +159,14 @@ select.form-control option {
     background: var(--bg-card);
     padding: 8px;
 }
+.main-logo { width: 42px; height: 42px; border-radius: 8px; object-fit: contain; margin-right: 12px; flex-shrink: 0; } .main-logo-large { width: 64px; height: 64px; border-radius: 12px; object-fit: contain; }
+.dynamic-image-logo { position: relative; display: inline-block; flex-shrink: 0; }
+.logo-text-overlay { position: absolute; top: 40%; left: 0%; width: 100%; text-align: center; pointer-events: none; padding-right: 12px; }
+.dynamic-image-logo.large .logo-text-overlay { top: 40%; padding-right: 0;}
+.logo-text-overlay .logo-month-text { font-size: 0.38rem; font-weight: 800; color: white; line-height: 1; text-transform: uppercase; letter-spacing: 0.5px; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+.dynamic-image-logo.large .logo-text-overlay .logo-month-text { font-size: 0.5rem; }
+.logo-text-overlay .logo-day-text { font-size: 0.8rem; font-weight: 800; color: white; line-height: 1; margin-top: 1px; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+.dynamic-image-logo.large .logo-text-overlay .logo-day-text { font-size: 1.3rem; margin-top: 2px; }
 /* --- Responsive Logo Title --- */
 .desktop-title {
     display: inline;
@@ -203,12 +211,19 @@ select.form-control option {
                 <span class="material-icons-round">menu</span>
             </button>
             <div class="logo" style="cursor:pointer;" onclick="openAbout()" title="เกี่ยวกับระบบ">
-                <div class="dynamic-logo-wrapper" id="dynamic-logo-1">
-                    <span class="material-icons-round dynamic-logo-cap">school</span>
-                    <div class="dynamic-logo-cal">
-                        <div class="dynamic-logo-header"></div>
-                        <div class="dynamic-logo-month logo-month-text">OCT</div>
-                        <div class="dynamic-logo-day logo-day-text">26</div>
+                
+                <div class="dynamic-image-logo">
+                    
+                <div class="dynamic-image-logo">
+                    <img src="logo.png" alt="Logo" class="main-logo" onerror="this.src='icon-app.png'">
+                    <div class="logo-text-overlay">
+                        <div class="logo-month-text">OCT</div>
+                        <div class="logo-day-text">26</div>
+                    </div>
+                </div>
+                    <div class="logo-text-overlay">
+                        <div class="logo-month-text">OCT</div>
+                        <div class="logo-day-text">26</div>
                     </div>
                 </div>
                 <h1>
@@ -220,14 +235,7 @@ select.form-control option {
         <nav id="main-nav">
             <div class="mobile-nav-header">
                 <div class="nav-header-info">
-                    <div class="dynamic-logo-wrapper">
-                        <span class="material-icons-round dynamic-logo-cap">school</span>
-                        <div class="dynamic-logo-cal">
-                            <div class="dynamic-logo-header"></div>
-                            <div class="dynamic-logo-month logo-month-text">OCT</div>
-                            <div class="dynamic-logo-day logo-day-text">26</div>
-                        </div>
-                    </div>
+                    <img src="logo.png" alt="Logo" class="main-logo" onerror="this.src='icon-app.png'">
                     <div class="nav-header-text">
                         <h2>ระบบแสดงข้อมูลวันลา</h2>
                         <p id="nav-role-text">สำหรับสถานศึกษา</p>
@@ -792,12 +800,12 @@ select.form-control option {
         <div class="about-box">
             <button class="about-close-abs" onclick="closeAbout()"><span class="material-icons-round">close</span></button>
             <div class="about-logo" style="background: none; width: auto; height: auto;">
-                <div class="dynamic-logo-wrapper" style="transform: scale(1.3); margin: 0;">
-                    <span class="material-icons-round dynamic-logo-cap">school</span>
-                    <div class="dynamic-logo-cal">
-                        <div class="dynamic-logo-header"></div>
-                        <div class="dynamic-logo-month logo-month-text">OCT</div>
-                        <div class="dynamic-logo-day logo-day-text">26</div>
+                
+                <div class="dynamic-image-logo large">
+                    <img src="logo.png" alt="Logo" class="main-logo-large" onerror="this.src='icon-app.png'">
+                    <div class="logo-text-overlay">
+                        <div class="logo-month-text">OCT</div>
+                        <div class="logo-day-text">26</div>
                     </div>
                 </div>
             </div>
