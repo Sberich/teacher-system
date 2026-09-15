@@ -1,4 +1,4 @@
-/* ============================================
+﻿/* ============================================
    LateArrival - Late Arrival Tracking
    ============================================ */
 const LateArrival = (() => {
@@ -50,7 +50,7 @@ const LateArrival = (() => {
                 <div class="form-row" style="margin-bottom: 16px;">
                     <div class="form-group">
                         <label for="la-date">วันที่</label>
-                        <input type="text" id="la-date" class="form-control flatpickr-input" placeholder="เลือกวันที่">
+                        <input type="date" id="la-date" class="form-control">
                     </div>
                     <div class="form-group">
                         <label for="la-time">เวลาที่มาถึง (น.)</label>
@@ -76,12 +76,12 @@ const LateArrival = (() => {
         
         container.innerHTML = formHtml;
 
-        // Initialize date picker
-        flatpickr("#la-date", {
-            dateFormat: "d/m/Y",
-            defaultDate: "today",
-            locale: "th"
-        });
+        // Set default date to today in YYYY-MM-DD
+        const today = new Date();
+        const y = today.getFullYear();
+        const m = String(today.getMonth() + 1).padStart(2, '0');
+        const d = String(today.getDate()).padStart(2, '0');
+        document.getElementById('la-date').value = `${y}-${m}-${d}`;
 
         document.getElementById('btn-save-la').addEventListener('click', saveLateArrival);
     }
@@ -154,13 +154,14 @@ const LateArrival = (() => {
         }
 
         let finalDate = date;
-        const parts = finalDate.split('/');
+        // Convert from YYYY-MM-DD to DD/MM/YYYY (Buddhist Era)
+        const parts = finalDate.split('-');
         if (parts.length === 3) {
-            let y = parseInt(parts[2], 10);
+            let y = parseInt(parts[0], 10);
             if (y < 2500) {
                 y += 543;
-                finalDate = `${parts[0]}/${parts[1]}/${y}`;
             }
+            finalDate = `${parts[2]}/${parts[1]}/${y}`;
         }
 
         const id = 'la_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
@@ -372,3 +373,4 @@ const LateArrival = (() => {
 })();
 
 window.LateArrival = LateArrival;
+

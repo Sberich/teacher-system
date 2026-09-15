@@ -16,9 +16,9 @@
     <script
         src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
     <!-- Flatpickr for Date Picker -->
-    <link rel="stylesheet" href="vendor/flatpickr.min.css">
-    <link rel="stylesheet" type="text/css" href="vendor/airbnb.css">
-    <link rel="stylesheet" href="css/style.css?v=31.2">
+    
+    
+    <link rel="stylesheet" href="css/style.css?v=31.4">
 
     <!-- Web App Manifest (Android & iOS) -->
     <meta name="theme-color" content="#0f172a">
@@ -600,12 +600,12 @@
                 <div class="form-row" style="margin-bottom: 16px;">
                     <div class="form-group">
                         <label for="lr-start-date">ตั้งแต่วันที่</label>
-                        <input type="text" id="lr-start-date" class="form-control flatpickr-date"
+                        <input type="date" id="lr-start-date" class="form-control"
                             placeholder="เลือกวันที่">
                     </div>
                     <div class="form-group">
                         <label for="lr-end-date">ถึงวันที่</label>
-                        <input type="text" id="lr-end-date" class="form-control flatpickr-date"
+                        <input type="date" id="lr-end-date" class="form-control"
                             placeholder="เลือกวันที่">
                     </div>
                 </div>
@@ -714,17 +714,10 @@
                         <div
                             style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                             <label for="leave-notes" style="margin-bottom: 0;">โน้ต (วันที่ลา)</label>
-                            <button type="button" id="btn-pick-dates" class="btn-secondary"
-                                style="padding: 4px 8px; font-size: 0.75rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--bg-card); display: flex; align-items: center; gap: 4px;">
-                                <span class="material-icons-round"
-                                    style="font-size: 14px; color: var(--primary);">calendar_month</span>
-                                เลือกจากปฏิทิน
-                            </button>
+                            
                         </div>
                         <textarea id="leave-notes" rows="2" placeholder="เช่น ลาวันที่ 10-12 พ.ค."></textarea>
-                        <!-- Hidden input for Flatpickr binding -->
-                        <input type="text" id="leave-notes-picker"
-                            style="opacity: 0; position: absolute; width: 1px; height: 1px;">
+                        
                     </div>
                 </div>
             </div>
@@ -1114,18 +1107,18 @@
     </div>
 
     <!-- Scripts -->
-    <script src="vendor/flatpickr.min.js"></script>
-    <script src="vendor/th.js"></script>
+    
+    
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-    <script src="js/data.js?v=31.2"></script>
-    <script src="js/app.js?v=31.2"></script>
-    <script src="js/leave-request.js?v=31.2"></script>
-    <script src="js/late-arrival.js?v=31.2"></script>
-    <script src="js/table.js?v=31.2"></script>
-    <script src="js/dashboard.js?v=31.2"></script>
-    <script src="js/calendar.js?v=31.2"></script>
-    <script src="js/teachers.js?v=31.2"></script>
-    <script src="js/settings.js?v=31.2"></script>
+    <script src="js/data.js?v=31.4"></script>
+    <script src="js/app.js?v=31.4"></script>
+    <script src="js/leave-request.js?v=31.4"></script>
+    <script src="js/late-arrival.js?v=31.4"></script>
+    <script src="js/table.js?v=31.4"></script>
+    <script src="js/dashboard.js?v=31.4"></script>
+    <script src="js/calendar.js?v=31.4"></script>
+    <script src="js/teachers.js?v=31.4"></script>
+    <script src="js/settings.js?v=31.4"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -1139,5 +1132,8 @@
 </body>
 
 </html>
+
+
+
 
 

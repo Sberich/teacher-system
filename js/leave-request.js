@@ -85,49 +85,17 @@ const LeaveRequest = (() => {
     }
 
     function bindEvents() {
-        // Date pickers
-        datePickerStart = flatpickr("#lr-start-date", {
-            locale: "th",
-            dateFormat: "Y-m-d",
-            altInput: true,
-            altFormat: "custom",
-            formatDate: (date, format) => {
-                if (format === "Y-m-d") {
-                    const y = date.getFullYear();
-                    const m = String(date.getMonth() + 1).padStart(2, '0');
-                    const d = String(date.getDate()).padStart(2, '0');
-                    return `${y}-${m}-${d}`;
-                }
-                const y = date.getFullYear() + 543;
-                const m = DataManager.THAI_MONTHS[date.getMonth() + 1];
-                const d = date.getDate();
-                return `${d} ${m} ${y}`;
-            },
-            onChange: function(selectedDates, dateStr, instance) {
-                if(datePickerEnd) {
-                    datePickerEnd.set('minDate', dateStr);
-                }
-            }
-        });
+        // Native date inputs handle their own logic.
+        const startDateInput = document.getElementById('lr-start-date');
+        const endDateInput = document.getElementById('lr-end-date');
 
-        datePickerEnd = flatpickr("#lr-end-date", {
-            locale: "th",
-            dateFormat: "Y-m-d",
-            altInput: true,
-            altFormat: "custom",
-            formatDate: (date, format) => {
-                if (format === "Y-m-d") {
-                    const y = date.getFullYear();
-                    const m = String(date.getMonth() + 1).padStart(2, '0');
-                    const d = String(date.getDate()).padStart(2, '0');
-                    return `${y}-${m}-${d}`;
+        if (startDateInput && endDateInput) {
+            startDateInput.addEventListener('change', (e) => {
+                if (e.target.value) {
+                    endDateInput.min = e.target.value;
                 }
-                const y = date.getFullYear() + 543;
-                const m = DataManager.THAI_MONTHS[date.getMonth() + 1];
-                const d = date.getDate();
-                return `${d} ${m} ${y}`;
-            },
-        });
+            });
+        }
 
         const btnSubmit = document.getElementById('btn-submit-leave-request');
         if (btnSubmit) {
@@ -185,10 +153,11 @@ const LeaveRequest = (() => {
         }
 
         // Clear form
+        if (document.getElementById('lr-teacher')) document.getElementById('lr-teacher').value = '';
         if (document.getElementById('lr-reason')) document.getElementById('lr-reason').value = '';
+        if (document.getElementById('lr-start-date')) document.getElementById('lr-start-date').value = '';
+        if (document.getElementById('lr-end-date')) document.getElementById('lr-end-date').value = '';
         if (document.getElementById('lr-contact')) document.getElementById('lr-contact').value = '';
-        if (datePickerStart) datePickerStart.clear();
-        if (datePickerEnd) datePickerEnd.clear();
 
         // Render Manage Requests Table (Admin)
         renderManageTable();

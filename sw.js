@@ -1,12 +1,12 @@
-﻿const CACHE_NAME = 'tla-cache-v175';
+﻿const CACHE_NAME = 'tla-cache-v177';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
     './css/style.css',
-  './vendor/flatpickr.min.css',
-  './vendor/airbnb.css',
-  './vendor/flatpickr.min.js',
-  './vendor/th.js',
+  
+  
+  
+  
     './js/app.js',
     './js/data.js',
     './js/calendar.js',
@@ -20,10 +20,6 @@ const ASSETS_TO_CACHE = [
     './icon-app.png',
     'https://fonts.googleapis.com/icon?family=Material+Icons+Round',
     'https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap',
-    'https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css',
-    'https://npmcdn.com/flatpickr/dist/themes/airbnb.css',
-    'https://cdn.jsdelivr.net/npm/flatpickr',
-    'https://npmcdn.com/flatpickr/dist/l10n/th.js',
     'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js', 'https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js'
 ];
 
@@ -68,6 +64,9 @@ self.addEventListener('fetch', event => {
         })
     );
 });
+
+
+
 
 
 
