@@ -402,14 +402,11 @@
                             <span class="material-icons-round">ios_share</span>
                         </button>
                         <div class="dropdown-menu">
-                            <button class="dropdown-item" id="btn-print-table">
+                            <button class="dropdown-item" id="btn-print-late-table">
                                 <span class="material-icons-round">print</span> พิมพ์ตาราง
                             </button>
-                            <button class="dropdown-item" id="btn-export-csv">
+                            <button class="dropdown-item" id="btn-export-late-csv">
                                 <span class="material-icons-round">download</span> ดาวน์โหลด CSV
-                            </button>
-                            <button class="dropdown-item" id="btn-send-leave-notify">
-                                <span class="material-icons-round">notifications_active</span> ส่งแจ้งเตือน LINE ให้ครู
                             </button>
                         </div>
                     </div>
@@ -600,13 +597,11 @@
                 <div class="form-row" style="margin-bottom: 16px;">
                     <div class="form-group">
                         <label for="lr-start-date">ตั้งแต่วันที่</label>
-                        <input type="text" id="lr-start-date" class="form-control"
-                            placeholder="เลือกวันที่" readonly>
+                        <input type="text" id="lr-start-date" class="form-control" placeholder="เลือกวันที่" readonly>
                     </div>
                     <div class="form-group">
                         <label for="lr-end-date">ถึงวันที่</label>
-                        <input type="text" id="lr-end-date" class="form-control"
-                            placeholder="เลือกวันที่" readonly>
+                        <input type="text" id="lr-end-date" class="form-control" placeholder="เลือกวันที่" readonly>
                     </div>
                 </div>
                 <div class="form-group" style="margin-bottom: 16px;">
@@ -714,10 +709,10 @@
                         <div
                             style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                             <label for="leave-notes" style="margin-bottom: 0;">โน้ต (วันที่ลา)</label>
-                            
+
                         </div>
                         <textarea id="leave-notes" rows="2" placeholder="เช่น ลาวันที่ 10-12 พ.ค."></textarea>
-                        
+
                     </div>
                 </div>
             </div>
@@ -1132,8 +1127,3 @@
 </body>
 
 </html>
-
-
-
-
-

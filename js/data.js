@@ -785,12 +785,12 @@ const DataManager = (() => {
         save(KEYS.lateArrivals, list);
     }
 
-    async function sendLeaveNotifications() {
+    async function setLeaveNotifyEnabled(enabled) {
         const url = getCloudUrl();
-        if (!url) return { status: 'error', message: 'ยังไม่ได้ตั้งค่า Cloud URL' };
+        if (!url) return { status: 'error', message: 'กรุณาตั้งค่า Cloud URL' };
 
         const token = getSessionToken();
-        if (!token) return { status: 'error', message: 'ยังไม่มีเซสชัน กรุณาเข้าสู่ระบบใหม่' };
+        if (!token) return { status: 'error', message: 'กรุณาเข้าสู่ระบบก่อน' };
 
         try {
             const controller = new AbortController();
@@ -799,7 +799,8 @@ const DataManager = (() => {
             const response = await fetch(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({ action: 'sendLeaveNotifications', token: token }),
+                // เปลี่ยน action และส่งค่า enabled ไปด้วย
+                body: JSON.stringify({ action: 'setLeaveNotifyEnabled', token: token, enabled: enabled }),
                 signal: controller.signal
             });
             clearTimeout(timeoutId);
@@ -807,14 +808,14 @@ const DataManager = (() => {
             if (!response.ok) throw new Error('Network error');
             return await response.json();
         } catch (error) {
-            console.error('sendLeaveNotifications failed:', error);
-            return { status: 'error', message: 'เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ' };
+            console.error('setLeaveNotifyEnabled failed:', error);
+            return { status: 'error', message: 'ไม่สามารถติดต่อเซิร์ฟเวอร์ได้' };
         }
     }
 
     return {
         isAdmin, isLateAdmin, login, logout, verifyAdminPin,
-        getCloudUrl, setCloudUrl, pullFromCloud, forceSyncToCloud, sendLeaveNotifications,
+        getCloudUrl, setCloudUrl, pullFromCloud, forceSyncToCloud, setLeaveNotifyEnabled,
         getTeachers, getSections, addTeacher, addTeachersBulk, updateTeacher, deleteTeacher, getNextOrder,
         getLeaveRecords, addLeaveEvent, updateLeaveEvent, getLeaveRecord, getTeacherLeaveForPeriod, deleteLeaveEvent,
         getLeaveRequests, addLeaveRequest, updateLeaveRequestStatus, deleteLeaveRequest, clearCompletedLeaveRequests,

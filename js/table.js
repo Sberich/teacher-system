@@ -28,9 +28,6 @@ const LeaveTable = (() => {
         document.getElementById('btn-print-table').addEventListener('click', printTable);
         document.getElementById('btn-export-csv').addEventListener('click', exportCSV);
 
-        const btnSendNotify = document.getElementById('btn-send-leave-notify');
-        if (btnSendNotify) btnSendNotify.addEventListener('click', sendLeaveNotifications);
-
         // Event delegation for edit/delete buttons in history list
         document.getElementById('leave-history-list').addEventListener('click', (e) => {
             const btnDelete = e.target.closest('.btn-delete-event');
@@ -704,42 +701,6 @@ const LeaveTable = (() => {
             if (!str) return '';
             return str.toString().replace(/"/g, '""');
         };
-        async function sendLeaveNotifications() {
-            if (!App.isAdmin()) {
-                App.showToast('เฉพาะผู้ดูแลระบบเท่านั้น', 'warning');
-                return;
-            }
-            if (!DataManager.getCloudUrl()) {
-                App.showToast('ยังไม่ได้ตั้งค่า Cloud URL', 'warning');
-                return;
-            }
-
-            document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('show'));
-
-            App.confirm('ต้องการส่งแจ้งเตือน LINE สรุปวันลาให้ครูที่มีรายการค้างส่งหรือไม่?', async () => {
-                App.showToast('กำลังบันทึกข้อมูลล่าสุดขึ้นคลาวด์...', 'info');
-                const syncOk = await DataManager.forceSyncToCloud();
-                if (!syncOk) {
-                    App.showToast('บันทึกข้อมูลขึ้นคลาวด์ไม่สำเร็จ ยกเลิกการส่งแจ้งเตือน', 'error');
-                    return;
-                }
-
-                App.showToast('กำลังส่งแจ้งเตือน LINE...', 'info');
-                const result = await DataManager.sendLeaveNotifications();
-
-                if (result && result.status === 'success') {
-                    const d = result.detail || {};
-                    if (d.sent > 0) {
-                        App.showToast(`ส่งแจ้งเตือนสำเร็จ ${d.sent} คน`, 'success');
-                    } else {
-                        App.showToast('ไม่มีรายการใหม่ที่ต้องแจ้งเตือน', 'info');
-                    }
-                } else {
-                    App.showToast((result && result.message) || 'ส่งแจ้งเตือนไม่สำเร็จ', 'error');
-                }
-            });
-        }
-
         // Data rows
         teachers.forEach(teacher => {
             const leaveData = DataManager.getTeacherLeaveForPeriod(teacher.id);

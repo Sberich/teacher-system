@@ -136,6 +136,20 @@ const Settings = (() => {
                 </div>
             </div>
 
+            <div class="settings-card admin-only">
+                <div style="display: flex; justify-content: space-between; align-items: center; gap: 16px;">
+                    <div>
+                        <h3 style="margin-top: 0; margin-bottom: 6px; padding-bottom: 0; border-bottom: none;"><span class="material-icons-round" style="color: var(--warning);">notifications_active</span> ส่งแจ้งเตือน LINE</h3>
+                        <div style="color: var(--text-secondary); font-size: 0.85rem; line-height: 1.4;">กวาดส่งรายการลาที่ค้างอยู่ (ยกเว้นลาคลอด) ไปยัง LINE ของครู<br>เมื่อส่งเสร็จ สวิตช์จะเด้งกลับเป็นปิดอัตโนมัติ</div>
+                    </div>
+                    <label class="toggle-switch" title="เปิดเพื่อส่งแจ้งเตือนทันที">
+                        <!-- ค่าเริ่มต้นคือปิดเสมอ -->
+                        <input type="checkbox" id="setting-notify-toggle">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+
             <div class="settings-card danger-zone admin-only">
                 <h3><span class="material-icons-round">warning</span> โซนอันตราย</h3>
                 <div class="settings-form">
@@ -151,6 +165,44 @@ const Settings = (() => {
 
         // --- Event listeners ---
         document.getElementById('btn-save-settings').addEventListener('click', saveSettings);
+        // 🔔 ระบบแจ้งเตือน LINE วันลา (สวิตช์)
+        const notifyToggle = document.getElementById('setting-notify-toggle');
+        if (notifyToggle) {
+            notifyToggle.addEventListener('change', async (e) => {
+                const isChecked = e.target.checked;
+                if (!isChecked) return; // ถ้ากดปิด ไม่ต้องทำอะไร
+
+                // ทริค UX: เด้งสวิตช์กลับเป็นปิดไว้ก่อนทันที เผื่อแอดมินกดยกเลิก
+                notifyToggle.checked = false;
+
+                App.confirm('ระบบจะส่งแจ้งเตือนรายการลาทั้งหมดที่ค้างอยู่ (ยกเว้นลาคลอด) ไปยัง LINE ของครูแต่ละคนทันที ยืนยันหรือไม่?', async () => {
+
+                    // หากกดยืนยัน ให้เปิดสวิตช์ค้างไว้ระหว่างโหลด และล็อกไม่ให้กดซ้ำ
+                    notifyToggle.checked = true;
+                    notifyToggle.disabled = true;
+                    App.showLoading('กำลังส่งแจ้งเตือน...');
+
+                    const result = await DataManager.setLeaveNotifyEnabled(true);
+
+                    App.hideLoading();
+                    if (result.status === 'success') {
+                        const sent = result.detail ? result.detail.sent : 0;
+                        App.showToast(`ส่งสำเร็จ ${sent} รายการ`, 'success');
+                    } else {
+                        App.showToast('เกิดข้อผิดพลาด: ' + result.message, 'error');
+                    }
+
+                    // ส่งเสร็จ รีเซ็ตกลับเป็นปิดเสมอ
+                    notifyToggle.checked = false;
+                    notifyToggle.disabled = false;
+
+                    // อัปเดต localStorage ป้องกันการสับสนของระบบ
+                    const currentSettings = DataManager.getSettings();
+                    currentSettings.lineNotifyEnabled = 'false';
+                    DataManager.saveSettings(currentSettings);
+                });
+            });
+        }
         const forceSyncBtn = document.getElementById('btn-force-sync');
         if (forceSyncBtn) {
             forceSyncBtn.addEventListener('click', forceSync);
