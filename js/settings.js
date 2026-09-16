@@ -180,8 +180,7 @@ const Settings = (() => {
                     // หากกดยืนยัน ให้เปิดสวิตช์ค้างไว้ระหว่างโหลด และล็อกไม่ให้กดซ้ำ
                     notifyToggle.checked = true;
                     notifyToggle.disabled = true;
-                    App.showLoading('กำลังส่งแจ้งเตือน...');
-
+                    App.showToast('กำลังส่งแจ้งเตือนไปยัง LINE...', 'info'); // ✅ เปลี่ยนมาใช้ตัวนี้
                     const result = await DataManager.setLeaveNotifyEnabled(true);
 
                     App.hideLoading();
