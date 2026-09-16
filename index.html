@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ระบบบันทึกข้อมูลวันลาข้าราชการครู v1.2.2</title>
+    <title>ระบบบันทึกข้อมูลวันลาข้าราชการครู v1.2.1</title>
     <meta name="description" content="ระบบบันทึกและแสดงข้อมูลวันลาข้าราชการครู สำหรับสถานศึกษา">
     <link rel="icon" type="image/svg+xml"
         href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%233b82f6'%3E%3Cpath d='M12 3L1 9L12 15L21 10.09V17H23V9M5 13.18V17.18C5 17.18 8.13 21 12 21C15.87 21 19 17.18 19 17.18V13.18C19 13.18 15.87 17 12 17C8.13 17 5 13.18 5 13.18Z'/%3E%3C/svg%3E">
@@ -709,7 +709,15 @@
                         <div
                             style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                             <label for="leave-notes" style="margin-bottom: 0;">โน้ต (วันที่ลา)</label>
-
+                            <div style="position: relative;">
+                                <button type="button" id="btn-pick-dates"
+                                    style="background:none; border:none; color:var(--primary); font-size:0.85rem; display:flex; align-items:center; gap:4px; cursor:pointer; padding:0;">
+                                    <span class="material-icons-round" style="font-size:16px;">calendar_month</span>
+                                    เลือกปฏิทิน
+                                </button>
+                                <input type="text" id="leave-notes-picker"
+                                    style="visibility:hidden; position:absolute; width:0; height:0; border:0; padding:0; margin:0; bottom:0; right:0;">
+                            </div>
                         </div>
                         <textarea id="leave-notes" rows="2" placeholder="เช่น ลาวันที่ 10-12 พ.ค."></textarea>
 
