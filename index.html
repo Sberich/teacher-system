@@ -889,10 +889,18 @@
                 </button>
             </div>
             <div class="modal-body">
-                <div class="form-group">
+                <div class="form-group" style="position: relative;">
                     <label for="auth-pin">รหัสผ่าน (PIN)</label>
-                    <input type="password" id="auth-pin" placeholder="****" inputmode="numeric"
-                        style="letter-spacing:4px;font-size:1.2rem;text-align:center;">
+                    <!-- นำ inputmode="numeric" ออก และใส่ autocapitalize="none" เข้าไปแทน -->
+                    <input type="password" id="auth-pin" placeholder="****" autocapitalize="none" autocorrect="off"
+                        spellcheck="false" autocomplete="off"
+                        style="letter-spacing:4px;font-size:1.2rem;text-align:center; padding-right: 40px;">
+
+                    <button type="button" id="btn-toggle-pin"
+                        style="position: absolute; right: 5px; top: 32px; background: none; border: none; color: var(--text-secondary); cursor: pointer; padding: 8px;">
+                        <span class="material-icons-round" id="icon-toggle-pin"
+                            style="font-size: 20px;">visibility_off</span>
+                    </button>
                 </div>
             </div>
             <div class="modal-footer">
@@ -1113,15 +1121,15 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/th.js"></script>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-    <script src="js/data.js?v=31.6"></script>
-    <script src="js/app.js?v=31.6"></script>
-    <script src="js/leave-request.js?v=31.6"></script>
-    <script src="js/late-arrival.js?v=31.6"></script>
-    <script src="js/table.js?v=31.6"></script>
-    <script src="js/dashboard.js?v=31.6"></script>
-    <script src="js/calendar.js?v=31.6"></script>
-    <script src="js/teachers.js?v=31.6"></script>
-    <script src="js/settings.js?v=31.6"></script>
+    <script src="js/data.js?v=31.7"></script>
+    <script src="js/app.js?v=31.7"></script>
+    <script src="js/leave-request.js?v=31.7"></script>
+    <script src="js/late-arrival.js?v=31.7"></script>
+    <script src="js/table.js?v=31.7"></script>
+    <script src="js/dashboard.js?v=31.7"></script>
+    <script src="js/calendar.js?v=31.7"></script>
+    <script src="js/teachers.js?v=31.7"></script>
+    <script src="js/settings.js?v=31.7"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
