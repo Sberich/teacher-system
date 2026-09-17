@@ -87,7 +87,7 @@ const App = (() => {
         // Default page based on URL hash or query string
         const urlParams = new URLSearchParams(window.location.search);
         const urlPage = urlParams.get('page') || window.location.hash.substring(1);
-        
+
         if (urlPage && document.querySelector(`.nav-item[data-page="${urlPage}"]`)) {
             navigate(urlPage);
         } else {
@@ -111,7 +111,7 @@ const App = (() => {
             overlay.style.justifyContent = 'center';
             overlay.style.padding = '20px';
             overlay.style.textAlign = 'center';
-            
+
             const icon = document.createElement('span');
             icon.className = 'material-icons-round';
             icon.style.fontSize = '64px';
@@ -135,7 +135,7 @@ const App = (() => {
             btn.style.fontSize = '1.2rem';
             btn.style.boxShadow = '0 10px 25px rgba(59, 130, 246, 0.5)';
             btn.innerHTML = '<span class="material-icons-round" style="margin-right: 8px;">print</span> กดที่นี่เพื่อบันทึก PDF';
-            
+
             overlay.appendChild(icon);
             overlay.appendChild(title);
             overlay.appendChild(subtitle);
@@ -166,7 +166,7 @@ const App = (() => {
 
     async function handleManualRefresh(e) {
         if (e) e.preventDefault();
-        
+
         if (!DataManager.getCloudUrl()) {
             showToast('กรุณาตั้งค่า Google Sheets URL', 'warning');
             return;
@@ -295,6 +295,19 @@ const App = (() => {
         const toggleBtn = document.getElementById('auth-toggle');
         const loginBtn = document.getElementById('btn-login-submit');
         const pinInput = document.getElementById('auth-pin');
+        const togglePinBtn = document.getElementById('btn-toggle-pin');
+        const togglePinIcon = document.getElementById('icon-toggle-pin');
+        if (togglePinBtn) {
+            togglePinBtn.addEventListener('click', () => {
+                if (pinInput.type === 'password') {
+                    pinInput.type = 'text';
+                    togglePinIcon.textContent = 'visibility';
+                } else {
+                    pinInput.type = 'password';
+                    togglePinIcon.textContent = 'visibility_off';
+                }
+            });
+        }
         const loginBtnDefaultHtml = loginBtn.innerHTML;
 
         updateAuthUI();
@@ -495,7 +508,7 @@ const App = (() => {
         if (ind) ind.classList.remove('show');
     }
 
-    ﻿    function setupDynamicLogo() {
+    function setupDynamicLogo() {
         const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
         const now = new Date();
         const mStr = months[now.getMonth()];
@@ -534,10 +547,10 @@ const App = (() => {
         // Setup About Modal listeners
         const aboutModal = document.getElementById('about-modal');
         if (aboutModal) {
-            aboutModal.addEventListener('click', function(e) {
+            aboutModal.addEventListener('click', function (e) {
                 if (e.target === this) closeAbout();
             });
-            document.addEventListener('keydown', function(e) {
+            document.addEventListener('keydown', function (e) {
                 if (e.key === 'Escape') closeAbout();
             });
         }
@@ -545,7 +558,7 @@ const App = (() => {
 
     function setupAntiCopy() {
         // Prevent right click
-        document.addEventListener('contextmenu', function(e) {
+        document.addEventListener('contextmenu', function (e) {
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
             if (!isAdmin()) {
                 e.preventDefault();
@@ -553,7 +566,7 @@ const App = (() => {
         });
 
         // Prevent copy shortcut
-        document.addEventListener('copy', function(e) {
+        document.addEventListener('copy', function (e) {
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
             if (!isAdmin()) {
                 e.preventDefault();
