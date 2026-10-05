@@ -247,50 +247,6 @@ const LateArrival = (() => {
         // Cap max columns to 10 as per user request, but if none exceeds, use the max we have (at least 1)
         maxLate = Math.max(1, Math.min(10, maxLate));
 
-        function exportLateJson() {
-            if (!App.isAdmin()) return;
-            const data = DataManager.getLateArrivals();
-            const json = JSON.stringify(data, null, 2);
-            const blob = new Blob([json], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `late_arrival_backup_${new Date().toISOString().split('T')[0]}.json`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
-        }
-
-        function importLateJson(e) {
-            if (!App.isAdmin()) return;
-            const file = e.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = (ev) => {
-                App.confirm('ยืนยันการคืนค่าข้อมูล', 'ข้อมูลการมาสายปัจจุบันจะถูกแทนที่ด้วยข้อมูลจากไฟล์นี้ทั้งหมด ต้องการดำเนินการต่อหรือไม่?', () => {
-                    const success = DataManager.importLateData(ev.target.result);
-                    if (success) {
-                        App.showToast('คืนค่าข้อมูลมาสายสำเร็จ', 'success');
-                        renderTable();
-                    } else {
-                        App.showToast('ไฟล์ไม่ถูกต้อง', 'error');
-                    }
-                    e.target.value = ''; // รีเซ็ตช่องรับไฟล์
-                });
-            };
-            reader.readAsText(file);
-        }
-
-        function clearLateData() {
-            if (!App.isAdmin()) return;
-            App.confirm('ยืนยันการล้างข้อมูล', 'คุณต้องการล้างข้อมูลการมาสาย "ทั้งหมด" เพื่อเริ่มปีงบประมาณใหม่ใช่หรือไม่? (แนะนำให้สำรองข้อมูล JSON ไว้ก่อนล้าง)', () => {
-                DataManager.clearLateData();
-                App.showToast('ล้างข้อมูลมาสายทั้งหมดสำเร็จ', 'success');
-                renderTable();
-            });
-        }
         return { data: result, maxLate };
     }
 
@@ -412,6 +368,50 @@ const LateArrival = (() => {
         link.click();
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
+    }
+    function exportLateJson() {
+        if (!App.isAdmin()) return;
+        const data = DataManager.getLateArrivals();
+        const json = JSON.stringify(data, null, 2);
+        const blob = new Blob([json], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `late_arrival_backup_${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    }
+
+    function importLateJson(e) {
+        if (!App.isAdmin()) return;
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            App.confirm('ยืนยันการคืนค่าข้อมูล', 'ข้อมูลการมาสายปัจจุบันจะถูกแทนที่ด้วยข้อมูลจากไฟล์นี้ทั้งหมด ต้องการดำเนินการต่อหรือไม่?', () => {
+                const success = DataManager.importLateData(ev.target.result);
+                if (success) {
+                    App.showToast('คืนค่าข้อมูลมาสายสำเร็จ', 'success');
+                    renderTable();
+                } else {
+                    App.showToast('ไฟล์ไม่ถูกต้อง', 'error');
+                }
+                e.target.value = ''; // รีเซ็ตช่องรับไฟล์
+            });
+        };
+        reader.readAsText(file);
+    }
+
+    function clearLateData() {
+        if (!App.isAdmin()) return;
+        App.confirm('ยืนยันการล้างข้อมูล', 'คุณต้องการล้างข้อมูลการมาสาย "ทั้งหมด" เพื่อเริ่มปีงบประมาณใหม่ใช่หรือไม่? (แนะนำให้สำรองข้อมูล JSON ไว้ก่อนล้าง)', () => {
+            DataManager.clearLateData();
+            App.showToast('ล้างข้อมูลมาสายทั้งหมดสำเร็จ', 'success');
+            renderTable();
+        });
     }
 
     return {
