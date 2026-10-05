@@ -410,10 +410,21 @@ const LateArrival = (() => {
 
     function clearLateData() {
         if (!App.isAdmin()) return;
-        App.confirm('ยืนยันการล้างข้อมูล', 'คุณต้องการล้างข้อมูลการมาสาย "ทั้งหมด" เพื่อเริ่มปีงบประมาณใหม่ใช่หรือไม่? (แนะนำให้สำรองข้อมูล JSON ไว้ก่อนล้าง)', () => {
+        App.confirm('ยืนยันการล้างข้อมูล', 'คุณต้องการล้างข้อมูลการมาสาย "ทั้งหมด" เพื่อเริ่มปีงบประมาณใหม่ใช่หรือไม่? (แนะนำให้สำรองข้อมูล JSON ไว้ก่อนล้าง)', async () => {
+
+            // 1. ลบจากหน่วยความจำเครื่อง
             DataManager.clearLateData();
-            App.showToast('ล้างข้อมูลมาสายทั้งหมดสำเร็จ', 'success');
-            renderTable();
+
+            // 2. บังคับยิงคำสั่งลบไปที่ Google Sheets ทันที (ไม่ต้องรอ 2 วิ)
+            App.showToast('กำลังซิงค์การล้างข้อมูลไปยังฐานข้อมูล...', 'info');
+            const success = await DataManager.forceSyncToCloud();
+
+            if (success) {
+                App.showToast('ล้างข้อมูลมาสายทั้งหมดสำเร็จแล้ว!', 'success');
+                renderTable();
+            } else {
+                App.showToast('เกิดข้อผิดพลาดในการเชื่อมต่อฐานข้อมูล', 'error');
+            }
         });
     }
 
