@@ -183,7 +183,7 @@ const Settings = (() => {
                     App.showToast('กำลังส่งแจ้งเตือนไปยัง LINE...', 'info'); // ✅ เปลี่ยนมาใช้ตัวนี้
                     const result = await DataManager.setLeaveNotifyEnabled(true);
 
-                    App.hideLoading();
+
                     if (result.status === 'success') {
                         const sent = result.detail ? result.detail.sent : 0;
                         App.showToast(`ส่งสำเร็จ ${sent} รายการ`, 'success');

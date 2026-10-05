@@ -766,7 +766,24 @@ const DataManager = (() => {
         localStorage.removeItem(KEYS.leaveRecords);
         triggerCloudSync(); // sync empty leave state to cloud
     }
+    function clearLateData() {
+        localStorage.removeItem(KEYS.lateArrivals);
+        triggerCloudSync();
+    }
 
+    function importLateData(jsonData) {
+        try {
+            const data = JSON.parse(jsonData);
+            if (Array.isArray(data)) {
+                localStorage.setItem(KEYS.lateArrivals, JSON.stringify(data));
+                triggerCloudSync();
+                return true;
+            }
+        } catch (e) {
+            console.error(e);
+        }
+        return false;
+    }
 
     // --- Late Arrivals ---
     function getLateArrivals() {
@@ -823,6 +840,6 @@ const DataManager = (() => {
         getSettings, updateSettings, getPeriodMonths,
         getThaiMonth, getThaiMonthFull, THAI_MONTHS, THAI_MONTHS_FULL,
         exportData, importData,
-        loadDemoData, hasData, clearAllData, clearLeaveData, getLateArrivals, addLateArrival, deleteLateArrival
+        loadDemoData, hasData, clearAllData, clearLeaveData, clearLateData, importLateData, getLateArrivals, addLateArrival, deleteLateArrival
     };
 })();

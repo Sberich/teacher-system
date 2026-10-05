@@ -15,12 +15,21 @@ const LateArrival = (() => {
 
         const btnExport = document.getElementById('btn-export-late-csv');
         if (btnExport) btnExport.addEventListener('click', exportLateCSV);
+
+        const btnImportJson = document.getElementById('btn-import-late-json');
+        const fileImport = document.getElementById('import-late-file');
+        if (btnImportJson && fileImport) {
+            btnImportJson.addEventListener('click', () => fileImport.click());
+            fileImport.addEventListener('change', importLateJson);
+        }
+        const btnClear = document.getElementById('btn-clear-late-data');
+        if (btnClear) btnClear.addEventListener('click', clearLateData);
     }
 
     function renderForm() {
         const container = document.getElementById('late-arrival-container');
         const teachers = DataManager.getTeachers().sort((a, b) => a.order - b.order);
-        
+
         // Group by section for the dropdown
         const grouped = {};
         teachers.forEach(t => {
@@ -28,7 +37,7 @@ const LateArrival = (() => {
             if (!grouped[sec]) grouped[sec] = [];
             grouped[sec].push(t);
         });
-        
+
         let teacherOptions = '';
         for (const sec in grouped) {
             teacherOptions += `<optgroup label="${sec}">`;
@@ -73,7 +82,7 @@ const LateArrival = (() => {
                 </div>
             </div>
         `;
-        
+
         container.innerHTML = formHtml;
 
         // Initialize date picker
@@ -94,7 +103,7 @@ const LateArrival = (() => {
             // Sort by date desc, time desc
             const aDate = a.date.split('/').reverse().join('');
             const bDate = b.date.split('/').reverse().join('');
-            if(aDate !== bDate) return bDate.localeCompare(aDate);
+            if (aDate !== bDate) return bDate.localeCompare(aDate);
             return b.time.localeCompare(a.time);
         });
         const teachers = DataManager.getTeachers();
@@ -120,7 +129,7 @@ const LateArrival = (() => {
         lateArrivals.forEach(record => {
             const teacher = teachers.find(t => t.id === record.teacherId);
             const teacherName = teacher ? teacher.name : 'ไม่พบข้อมูลครู';
-            
+
             html += `
                 <tr>
                     <td>${record.date}</td>
@@ -164,7 +173,7 @@ const LateArrival = (() => {
         }
 
         const id = 'la_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
-        
+
         DataManager.addLateArrival({
             id: id,
             teacherId: teacherId,
@@ -196,7 +205,7 @@ const LateArrival = (() => {
         const months = DataManager.getPeriodMonths();
         const lateArrivals = DataManager.getLateArrivals();
         const recordsByTeacher = {};
-        
+
         lateArrivals.forEach(r => {
             const parts = r.date.split('/');
             if (parts.length === 3) {
@@ -227,7 +236,7 @@ const LateArrival = (() => {
                 const records = recordsByTeacher[t.id].sort((a, b) => {
                     const aDate = a.date.split('/').reverse().join('');
                     const bDate = b.date.split('/').reverse().join('');
-                    if(aDate !== bDate) return aDate.localeCompare(bDate);
+                    if (aDate !== bDate) return aDate.localeCompare(bDate);
                     return a.time.localeCompare(b.time);
                 });
                 if (records.length > maxLate) maxLate = records.length;
@@ -237,14 +246,58 @@ const LateArrival = (() => {
 
         // Cap max columns to 10 as per user request, but if none exceeds, use the max we have (at least 1)
         maxLate = Math.max(1, Math.min(10, maxLate));
-        
+
+        function exportLateJson() {
+            if (!App.isAdmin()) return;
+            const data = DataManager.getLateArrivals();
+            const json = JSON.stringify(data, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `late_arrival_backup_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        function importLateJson(e) {
+            if (!App.isAdmin()) return;
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                App.confirm('ยืนยันการคืนค่าข้อมูล', 'ข้อมูลการมาสายปัจจุบันจะถูกแทนที่ด้วยข้อมูลจากไฟล์นี้ทั้งหมด ต้องการดำเนินการต่อหรือไม่?', () => {
+                    const success = DataManager.importLateData(ev.target.result);
+                    if (success) {
+                        App.showToast('คืนค่าข้อมูลมาสายสำเร็จ', 'success');
+                        renderTable();
+                    } else {
+                        App.showToast('ไฟล์ไม่ถูกต้อง', 'error');
+                    }
+                    e.target.value = ''; // รีเซ็ตช่องรับไฟล์
+                });
+            };
+            reader.readAsText(file);
+        }
+
+        function clearLateData() {
+            if (!App.isAdmin()) return;
+            App.confirm('ยืนยันการล้างข้อมูล', 'คุณต้องการล้างข้อมูลการมาสาย "ทั้งหมด" เพื่อเริ่มปีงบประมาณใหม่ใช่หรือไม่? (แนะนำให้สำรองข้อมูล JSON ไว้ก่อนล้าง)', () => {
+                DataManager.clearLateData();
+                App.showToast('ล้างข้อมูลมาสายทั้งหมดสำเร็จ', 'success');
+                renderTable();
+            });
+        }
         return { data: result, maxLate };
     }
 
     function printLateTable() {
         const { data, maxLate } = getFilteredLateRecords();
         const months = DataManager.getPeriodMonths();
-        const periodLabel = months.length > 0 ? DataManager.getThaiMonth(months[0].month) + ' ' + months[0].year + ' - ' + DataManager.getThaiMonth(months[months.length-1].month) + ' ' + months[months.length-1].year : '';
+        const periodLabel = months.length > 0 ? DataManager.getThaiMonth(months[0].month) + ' ' + months[0].year + ' - ' + DataManager.getThaiMonth(months[months.length - 1].month) + ' ' + months[months.length - 1].year : '';
 
         let html = `<!DOCTYPE html><html lang="th"><head><meta charset="UTF-8">
         <title>รายงานการมาสาย</title>
@@ -274,11 +327,11 @@ const LateArrival = (() => {
                     <th style="width: 150px;">ชื่อ-สกุล</th>
                     <th style="width: 100px;">กลุ่มงาน</th>
                     <th>รวม (ครั้ง)</th>`;
-        
+
         for (let i = 1; i <= maxLate; i++) {
             html += `<th>ครั้งที่ ${i}</th>`;
         }
-        
+
         html += `</tr></thead><tbody>`;
 
         data.forEach(item => {
@@ -287,7 +340,7 @@ const LateArrival = (() => {
                 <td class="name">${item.teacher.name}</td>
                 <td>${item.teacher.section || ''}</td>
                 <td style="font-weight: bold;">${item.records.length}</td>`;
-            
+
             for (let i = 0; i < maxLate; i++) {
                 if (i < item.records.length) {
                     html += `<td>${item.records[i].date}<br><span style="color:#666;font-size:9px;">${item.records[i].time} น.</span></td>`;
@@ -315,7 +368,7 @@ const LateArrival = (() => {
 
     function exportLateCSV() {
         const { data, maxLate } = getFilteredLateRecords();
-        
+
         let csv = '\uFEFF';
         let row1 = ['ลำดับ', 'ชื่อ-สกุล', 'กลุ่มงาน', 'รวม (ครั้ง)'];
         for (let i = 1; i <= maxLate; i++) {
@@ -330,12 +383,12 @@ const LateArrival = (() => {
 
         data.forEach(item => {
             let row = [
-                item.teacher.order, 
-                `"${escapeHtml(item.teacher.name)}"`, 
+                item.teacher.order,
+                `"${escapeHtml(item.teacher.name)}"`,
                 `"${escapeHtml(item.teacher.section)}"`,
                 item.records.length
             ];
-            
+
             for (let i = 0; i < maxLate; i++) {
                 if (i < item.records.length) {
                     row.push(`"${item.records[i].date} ${item.records[i].time} น."`);

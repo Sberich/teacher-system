@@ -18,7 +18,7 @@
     <!-- Flatpickr for Date Picker -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/airbnb.css">
-    <link rel="stylesheet" href="css/style.css?v=31.5">
+    <link rel="stylesheet" href="css/style.css?v=31.8">
 
     <!-- Web App Manifest (Android & iOS) -->
     <meta name="theme-color" content="#0f172a">
@@ -408,7 +408,22 @@
                             <button class="dropdown-item" id="btn-export-late-csv">
                                 <span class="material-icons-round">download</span> ดาวน์โหลด CSV
                             </button>
+
+                            <!-- เพิ่มปุ่มใหม่ สำหรับ Admin หลักเท่านั้น -->
+                            <div class="admin-only" style="border-top: 1px solid var(--border); margin: 4px 0;"></div>
+                            <button class="dropdown-item admin-only" id="btn-export-late-json">
+                                <span class="material-icons-round">save</span> แบ็คอัปมาสาย (JSON)
+                            </button>
+                            <button class="dropdown-item admin-only" id="btn-import-late-json">
+                                <span class="material-icons-round">restore</span> คืนค่ามาสาย (JSON)
+                            </button>
+                            <button class="dropdown-item admin-only" id="btn-clear-late-data"
+                                style="color: var(--danger);">
+                                <span class="material-icons-round">delete_sweep</span> ล้างประวัติ (เริ่มปีใหม่)
+                            </button>
                         </div>
+                        <!-- ซ่อนช่องรับไฟล์ Import ไว้หลังเมนู -->
+                        <input type="file" id="import-late-file" accept=".json" style="display:none;">
                     </div>
                 </div>
             </div>
@@ -1121,15 +1136,15 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/th.js"></script>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-    <script src="js/data.js?v=31.7"></script>
-    <script src="js/app.js?v=31.7"></script>
-    <script src="js/leave-request.js?v=31.7"></script>
-    <script src="js/late-arrival.js?v=31.7"></script>
-    <script src="js/table.js?v=31.7"></script>
-    <script src="js/dashboard.js?v=31.7"></script>
-    <script src="js/calendar.js?v=31.7"></script>
-    <script src="js/teachers.js?v=31.7"></script>
-    <script src="js/settings.js?v=31.7"></script>
+    <script src="js/data.js?v=31.8"></script>
+    <script src="js/app.js?v=31.8"></script>
+    <script src="js/leave-request.js?v=31.8"></script>
+    <script src="js/late-arrival.js?v=31.8"></script>
+    <script src="js/table.js?v=31.8"></script>
+    <script src="js/dashboard.js?v=31.8"></script>
+    <script src="js/calendar.js?v=31.8"></script>
+    <script src="js/teachers.js?v=31.8"></script>
+    <script src="js/settings.js?v=31.8"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
