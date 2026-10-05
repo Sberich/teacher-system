@@ -394,9 +394,13 @@ const LateArrival = (() => {
 
         const reader = new FileReader();
         reader.onload = (ev) => {
-            App.confirm('ยืนยันการคืนค่าข้อมูล', 'ข้อมูลการมาสายปัจจุบันจะถูกแทนที่ด้วยข้อมูลจากไฟล์นี้ทั้งหมด ต้องการดำเนินการต่อหรือไม่?', () => {
+            // เติมคำว่า async เข้าไปตรงนี้
+            App.confirm('ยืนยันการคืนค่าข้อมูล', 'ข้อมูลการมาสายปัจจุบันจะถูกแทนที่ด้วยข้อมูลจากไฟล์นี้ทั้งหมด ต้องการดำเนินการต่อหรือไม่?', async () => {
                 const success = DataManager.importLateData(ev.target.result);
                 if (success) {
+                    App.showToast('กำลังซิงค์ข้อมูลไปยังฐานข้อมูล...', 'info');
+                    // บังคับยิงเข้า Cloud ทันที
+                    await DataManager.forceSyncToCloud();
                     App.showToast('คืนค่าข้อมูลมาสายสำเร็จ', 'success');
                     renderTable();
                 } else {
