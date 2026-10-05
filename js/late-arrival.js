@@ -394,19 +394,19 @@ const LateArrival = (() => {
 
         const reader = new FileReader();
         reader.onload = (ev) => {
-            // เติมคำว่า async เข้าไปตรงนี้
-            App.confirm('ยืนยันการคืนค่าข้อมูล', 'ข้อมูลการมาสายปัจจุบันจะถูกแทนที่ด้วยข้อมูลจากไฟล์นี้ทั้งหมด ต้องการดำเนินการต่อหรือไม่?', async () => {
+            // รวบข้อความให้เป็นก้อนเดียว
+            App.confirm('ยืนยันการคืนค่าข้อมูล: ข้อมูลการมาสายปัจจุบันจะถูกแทนที่ด้วยข้อมูลจากไฟล์นี้ทั้งหมด ต้องการดำเนินการต่อหรือไม่?', async () => {
+
                 const success = DataManager.importLateData(ev.target.result);
                 if (success) {
                     App.showToast('กำลังซิงค์ข้อมูลไปยังฐานข้อมูล...', 'info');
-                    // บังคับยิงเข้า Cloud ทันที
                     await DataManager.forceSyncToCloud();
                     App.showToast('คืนค่าข้อมูลมาสายสำเร็จ', 'success');
                     renderTable();
                 } else {
                     App.showToast('ไฟล์ไม่ถูกต้อง', 'error');
                 }
-                e.target.value = ''; // รีเซ็ตช่องรับไฟล์
+                e.target.value = '';
             });
         };
         reader.readAsText(file);
@@ -414,12 +414,10 @@ const LateArrival = (() => {
 
     function clearLateData() {
         if (!App.isAdmin()) return;
-        App.confirm('ยืนยันการล้างข้อมูล', 'คุณต้องการล้างข้อมูลการมาสาย "ทั้งหมด" เพื่อเริ่มปีงบประมาณใหม่ใช่หรือไม่? (แนะนำให้สำรองข้อมูล JSON ไว้ก่อนล้าง)', async () => {
+        // รวบข้อความให้เป็นก้อนเดียว
+        App.confirm('ยืนยันการล้างข้อมูล: คุณต้องการล้างข้อมูลการมาสาย "ทั้งหมด" เพื่อเริ่มปีงบประมาณใหม่ใช่หรือไม่?', async () => {
 
-            // 1. ลบจากหน่วยความจำเครื่อง
             DataManager.clearLateData();
-
-            // 2. บังคับยิงคำสั่งลบไปที่ Google Sheets ทันที (ไม่ต้องรอ 2 วิ)
             App.showToast('กำลังซิงค์การล้างข้อมูลไปยังฐานข้อมูล...', 'info');
             const success = await DataManager.forceSyncToCloud();
 
