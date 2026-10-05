@@ -16,6 +16,9 @@ const LateArrival = (() => {
         const btnExport = document.getElementById('btn-export-late-csv');
         if (btnExport) btnExport.addEventListener('click', exportLateCSV);
 
+        const btnExportJson = document.getElementById('btn-export-late-json');
+        if (btnExportJson) btnExportJson.addEventListener('click', exportLateJson);
+
         const btnImportJson = document.getElementById('btn-import-late-json');
         const fileImport = document.getElementById('import-late-file');
         if (btnImportJson && fileImport) {
