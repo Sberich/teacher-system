@@ -482,7 +482,12 @@ const LeaveRequest = (() => {
         if (typeof liff !== 'undefined' && liff.isInClient && liff.isInClient()) {
             if (window.App && App.openModal) App.openModal('liff-pdf-guide-modal');
         } else {
+            const originalTitle = document.title;
+            document.title = ' ';
             window.print();
+            setTimeout(() => {
+                document.title = originalTitle;
+            }, 1000);
         }
     }
 
