@@ -950,20 +950,19 @@
     </div>
 
     <!-- A4 Print Form Template (Hidden by default, shown on print) -->
-    <div id="print-leave-form" class="print-only" style="font-size: 13.5pt; line-height: 1.35;">
-        <h3 style="text-align: center; margin-top: 0; margin-bottom: 8px; font-size: 15pt;">แบบใบลาป่วย ลากิจส่วนตัว
-            ลาคลอดบุตร</h3>
-        <div style="text-align: right; margin-bottom: 3px;">เขียนที่ <span
+    <div id="print-leave-form" class="print-only" style="font-size: 14pt; line-height: 1.45;">
+        <h3 style="text-align: center; margin-top: 0; margin-bottom: 12px; font-size: 16pt;">แบบใบลาป่วย ลากิจส่วนตัว ลาคลอดบุตร</h3>
+        <div style="text-align: right; margin-bottom: 4px;">เขียนที่ <span
                 id="print-location">โรงเรียน....................................</span></div>
-        <div style="text-align: right; margin-bottom: 6px;">วันที่ <span id="print-date">......</span> เดือน <span
+        <div style="text-align: right; margin-bottom: 8px;">วันที่ <span id="print-date">......</span> เดือน <span
                 id="print-month">......................</span> พ.ศ. <span id="print-year">............</span></div>
 
-        <div style="margin-bottom: 3px;">เรื่อง <span
+        <div style="margin-bottom: 4px;">เรื่อง <span
                 id="print-subject">ขอลา..........................................</span></div>
-        <div style="margin-bottom: 6px;">เรียน <span
+        <div style="margin-bottom: 8px;">เรียน <span
                 id="print-director">ผู้อำนวยการโรงเรียน..........................................</span></div>
 
-        <div style="display: flex; align-items: flex-end; margin-bottom: 4px;">
+        <div style="display: flex; align-items: flex-end; margin-bottom: 6px;">
             <span style="margin-left: 50px; margin-right: 10px;">ข้าพเจ้า</span>
             <span id="print-name" style="flex: 1; text-align: center; margin-right: 10px;"></span>
             <span style="margin-right: 10px;">ตำแหน่ง</span>
@@ -971,7 +970,7 @@
             <span>สังกัด <span id="print-dept">สำนักงานเขตพื้นที่การศึกษามัธยมศึกษานครพนม</span></span>
         </div>
 
-        <div style="margin-bottom: 4px; line-height: 1.4;">
+        <div style="margin-bottom: 6px; line-height: 1.5;">
             <span style="margin-right: 20px;">ขอลา</span>
             <span style="margin-right: 15px; font-size: 1.15em;"><span id="print-cb-sick">☐</span> ป่วย</span>
             <span style="margin-right: 15px; font-size: 1.15em;"><span id="print-cb-personal">☐</span> กิจส่วนตัว</span>
@@ -979,7 +978,7 @@
             <span>เนื่องจาก</span><span id="print-reason" style="margin-left: 10px;"></span>
         </div>
 
-        <div style="display: flex; align-items: flex-end; margin-bottom: 4px;">
+        <div style="display: flex; align-items: flex-end; margin-bottom: 6px;">
             <span style="margin-right: 10px;">ตั้งแต่วันที่</span>
             <span style="flex: 1; text-align: center; margin-right: 10px;"><span id="print-start-d"></span> <span
                     id="print-start-m"></span> <span id="print-start-y"></span></span>
@@ -991,7 +990,7 @@
             <span>วัน</span>
         </div>
 
-        <div style="margin-bottom: 6px; line-height: 1.4;">
+        <div style="margin-bottom: 10px; line-height: 1.5;">
             <span style="margin-right: 20px;">ข้าพเจ้าได้ลา</span>
             <span style="margin-right: 15px; font-size: 1.15em;"><span id="print-last-cb-sick">☐</span> ป่วย</span>
             <span style="margin-right: 15px; font-size: 1.15em;"><span id="print-last-cb-personal">☐</span>
@@ -1006,9 +1005,9 @@
                 style="margin-left: 10px;"></span>
         </div>
 
-        <div style="display: flex; margin-top: 6px;">
+        <div style="display: flex; margin-top: 10px;">
             <div style="width: 50%;">
-                <table class="print-stats-table">
+                <table class="print-stats-table" style="font-size: 12.5pt;">
                     <thead>
                         <tr>
                             <th>ประเภทลา</th>
@@ -1039,68 +1038,62 @@
                     </tbody>
                 </table>
 
-                <div style="margin-top: 8px; text-align: center;">
-                    <div>(ลงชื่อ).......................................................ผู้ตรวจสอบ</div>
-                    <div style="margin-top: 2px;">ตำแหน่ง.......................................................</div>
-                    <div style="margin-top: 2px;">วันที่.........../.........../...........</div>
+                <div style="margin-top: 20px; text-align: center;">
+                    <div style="margin-top: 22px;">(ลงชื่อ).......................................................ผู้ตรวจสอบ</div>
+                    <div style="margin-top: 4px;">ตำแหน่ง.......................................................</div>
+                    <div style="margin-top: 4px;">วันที่.........../.........../...........</div>
                 </div>
 
-                <div style="margin-top: 8px; text-align: center;">
-                    <div style="margin-bottom: 2px;">(ลงชื่อ).......................................................
-                    </div>
-                    <div>( <span id="print-hr-name">.......................................................</span> )
-                    </div>
-                    <div style="margin-top: 1px;">ตำแหน่ง หัวหน้ากลุ่มบริหารงานบุคคล</div>
-                    <div style="margin-top: 1px;">วันที่.........../.........../...........</div>
+                <div style="margin-top: 20px; text-align: center;">
+                    <div style="margin-top: 22px;">(ลงชื่อ).......................................................</div>
+                    <div style="margin-top: 4px;">( <span id="print-hr-name">.......................................................</span> )</div>
+                    <div style="margin-top: 3px;">ตำแหน่ง หัวหน้ากลุ่มบริหารงานบุคคล</div>
+                    <div style="margin-top: 3px;">วันที่.........../.........../...........</div>
                 </div>
 
-                <div style="margin-top: 8px; text-align: center;">
+                <div style="margin-top: 20px; text-align: center;">
                     <div>ความเห็นรองผู้อำนวยการกลุ่มบริหารงานบุคคล</div>
-                    <div style="margin-top: 3px; margin-bottom: 2px;">
-                        ...............................................................................</div>
-                    <div style="margin-top: 3px; margin-bottom: 2px;">
-                        ...............................................................................</div>
-                    <div style="margin-top: 3px;">(ลงชื่อ).......................................................</div>
-                    <div style="margin-top: 1px;">( <span
-                            id="print-deputy-name">.......................................................</span> )
-                    </div>
-                    <div style="margin-top: 1px;">ตำแหน่ง รองผู้อำนวยการกลุ่มบริหารงานบุคคล</div>
-                    <div style="margin-top: 1px;">วันที่.........../.........../...........</div>
+                    <div style="margin-top: 5px; margin-bottom: 4px;">.......................................................................................</div>
+                    <div style="margin-top: 4px; margin-bottom: 4px;">.......................................................................................</div>
+                    <div style="margin-top: 22px;">(ลงชื่อ).......................................................</div>
+                    <div style="margin-top: 4px;">( <span
+                            id="print-deputy-name">.......................................................</span> )</div>
+                    <div style="margin-top: 3px;">ตำแหน่ง รองผู้อำนวยการกลุ่มบริหารงานบุคคล</div>
+                    <div style="margin-top: 3px;">วันที่.........../.........../...........</div>
                 </div>
             </div>
 
-            <div style="width: 50%; padding-left: 30px; text-align: center;">
-                <div style="margin-bottom: 6px;">ขอแสดงความนับถือ</div>
-                <div style="margin-bottom: 2px;">(ลงชื่อ).......................................................</div>
-                <div style="margin-bottom: 8px;">( <span
-                        id="print-sign-name">.......................................................</span> )</div>
-
-                <div style="margin-top: 8px;">
-                    <div>ความเห็นหัวหน้ากลุ่มสาระการเรียนรู้</div>
-                    <div style="margin-top: 3px; margin-bottom: 2px;">
-                        .............................................................................</div>
-                    <div style="margin-top: 3px; margin-bottom: 2px;">
-                        .............................................................................</div>
-                    <div style="margin-top: 3px;">(ลงชื่อ).......................................................</div>
-                    <div style="margin-top: 1px;">( ....................................................... )</div>
-                    <div style="margin-top: 1px;">ตำแหน่ง.......................................................</div>
-                    <div style="margin-top: 1px;">วันที่.........../.........../...........</div>
+            <div style="width: 50%; padding-left: 35px; text-align: center;">
+                <div>
+                    <div>ขอแสดงความนับถือ</div>
+                    <div style="margin-top: 22px;">(ลงชื่อ).......................................................</div>
+                    <div style="margin-top: 4px;">( <span
+                            id="print-sign-name">.......................................................</span> )</div>
                 </div>
 
-                <div style="margin-top: 8px;">
+                <div style="margin-top: 20px;">
+                    <div>ความเห็นหัวหน้ากลุ่มสาระการเรียนรู้</div>
+                    <div style="margin-top: 5px; margin-bottom: 4px;">.......................................................................................</div>
+                    <div style="margin-top: 4px; margin-bottom: 4px;">.......................................................................................</div>
+                    <div style="margin-top: 22px;">(ลงชื่อ).......................................................</div>
+                    <div style="margin-top: 4px;">( ....................................................... )</div>
+                    <div style="margin-top: 3px;">ตำแหน่ง.......................................................</div>
+                    <div style="margin-top: 3px;">วันที่.........../.........../...........</div>
+                </div>
+
+                <div style="margin-top: 20px;">
                     <div>ความเห็นผู้บังคับบัญชา</div>
-                    <div style="text-align: left; padding-left: 20px; margin-top: 2px;"><u>คำสั่ง</u></div>
-                    <div style="margin-top: 2px;">
-                        <span style="margin-right: 20px;">☐ อนุญาต</span>
+                    <div style="text-align: left; padding-left: 20px; margin-top: 4px;"><u>คำสั่ง</u></div>
+                    <div style="margin-top: 4px;">
+                        <span style="margin-right: 25px;">☐ อนุญาต</span>
                         <span>☐ ไม่อนุญาต</span>
                     </div>
-                    <div style="margin-top: 4px;">(ลงชื่อ).......................................................</div>
-                    <div style="margin-top: 1px;">( <span
-                            id="print-director-name">.......................................................</span> )
-                    </div>
-                    <div style="margin-top: 1px;" id="print-director-pos">
+                    <div style="margin-top: 22px;">(ลงชื่อ).......................................................</div>
+                    <div style="margin-top: 4px;">( <span
+                            id="print-director-name">.......................................................</span> )</div>
+                    <div style="margin-top: 3px;" id="print-director-pos">
                         ผู้อำนวยการโรงเรียน....................................</div>
-                    <div style="margin-top: 1px;">วันที่.........../.........../...........</div>
+                    <div style="margin-top: 3px;">วันที่.........../.........../...........</div>
                 </div>
             </div>
         </div>
