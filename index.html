@@ -18,7 +18,7 @@
     <!-- Flatpickr for Date Picker -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/airbnb.css">
-    <link rel="stylesheet" href="css/style.css?v=31.9">
+    <link rel="stylesheet" href="css/style.css?v=31.8">
 
     <!-- Web App Manifest (Android & iOS) -->
     <meta name="theme-color" content="#0f172a">
@@ -950,19 +950,20 @@
     </div>
 
     <!-- A4 Print Form Template (Hidden by default, shown on print) -->
-    <div id="print-leave-form" class="print-only" style="font-size: 14pt; line-height: 1.5;">
-        <h3 style="text-align: center; margin-bottom: 15px;">แบบใบลาป่วย ลากิจส่วนตัว ลาคลอดบุตร</h3>
-        <div style="text-align: right; margin-bottom: 5px;">เขียนที่ <span
+    <div id="print-leave-form" class="print-only" style="font-size: 13.5pt; line-height: 1.35;">
+        <h3 style="text-align: center; margin-top: 0; margin-bottom: 8px; font-size: 15pt;">แบบใบลาป่วย ลากิจส่วนตัว
+            ลาคลอดบุตร</h3>
+        <div style="text-align: right; margin-bottom: 3px;">เขียนที่ <span
                 id="print-location">โรงเรียน....................................</span></div>
-        <div style="text-align: right; margin-bottom: 10px;">วันที่ <span id="print-date">......</span> เดือน <span
+        <div style="text-align: right; margin-bottom: 6px;">วันที่ <span id="print-date">......</span> เดือน <span
                 id="print-month">......................</span> พ.ศ. <span id="print-year">............</span></div>
 
-        <div style="margin-bottom: 5px;">เรื่อง <span
+        <div style="margin-bottom: 3px;">เรื่อง <span
                 id="print-subject">ขอลา..........................................</span></div>
-        <div style="margin-bottom: 10px;">เรียน <span
+        <div style="margin-bottom: 6px;">เรียน <span
                 id="print-director">ผู้อำนวยการโรงเรียน..........................................</span></div>
 
-        <div style="display: flex; align-items: flex-end; margin-bottom: 5px;">
+        <div style="display: flex; align-items: flex-end; margin-bottom: 4px;">
             <span style="margin-left: 50px; margin-right: 10px;">ข้าพเจ้า</span>
             <span id="print-name" style="flex: 1; text-align: center; margin-right: 10px;"></span>
             <span style="margin-right: 10px;">ตำแหน่ง</span>
@@ -970,15 +971,15 @@
             <span>สังกัด <span id="print-dept">สำนักงานเขตพื้นที่การศึกษามัธยมศึกษานครพนม</span></span>
         </div>
 
-        <div style="margin-bottom: 5px; line-height: 1.6;">
+        <div style="margin-bottom: 4px; line-height: 1.4;">
             <span style="margin-right: 20px;">ขอลา</span>
-            <span style="margin-right: 15px; font-size: 1.2em;"><span id="print-cb-sick">☐</span> ป่วย</span>
-            <span style="margin-right: 15px; font-size: 1.2em;"><span id="print-cb-personal">☐</span> กิจส่วนตัว</span>
-            <span style="margin-right: 15px; font-size: 1.2em;"><span id="print-cb-maternity">☐</span> คลอดบุตร</span>
+            <span style="margin-right: 15px; font-size: 1.15em;"><span id="print-cb-sick">☐</span> ป่วย</span>
+            <span style="margin-right: 15px; font-size: 1.15em;"><span id="print-cb-personal">☐</span> กิจส่วนตัว</span>
+            <span style="margin-right: 15px; font-size: 1.15em;"><span id="print-cb-maternity">☐</span> คลอดบุตร</span>
             <span>เนื่องจาก</span><span id="print-reason" style="margin-left: 10px;"></span>
         </div>
 
-        <div style="display: flex; align-items: flex-end; margin-bottom: 5px;">
+        <div style="display: flex; align-items: flex-end; margin-bottom: 4px;">
             <span style="margin-right: 10px;">ตั้งแต่วันที่</span>
             <span style="flex: 1; text-align: center; margin-right: 10px;"><span id="print-start-d"></span> <span
                     id="print-start-m"></span> <span id="print-start-y"></span></span>
@@ -990,12 +991,12 @@
             <span>วัน</span>
         </div>
 
-        <div style="margin-bottom: 10px; line-height: 1.6;">
+        <div style="margin-bottom: 6px; line-height: 1.4;">
             <span style="margin-right: 20px;">ข้าพเจ้าได้ลา</span>
-            <span style="margin-right: 15px; font-size: 1.2em;"><span id="print-last-cb-sick">☐</span> ป่วย</span>
-            <span style="margin-right: 15px; font-size: 1.2em;"><span id="print-last-cb-personal">☐</span>
+            <span style="margin-right: 15px; font-size: 1.15em;"><span id="print-last-cb-sick">☐</span> ป่วย</span>
+            <span style="margin-right: 15px; font-size: 1.15em;"><span id="print-last-cb-personal">☐</span>
                 กิจส่วนตัว</span>
-            <span style="margin-right: 15px; font-size: 1.2em;"><span id="print-last-cb-maternity">☐</span>
+            <span style="margin-right: 15px; font-size: 1.15em;"><span id="print-last-cb-maternity">☐</span>
                 คลอดบุตร</span>
             <span>ครั้งสุดท้ายตั้งแต่วันที่</span><span id="print-last-start"
                 style="margin-left: 10px; margin-right: 10px;"></span>
@@ -1005,7 +1006,7 @@
                 style="margin-left: 10px;"></span>
         </div>
 
-        <div style="display: flex; margin-top: 10px;">
+        <div style="display: flex; margin-top: 6px;">
             <div style="width: 50%;">
                 <table class="print-stats-table">
                     <thead>
@@ -1038,60 +1039,68 @@
                     </tbody>
                 </table>
 
-                <div style="margin-top: 15px; text-align: center;">
+                <div style="margin-top: 8px; text-align: center;">
                     <div>(ลงชื่อ).......................................................ผู้ตรวจสอบ</div>
-                    <div style="margin-top: 5px;">ตำแหน่ง.......................................................</div>
-                    <div style="margin-top: 5px;">วันที่.........../.........../...........</div>
-                </div>
-
-                <div style="margin-top: 15px; text-align: center;">
-                    <div style="margin-bottom: 5px;">(ลงชื่อ).......................................................
-                    </div>
-                    <div>( <span id="print-hr-name">.......................................................</span> )
-                    </div>
-                    <div style="margin-top: 2px;">ตำแหน่ง หัวหน้ากลุ่มบริหารงานบุคคล</div>
-                    <div style="margin-top: 2px;">วันที่.........../.........../...........</div>
-                </div>
-
-                <div style="margin-top: 15px; text-align: center;">
-                    <div>ความเห็นผู้อำนวยการกลุ่มบริหารงานบุคคล</div>
-                    <div style="margin-top: 10px;">(ลงชื่อ).......................................................</div>
-                    <div style="margin-top: 2px;">( <span
-                            id="print-deputy-name">.......................................................</span> )
-                    </div>
-                    <div style="margin-top: 2px;">ตำแหน่ง รองผู้อำนวยการกลุ่มบริหารงานบุคคล</div>
-                    <div style="margin-top: 2px;">วันที่.........../.........../...........</div>
-                </div>
-            </div>
-
-            <div style="width: 50%; padding-left: 40px; text-align: center;">
-                <div style="margin-bottom: 15px;">ขอแสดงความนับถือ</div>
-                <div style="margin-bottom: 5px;">(ลงชื่อ).......................................................</div>
-                <div style="margin-bottom: 15px;">( <span
-                        id="print-sign-name">.......................................................</span> )</div>
-
-                <div style="margin-top: 15px;">
-                    <div>ความเห็นหัวหน้ากลุ่มสาระการเรียนรู้</div>
-                    <div style="margin-top: 10px;">(ลงชื่อ).......................................................</div>
-                    <div style="margin-top: 2px;">( ....................................................... )</div>
                     <div style="margin-top: 2px;">ตำแหน่ง.......................................................</div>
                     <div style="margin-top: 2px;">วันที่.........../.........../...........</div>
                 </div>
 
-                <div style="margin-top: 15px;">
+                <div style="margin-top: 8px; text-align: center;">
+                    <div style="margin-bottom: 2px;">(ลงชื่อ).......................................................
+                    </div>
+                    <div>( <span id="print-hr-name">.......................................................</span> )
+                    </div>
+                    <div style="margin-top: 1px;">ตำแหน่ง หัวหน้ากลุ่มบริหารงานบุคคล</div>
+                    <div style="margin-top: 1px;">วันที่.........../.........../...........</div>
+                </div>
+
+                <div style="margin-top: 8px; text-align: center;">
+                    <div>ความเห็นรองผู้อำนวยการกลุ่มบริหารงานบุคคล</div>
+                    <div style="margin-top: 3px; margin-bottom: 2px;">
+                        ...............................................................................</div>
+                    <div style="margin-top: 3px; margin-bottom: 2px;">
+                        ...............................................................................</div>
+                    <div style="margin-top: 3px;">(ลงชื่อ).......................................................</div>
+                    <div style="margin-top: 1px;">( <span
+                            id="print-deputy-name">.......................................................</span> )
+                    </div>
+                    <div style="margin-top: 1px;">ตำแหน่ง รองผู้อำนวยการกลุ่มบริหารงานบุคคล</div>
+                    <div style="margin-top: 1px;">วันที่.........../.........../...........</div>
+                </div>
+            </div>
+
+            <div style="width: 50%; padding-left: 30px; text-align: center;">
+                <div style="margin-bottom: 6px;">ขอแสดงความนับถือ</div>
+                <div style="margin-bottom: 2px;">(ลงชื่อ).......................................................</div>
+                <div style="margin-bottom: 8px;">( <span
+                        id="print-sign-name">.......................................................</span> )</div>
+
+                <div style="margin-top: 8px;">
+                    <div>ความเห็นหัวหน้ากลุ่มสาระการเรียนรู้</div>
+                    <div style="margin-top: 3px; margin-bottom: 2px;">
+                        .............................................................................</div>
+                    <div style="margin-top: 3px; margin-bottom: 2px;">
+                        .............................................................................</div>
+                    <div style="margin-top: 3px;">(ลงชื่อ).......................................................</div>
+                    <div style="margin-top: 1px;">( ....................................................... )</div>
+                    <div style="margin-top: 1px;">ตำแหน่ง.......................................................</div>
+                    <div style="margin-top: 1px;">วันที่.........../.........../...........</div>
+                </div>
+
+                <div style="margin-top: 8px;">
                     <div>ความเห็นผู้บังคับบัญชา</div>
-                    <div style="text-align: left; padding-left: 20px; margin-top: 5px;"><u>คำสั่ง</u></div>
-                    <div style="margin-top: 5px;">
+                    <div style="text-align: left; padding-left: 20px; margin-top: 2px;"><u>คำสั่ง</u></div>
+                    <div style="margin-top: 2px;">
                         <span style="margin-right: 20px;">☐ อนุญาต</span>
                         <span>☐ ไม่อนุญาต</span>
                     </div>
-                    <div style="margin-top: 10px;">(ลงชื่อ).......................................................</div>
-                    <div style="margin-top: 2px;">( <span
+                    <div style="margin-top: 4px;">(ลงชื่อ).......................................................</div>
+                    <div style="margin-top: 1px;">( <span
                             id="print-director-name">.......................................................</span> )
                     </div>
-                    <div style="margin-top: 2px;" id="print-director-pos">
+                    <div style="margin-top: 1px;" id="print-director-pos">
                         ผู้อำนวยการโรงเรียน....................................</div>
-                    <div style="margin-top: 2px;">วันที่.........../.........../...........</div>
+                    <div style="margin-top: 1px;">วันที่.........../.........../...........</div>
                 </div>
             </div>
         </div>
@@ -1136,15 +1145,15 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/th.js"></script>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-    <script src="js/data.js?v=31.9"></script>
-    <script src="js/app.js?v=31.9"></script>
-    <script src="js/leave-request.js?v=31.9"></script>
-    <script src="js/late-arrival.js?v=31.9"></script>
-    <script src="js/table.js?v=31.9"></script>
-    <script src="js/dashboard.js?v=31.9"></script>
-    <script src="js/calendar.js?v=31.9"></script>
-    <script src="js/teachers.js?v=31.9"></script>
-    <script src="js/settings.js?v=31.9"></script>
+    <script src="js/data.js?v=31.8"></script>
+    <script src="js/app.js?v=31.8"></script>
+    <script src="js/leave-request.js?v=31.8"></script>
+    <script src="js/late-arrival.js?v=31.8"></script>
+    <script src="js/table.js?v=31.8"></script>
+    <script src="js/dashboard.js?v=31.8"></script>
+    <script src="js/calendar.js?v=31.8"></script>
+    <script src="js/teachers.js?v=31.8"></script>
+    <script src="js/settings.js?v=31.8"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
