@@ -137,16 +137,17 @@ const Settings = (() => {
             </div>
 
             <div class="settings-card admin-only">
-                <div style="display: flex; justify-content: space-between; align-items: center; gap: 16px;">
-                    <div>
-                        <h3 style="margin-top: 0; margin-bottom: 6px; padding-bottom: 0; border-bottom: none;"><span class="material-icons-round" style="color: var(--warning);">notifications_active</span> ส่งแจ้งเตือน LINE</h3>
-                        <div style="color: var(--text-secondary); font-size: 0.85rem; line-height: 1.4;">กวาดส่งรายการลาที่ค้างอยู่ (ยกเว้นลาคลอด) ไปยัง LINE ของครู<br>เมื่อส่งเสร็จ สวิตช์จะเด้งกลับเป็นปิดอัตโนมัติ</div>
+                <div style="display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 220px;">
+                        <h3 style="margin-top: 0; margin-bottom: 6px; padding-bottom: 0; border-bottom: none;"><span class="material-icons-round" style="color: #06c755;">notifications_active</span> ส่งแจ้งเตือน LINE</h3>
+                        <div style="color: var(--text-secondary); font-size: 0.85rem; line-height: 1.4;">กวาดส่งรายการลาที่ค้างอยู่ (ยกเว้นลาคลอด) ไปยัง LINE ของคุณครูแต่ละคน</div>
                     </div>
-                    <label class="toggle-switch" title="เปิดเพื่อส่งแจ้งเตือนทันที">
-                        <!-- ค่าเริ่มต้นคือปิดเสมอ -->
-                        <input type="checkbox" id="setting-notify-toggle">
-                        <span class="toggle-slider"></span>
-                    </label>
+                    <div>
+                        <button class="btn-primary" id="btn-send-line-notify" style="background: linear-gradient(135deg, #06c755, #05b04c); border: none; padding: 10px 18px; border-radius: 8px; font-weight: 500; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; transition: all 0.2s;">
+                            <span class="material-icons-round" id="icon-send-line" style="font-size: 1.15rem;">send</span>
+                            <span id="text-send-line">ส่งแจ้งเตือน LINE ทันที</span>
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -165,40 +166,40 @@ const Settings = (() => {
 
         // --- Event listeners ---
         document.getElementById('btn-save-settings').addEventListener('click', saveSettings);
-        // 🔔 ระบบแจ้งเตือน LINE วันลา (สวิตช์)
-        const notifyToggle = document.getElementById('setting-notify-toggle');
-        if (notifyToggle) {
-            notifyToggle.addEventListener('change', async (e) => {
-                const isChecked = e.target.checked;
-                if (!isChecked) return; // ถ้ากดปิด ไม่ต้องทำอะไร
+        // 🔔 ระบบแจ้งเตือน LINE วันลา (ปุ่มกดพร้อมสถานะโหลด)
+        const btnSendLine = document.getElementById('btn-send-line-notify');
+        if (btnSendLine) {
+            btnSendLine.addEventListener('click', () => {
+                App.confirm('ระบบจะส่งแจ้งเตือนรายการลาทั้งหมดที่ค้างอยู่ (ยกเว้นลาคลอด) ไปยัง LINE ของครูแต่ละคนทันที ต้องการเริ่มส่งข้อความใช่หรือไม่?', async () => {
+                    const icon = document.getElementById('icon-send-line');
+                    const text = document.getElementById('text-send-line');
 
-                // ทริค UX: เด้งสวิตช์กลับเป็นปิดไว้ก่อนทันที เผื่อแอดมินกดยกเลิก
-                notifyToggle.checked = false;
+                    btnSendLine.disabled = true;
+                    btnSendLine.style.opacity = '0.7';
+                    btnSendLine.style.cursor = 'not-allowed';
+                    if (icon) icon.textContent = 'hourglass_top';
+                    if (text) text.textContent = 'กำลังส่งแจ้งเตือน...';
 
-                App.confirm('ระบบจะส่งแจ้งเตือนรายการลาทั้งหมดที่ค้างอยู่ (ยกเว้นลาคลอด) ไปยัง LINE ของครูแต่ละคนทันที ยืนยันหรือไม่?', async () => {
+                    App.showToast('กำลังส่งแจ้งเตือนไปยัง LINE กรุณารอสักครู่...', 'info');
 
-                    // หากกดยืนยัน ให้เปิดสวิตช์ค้างไว้ระหว่างโหลด และล็อกไม่ให้กดซ้ำ
-                    notifyToggle.checked = true;
-                    notifyToggle.disabled = true;
-                    App.showToast('กำลังส่งแจ้งเตือนไปยัง LINE...', 'info'); // ✅ เปลี่ยนมาใช้ตัวนี้
-                    const result = await DataManager.setLeaveNotifyEnabled(true);
-
-
-                    if (result.status === 'success') {
-                        const sent = result.detail ? result.detail.sent : 0;
-                        App.showToast(`ส่งสำเร็จ ${sent} รายการ`, 'success');
-                    } else {
-                        App.showToast('เกิดข้อผิดพลาด: ' + result.message, 'error');
+                    try {
+                        const result = await DataManager.setLeaveNotifyEnabled(true);
+                        if (result.status === 'success') {
+                            const sent = result.detail ? result.detail.sent : 0;
+                            App.showToast(`ส่งแจ้งเตือน LINE สำเร็จทั้งหมด ${sent} รายการ`, 'success');
+                        } else {
+                            App.showToast('เกิดข้อผิดพลาด: ' + (result.message || 'ไม่สามารถติดต่อเซิร์ฟเวอร์ได้'), 'error');
+                        }
+                    } catch (err) {
+                        App.showToast('เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์', 'error');
+                    } finally {
+                        btnSendLine.disabled = false;
+                        btnSendLine.style.opacity = '1';
+                        btnSendLine.style.cursor = 'pointer';
+                        if (icon) icon.textContent = 'send';
+                        if (text) text.textContent = 'ส่งแจ้งเตือน LINE ทันที';
+                        DataManager.updateSettings({ lineNotifyEnabled: 'false' });
                     }
-
-                    // ส่งเสร็จ รีเซ็ตกลับเป็นปิดเสมอ
-                    notifyToggle.checked = false;
-                    notifyToggle.disabled = false;
-
-                    // อัปเดต localStorage ป้องกันการสับสนของระบบ
-                    const currentSettings = DataManager.getSettings();
-                    currentSettings.lineNotifyEnabled = 'false';
-                    DataManager.saveSettings(currentSettings);
                 });
             });
         }

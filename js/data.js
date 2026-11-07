@@ -125,6 +125,17 @@ const DataManager = (() => {
         }
 
         isSyncing = true;
+        const currentTeachers = load(KEYS.teachers, []);
+        if (currentTeachers.length === 0) {
+            console.warn('Sync aborted: teachers list is empty. Guarding against accidental overwrite.');
+            isSyncing = false;
+            if (window.App && App.hideSyncIndicator) App.hideSyncIndicator();
+            if (window.App && App.showToast) {
+                App.showToast('ระงับการซิงค์: ข้อมูลครูในเครื่องว่างเปล่า เพื่อป้องกันข้อมูลสูญหาย', 'warning');
+            }
+            return false;
+        }
+
         const currentSettings = getSettings();
         currentSettings.lastUpdatedTimestamp = new Date().toISOString();
         localStorage.setItem(KEYS.settings, JSON.stringify(currentSettings));
@@ -133,7 +144,7 @@ const DataManager = (() => {
             action: 'sync',
             token: token,
             payload: {
-                teachers: load(KEYS.teachers, []),
+                teachers: currentTeachers,
                 leaveRecords: load(KEYS.leaveRecords, []),
                 remarks: load(KEYS.remarks, {}),
                 leaveRequests: load(KEYS.leaveRequests, []),
@@ -435,6 +446,15 @@ const DataManager = (() => {
 
         save(KEYS.teachers, teachers);
         return teacher;
+    }
+
+    function resetLineUserId(id) {
+        let teachers = load(KEYS.teachers, []);
+        const teacher = teachers.find(t => t.id === id);
+        if (!teacher) return false;
+        teacher.lineUserId = '';
+        save(KEYS.teachers, teachers);
+        return true;
     }
 
     function deleteTeacher(id) {
@@ -833,11 +853,11 @@ const DataManager = (() => {
     return {
         isAdmin, isLateAdmin, login, logout, verifyAdminPin,
         getCloudUrl, setCloudUrl, pullFromCloud, forceSyncToCloud, setLeaveNotifyEnabled,
-        getTeachers, getSections, addTeacher, addTeachersBulk, updateTeacher, deleteTeacher, getNextOrder,
+        getTeachers, getSections, addTeacher, addTeachersBulk, updateTeacher, deleteTeacher, resetLineUserId, getNextOrder,
         getLeaveRecords, addLeaveEvent, updateLeaveEvent, getLeaveRecord, getTeacherLeaveForPeriod, deleteLeaveEvent,
         getLeaveRequests, addLeaveRequest, updateLeaveRequestStatus, deleteLeaveRequest, clearCompletedLeaveRequests,
         getRemarks, getRemark, setRemark,
-        getSettings, updateSettings, getPeriodMonths,
+        getSettings, updateSettings, saveSettings: updateSettings, getPeriodMonths,
         getThaiMonth, getThaiMonthFull, THAI_MONTHS, THAI_MONTHS_FULL,
         exportData, importData,
         loadDemoData, hasData, clearAllData, clearLeaveData, clearLateData, importLateData, getLateArrivals, addLateArrival, deleteLateArrival

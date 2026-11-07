@@ -161,7 +161,7 @@ const LateArrival = (() => {
         const time = document.getElementById('la-time').value;
 
         if (!teacherId) {
-            if (window.showToast) window.showToast('กรุณาเลือกครู', 'error');
+            if (window.App) App.showToast('กรุณาเลือกครู', 'error');
             return;
         }
 
@@ -187,7 +187,7 @@ const LateArrival = (() => {
             timestamp: new Date().toISOString()
         });
 
-        if (window.showToast) window.showToast('บันทึกข้อมูลมาสายเรียบร้อย', 'success');
+        if (window.App) App.showToast('บันทึกข้อมูลมาสายเรียบร้อย', 'success');
         document.getElementById('la-teacher-select').value = '';
         renderTable();
     }
@@ -199,7 +199,7 @@ const LateArrival = (() => {
         }
         if (confirm('ต้องการลบข้อมูลมาสายนี้ใช่หรือไม่?')) {
             DataManager.deleteLateArrival(id);
-            if (window.showToast) window.showToast('ลบข้อมูลเรียบร้อย', 'info');
+            if (window.App) App.showToast('ลบข้อมูลเรียบร้อย', 'info');
             renderTable();
         }
     }
