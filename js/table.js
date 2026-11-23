@@ -884,6 +884,15 @@ const LeaveTable = (() => {
         sectionFilter = '';
     }
 
+    function setFilters(sec, query) {
+        sectionFilter = sec || '';
+        searchQuery = (query || '').trim().toLowerCase();
+        const sel = document.getElementById('table-section-filter');
+        if (sel) sel.value = sectionFilter;
+        const inp = document.getElementById('table-search');
+        if (inp) inp.value = searchQuery;
+    }
+
     // --- Custom Floating Tooltip Logic ---
     function createTooltipElement() {
         let el = document.getElementById('table-custom-tooltip');
@@ -891,6 +900,28 @@ const LeaveTable = (() => {
             el = document.createElement('div');
             el.id = 'table-custom-tooltip';
             el.className = 'table-custom-tooltip';
+            el.style.position = 'fixed';
+            el.style.zIndex = '999999';
+            el.style.pointerEvents = 'none';
+            el.style.opacity = '0';
+            el.style.visibility = 'hidden';
+            el.style.transform = 'translateY(4px)';
+            el.style.transition = 'opacity 0.15s ease, transform 0.15s ease, visibility 0.15s';
+            el.style.background = 'rgba(15, 23, 42, 0.95)';
+            el.style.backdropFilter = 'blur(12px)';
+            el.style.webkitBackdropFilter = 'blur(12px)';
+            el.style.border = '1px solid rgba(96, 165, 250, 0.4)';
+            el.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.6), 0 0 15px rgba(59, 130, 246, 0.2)';
+            el.style.borderRadius = '9px';
+            el.style.padding = '7px 13px';
+            el.style.color = '#f8fafc';
+            el.style.fontSize = '0.85rem';
+            el.style.fontFamily = "'Prompt', 'Sarabun', sans-serif";
+            el.style.lineHeight = '1.45';
+            el.style.whiteSpace = 'nowrap';
+            el.style.display = 'none';
+            el.style.alignItems = 'center';
+            el.style.gap = '8px';
             document.body.appendChild(el);
         }
         return el;
@@ -901,16 +932,7 @@ const LeaveTable = (() => {
         if (!colName) return;
         const text = colName.getAttribute('data-tooltip');
         if (!text) return;
-        showCustomTooltip(text, e);
-    }
-
-    function handleTooltipMouseMove(e) {
-        const colName = e.target.closest('.col-name[data-tooltip]');
-        if (!colName) {
-            hideCustomTooltip();
-            return;
-        }
-        positionCustomTooltip(e);
+        showCustomTooltip(text, colName);
     }
 
     function handleTooltipMouseOut(e) {
@@ -921,7 +943,7 @@ const LeaveTable = (() => {
         }
     }
 
-    function showCustomTooltip(text, e) {
+    function showCustomTooltip(text, colName) {
         const tooltip = createTooltipElement();
         if (text === 'ยังไม่มีประวัติการลา') {
             tooltip.innerHTML = '<span style="color:#10b981;display:flex;align-items:center;"><span class="material-icons-round" style="font-size:16px;">check_circle</span></span><span style="color:#94a3b8;font-weight:500;">ยังไม่มีประวัติการลา</span>';
@@ -934,29 +956,36 @@ const LeaveTable = (() => {
 
             tooltip.innerHTML = '<span style="color:#60a5fa;display:flex;align-items:center;"><span class="material-icons-round" style="font-size:16px;">history</span></span><span style="color:#f8fafc;font-weight:500;">' + styledText + '</span>';
         }
-        tooltip.classList.add('visible');
-        positionCustomTooltip(e);
+
+        tooltip.style.display = 'flex';
+        positionCustomTooltip(colName);
+        tooltip.style.opacity = '1';
+        tooltip.style.visibility = 'visible';
+        tooltip.style.transform = 'translateY(0)';
     }
 
-    function positionCustomTooltip(e) {
+    function positionCustomTooltip(colName) {
         const tooltip = document.getElementById('table-custom-tooltip');
-        if (!tooltip || !tooltip.classList.contains('visible')) return;
+        if (!tooltip || !colName) return;
 
+        const rect = colName.getBoundingClientRect();
         const pad = 12;
         const width = tooltip.offsetWidth || 230;
-        const height = tooltip.offsetHeight || 36;
+        const height = tooltip.offsetHeight || 38;
 
-        let left = e.clientX + 14;
-        let top = e.clientY - height - 8;
+        let left = rect.left + 15;
+        let top = rect.top - height - 8;
 
+        // If too high (off top of screen), show below the cell
+        if (top < pad) {
+            top = rect.bottom + 8;
+        }
+
+        // If off right screen, shift left
         if (left + width > window.innerWidth - pad) {
-            left = e.clientX - width - 14;
+            left = window.innerWidth - width - pad;
         }
         if (left < pad) left = pad;
-
-        if (top < pad) {
-            top = e.clientY + 18;
-        }
 
         tooltip.style.left = left + 'px';
         tooltip.style.top = top + 'px';
@@ -965,9 +994,11 @@ const LeaveTable = (() => {
     function hideCustomTooltip() {
         const tooltip = document.getElementById('table-custom-tooltip');
         if (tooltip) {
-            tooltip.classList.remove('visible');
+            tooltip.style.opacity = '0';
+            tooltip.style.visibility = 'hidden';
+            tooltip.style.transform = 'translateY(4px)';
         }
     }
 
-    return { init, render, resetFilters };
+    return { init, render, resetFilters, setFilters, printTable, exportCSV };
 })();

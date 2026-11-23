@@ -2,13 +2,76 @@
    LateArrival - Late Arrival Tracking
    ============================================ */
 const LateArrival = (() => {
+    let sectionFilter = '';
+    let searchQuery = '';
+    let searchTimeout = null;
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.toString()
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+    function populateSectionFilter() {
+        const filterSelect = document.getElementById('late-section-filter');
+        if (!filterSelect) return;
+        if (document.activeElement === filterSelect) return;
+        const sections = DataManager.getSections();
+        let html = '<option value="">ทุกหมวดหมู่/กลุ่ม</option>';
+        sections.forEach(s => {
+            html += `<option value="${escapeHtml(s)}" ${sectionFilter === s ? 'selected' : ''}>${escapeHtml(s)}</option>`;
+        });
+        filterSelect.innerHTML = html;
+    }
+
+    function matchesFilter(teacher) {
+        if (!teacher) return false;
+        if (sectionFilter) {
+            if (sectionFilter === 'ครูอัตราจ้าง') {
+                const isContract = (teacher.title || '').includes('ครูอัตราจ้าง') || teacher.section === 'ครูอัตราจ้าง';
+                if (!isContract) return false;
+            } else {
+                if (teacher.section !== sectionFilter) return false;
+            }
+        }
+        if (searchQuery) {
+            if (!teacher.name.toLowerCase().includes(searchQuery)) return false;
+        }
+        return true;
+    }
 
     function init() {
         const container = document.getElementById('late-arrival-container');
         if (!container) return;
 
+        populateSectionFilter();
         renderForm();
         renderTable();
+
+        const searchInput = document.getElementById('late-search');
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                searchQuery = e.target.value.trim().toLowerCase();
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    renderTable();
+                    updateTeacherSelect();
+                }, 300);
+            });
+        }
+
+        const sectionSelect = document.getElementById('late-section-filter');
+        if (sectionSelect) {
+            sectionSelect.addEventListener('change', (e) => {
+                sectionFilter = e.target.value;
+                renderTable();
+                updateTeacherSelect();
+            });
+        }
 
         const btnPrint = document.getElementById('btn-print-late-table');
         if (btnPrint) btnPrint.addEventListener('click', printLateTable);
@@ -27,13 +90,45 @@ const LateArrival = (() => {
         }
         const btnClear = document.getElementById('btn-clear-late-data');
         if (btnClear) btnClear.addEventListener('click', clearLateData);
+
+        const btnPrintLeave = document.getElementById('btn-print-leave-from-late');
+        if (btnPrintLeave) {
+            btnPrintLeave.addEventListener('click', () => {
+                if (window.LeaveTable) {
+                    if (typeof LeaveTable.setFilters === 'function') {
+                        LeaveTable.setFilters(sectionFilter, searchQuery);
+                    }
+                    if (typeof LeaveTable.printTable === 'function') {
+                        LeaveTable.printTable();
+                    }
+                }
+            });
+        }
+
+        const btnExportLeaveCSV = document.getElementById('btn-export-leave-csv-from-late');
+        if (btnExportLeaveCSV) {
+            btnExportLeaveCSV.addEventListener('click', () => {
+                if (window.LeaveTable) {
+                    if (typeof LeaveTable.setFilters === 'function') {
+                        LeaveTable.setFilters(sectionFilter, searchQuery);
+                    }
+                    if (typeof LeaveTable.exportCSV === 'function') {
+                        LeaveTable.exportCSV();
+                    }
+                }
+            });
+        }
     }
 
-    function renderForm() {
-        const container = document.getElementById('late-arrival-container');
-        const teachers = DataManager.getTeachers().sort((a, b) => a.order - b.order);
+    function updateTeacherSelect() {
+        const select = document.getElementById('la-teacher-select');
+        if (!select) return;
+        const currentVal = select.value;
+        let teachers = DataManager.getTeachers().sort((a, b) => a.order - b.order);
+        if (sectionFilter || searchQuery) {
+            teachers = teachers.filter(t => matchesFilter(t));
+        }
 
-        // Group by section for the dropdown
         const grouped = {};
         teachers.forEach(t => {
             const sec = t.section || 'ทั่วไป';
@@ -41,14 +136,22 @@ const LateArrival = (() => {
             grouped[sec].push(t);
         });
 
-        let teacherOptions = '';
+        let teacherOptions = '<option value="" disabled selected>-- เลือกครู --</option>';
         for (const sec in grouped) {
-            teacherOptions += `<optgroup label="${sec}">`;
+            teacherOptions += `<optgroup label="${escapeHtml(sec)}">`;
             grouped[sec].forEach(t => {
-                teacherOptions += `<option value="${t.id}">${t.name}</option>`;
+                teacherOptions += `<option value="${t.id}">${escapeHtml(t.name)}</option>`;
             });
             teacherOptions += `</optgroup>`;
         }
+        select.innerHTML = teacherOptions;
+        if (currentVal && teachers.some(t => t.id === currentVal)) {
+            select.value = currentVal;
+        }
+    }
+
+    function renderForm() {
+        const container = document.getElementById('late-arrival-container');
 
         const formHtml = `
             <div class="form-card" style="max-width: 600px; margin: 0 auto 2rem auto; background: var(--bg-card); padding: 24px; border-radius: var(--radius); box-shadow: var(--shadow-md);">
@@ -56,7 +159,6 @@ const LateArrival = (() => {
                     <label for="la-teacher-select">เลือกครูที่มาสาย</label>
                     <select id="la-teacher-select" class="form-control">
                         <option value="" disabled selected>-- เลือกครู --</option>
-                        ${teacherOptions}
                     </select>
                 </div>
                 <div class="form-row" style="margin-bottom: 16px;">
@@ -87,6 +189,7 @@ const LateArrival = (() => {
         `;
 
         container.innerHTML = formHtml;
+        updateTeacherSelect();
 
         // Initialize date picker
         flatpickr("#la-date", {
@@ -103,7 +206,6 @@ const LateArrival = (() => {
         if (!tableContainer) return;
 
         const lateArrivals = DataManager.getLateArrivals().sort((a, b) => {
-            // Sort by date desc, time desc
             const aDate = a.date.split('/').reverse().join('');
             const bDate = b.date.split('/').reverse().join('');
             if (aDate !== bDate) return bDate.localeCompare(aDate);
@@ -111,8 +213,14 @@ const LateArrival = (() => {
         });
         const teachers = DataManager.getTeachers();
 
-        if (lateArrivals.length === 0) {
-            tableContainer.innerHTML = '<div style="text-align:center; padding: 2rem; color: #64748b;">ไม่มีข้อมูลการมาสาย</div>';
+        const filteredRecords = lateArrivals.filter(record => {
+            const teacher = teachers.find(t => t.id === record.teacherId);
+            return matchesFilter(teacher);
+        });
+
+        if (filteredRecords.length === 0) {
+            const msg = (sectionFilter || searchQuery) ? 'ไม่พบข้อมูลการมาสายที่ตรงกับเงื่อนไขการค้นหา' : 'ไม่มีข้อมูลการมาสาย';
+            tableContainer.innerHTML = `<div style="text-align:center; padding: 2rem; color: #64748b;">${msg}</div>`;
             return;
         }
 
@@ -129,7 +237,7 @@ const LateArrival = (() => {
                 <tbody>
         `;
 
-        lateArrivals.forEach(record => {
+        filteredRecords.forEach(record => {
             const teacher = teachers.find(t => t.id === record.teacherId);
             const teacherName = teacher ? teacher.name : 'ไม่พบข้อมูลครู';
 
@@ -137,7 +245,7 @@ const LateArrival = (() => {
                 <tr>
                     <td>${record.date}</td>
                     <td style="color: #ef4444; font-weight: bold;">${record.time} น.</td>
-                    <td>${teacherName}</td>
+                    <td>${escapeHtml(teacherName)}</td>
                     <td>
                         <button class="btn-icon" style="color: #ef4444;" onclick="window.LateArrival.deleteRecord('${record.id}')" title="ลบ">
                             <span class="material-icons-round">delete</span>
@@ -222,7 +330,6 @@ const LateArrival = (() => {
                     recordsByTeacher[r.teacherId].push(r);
                 }
             } else {
-                // If malformed date, just include it
                 if (!recordsByTeacher[r.teacherId]) {
                     recordsByTeacher[r.teacherId] = [];
                 }
@@ -235,19 +342,18 @@ const LateArrival = (() => {
         let maxLate = 0;
 
         teachers.forEach(t => {
-            if (recordsByTeacher[t.id]) {
+            if (recordsByTeacher[t.id] && matchesFilter(t)) {
                 const records = recordsByTeacher[t.id].sort((a, b) => {
                     const aDate = a.date.split('/').reverse().join('');
                     const bDate = b.date.split('/').reverse().join('');
                     if (aDate !== bDate) return aDate.localeCompare(bDate);
-                    return a.time.localeCompare(b.time);
+                    return b.time.localeCompare(a.time);
                 });
                 if (records.length > maxLate) maxLate = records.length;
                 result.push({ teacher: t, records: records });
             }
         });
 
-        // Cap max columns to 10 as per user request, but if none exceeds, use the max we have (at least 1)
         maxLate = Math.max(1, Math.min(10, maxLate));
 
         return { data: result, maxLate };
@@ -257,6 +363,7 @@ const LateArrival = (() => {
         const { data, maxLate } = getFilteredLateRecords();
         const months = DataManager.getPeriodMonths();
         const periodLabel = months.length > 0 ? DataManager.getThaiMonth(months[0].month) + ' ' + months[0].year + ' - ' + DataManager.getThaiMonth(months[months.length - 1].month) + ' ' + months[months.length - 1].year : '';
+        const sectionLabel = sectionFilter ? ` (กลุ่ม: ${sectionFilter})` : '';
 
         let html = `<!DOCTYPE html><html lang="th"><head><meta charset="UTF-8">
         <title>รายงานการมาสาย</title>
@@ -277,7 +384,7 @@ const LateArrival = (() => {
             }
         </style>
         </head><body>
-        <h2>รายงานการมาสายของบุคลากร</h2>
+        <h2>รายงานการมาสายของบุคลากร${escapeHtml(sectionLabel)}</h2>
         <div class="subtitle">รอบปีงบประมาณ: ${periodLabel}</div>
         <table>
             <thead>
@@ -296,8 +403,8 @@ const LateArrival = (() => {
         data.forEach(item => {
             html += `<tr>
                 <td>${item.teacher.order}</td>
-                <td class="name">${item.teacher.name}</td>
-                <td>${item.teacher.section || ''}</td>
+                <td class="name">${escapeHtml(item.teacher.name)}</td>
+                <td>${escapeHtml(item.teacher.section || '')}</td>
                 <td style="font-weight: bold;">${item.records.length}</td>`;
 
             for (let i = 0; i < maxLate; i++) {
@@ -335,7 +442,7 @@ const LateArrival = (() => {
         }
         csv += row1.join(',') + '\n';
 
-        const escapeHtml = (unsafe) => {
+        const escapeCSV = (unsafe) => {
             if (!unsafe) return '';
             return unsafe.toString().replace(/"/g, '""');
         };
@@ -343,8 +450,8 @@ const LateArrival = (() => {
         data.forEach(item => {
             let row = [
                 item.teacher.order,
-                `"${escapeHtml(item.teacher.name)}"`,
-                `"${escapeHtml(item.teacher.section)}"`,
+                `"${escapeCSV(item.teacher.name)}"`,
+                `"${escapeCSV(item.teacher.section)}"`,
                 item.records.length
             ];
 
@@ -366,12 +473,14 @@ const LateArrival = (() => {
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = `late_arrival_report_${new Date().toISOString().split('T')[0]}.csv`;
+        const fileSec = sectionFilter ? `-${sectionFilter}` : '';
+        link.download = `late_arrival_report_${new Date().toISOString().split('T')[0]}${fileSec}.csv`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
     }
+
     function exportLateJson() {
         if (!App.isAdmin()) return;
         const data = DataManager.getLateArrivals();
@@ -394,9 +503,7 @@ const LateArrival = (() => {
 
         const reader = new FileReader();
         reader.onload = (ev) => {
-            // รวบข้อความให้เป็นก้อนเดียว
             App.confirm('ยืนยันการคืนค่าข้อมูล: ข้อมูลการมาสายปัจจุบันจะถูกแทนที่ด้วยข้อมูลจากไฟล์นี้ทั้งหมด ต้องการดำเนินการต่อหรือไม่?', async () => {
-
                 const success = DataManager.importLateData(ev.target.result);
                 if (success) {
                     App.showToast('กำลังซิงค์ข้อมูลไปยังฐานข้อมูล...', 'info');
@@ -414,9 +521,7 @@ const LateArrival = (() => {
 
     function clearLateData() {
         if (!App.isAdmin()) return;
-        // รวบข้อความให้เป็นก้อนเดียว
         App.confirm('ยืนยันการล้างข้อมูล: คุณต้องการล้างข้อมูลการมาสาย "ทั้งหมด" เพื่อเริ่มปีงบประมาณใหม่ใช่หรือไม่?', async () => {
-
             DataManager.clearLateData();
             App.showToast('กำลังซิงค์การล้างข้อมูลไปยังฐานข้อมูล...', 'info');
             const success = await DataManager.forceSyncToCloud();
@@ -430,12 +535,23 @@ const LateArrival = (() => {
         });
     }
 
+    function resetFilters() {
+        sectionFilter = '';
+        searchQuery = '';
+        const sel = document.getElementById('late-section-filter');
+        if (sel) sel.value = '';
+        const inp = document.getElementById('late-search');
+        if (inp) inp.value = '';
+    }
+
     return {
         init,
         render: () => {
+            populateSectionFilter();
             renderForm();
             renderTable();
         },
+        resetFilters,
         deleteRecord
     };
 })();

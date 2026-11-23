@@ -18,7 +18,7 @@
     <!-- Flatpickr for Date Picker -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/airbnb.css">
-    <link rel="stylesheet" href="css/style.css?v=31.8">
+    <link rel="stylesheet" href="css/style.css?v=31.9">
 
     <!-- Web App Manifest (Android & iOS) -->
     <meta name="theme-color" content="#0f172a">
@@ -396,7 +396,16 @@
                             บันทึกเวลามาสายของบุคลากร</p>
                     </div>
                 </div>
-                <div class="page-actions late-admin-only" style="display:flex; gap:8px;">
+                <div class="page-actions late-admin-only" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                    <div class="form-group" style="margin-bottom:0;">
+                        <select id="late-section-filter" style="padding: 8px 12px; min-width: 140px;">
+                            <option value="">ทุกหมวดหมู่/กลุ่ม</option>
+                        </select>
+                    </div>
+                    <div class="search-box">
+                        <span class="material-icons-round">search</span>
+                        <input type="text" id="late-search" placeholder="ค้นหาชื่อครู...">
+                    </div>
                     <div class="dropdown">
                         <button class="btn-secondary dropdown-toggle" id="btn-export-menu" title="ส่งออกข้อมูล">
                             <span class="material-icons-round">ios_share</span>
@@ -420,6 +429,15 @@
                             <button class="dropdown-item admin-only" id="btn-clear-late-data"
                                 style="color: var(--danger);">
                                 <span class="material-icons-round">delete_sweep</span> ล้างประวัติ (เริ่มปีใหม่)
+                            </button>
+                            <!-- คัดลอกเมนูส่งออกข้อมูลวันลามาเพิ่มไว้ด้านล่าง (ตามที่ขอ ไม่ตัดเมนูเดิมออก) -->
+                            <div style="border-top: 1px solid var(--border); margin: 4px 0;"></div>
+                            <div style="padding: 4px 12px; font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">ตารางวันลา (หลัก)</div>
+                            <button class="dropdown-item" id="btn-print-leave-from-late">
+                                <span class="material-icons-round">print</span> พิมพ์ตารางวันลา
+                            </button>
+                            <button class="dropdown-item" id="btn-export-leave-csv-from-late">
+                                <span class="material-icons-round">download</span> ดาวน์โหลด CSV วันลา
                             </button>
                         </div>
                         <!-- ซ่อนช่องรับไฟล์ Import ไว้หลังเมนู -->
@@ -1138,11 +1156,11 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/th.js"></script>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-    <script src="js/data.js?v=31.8"></script>
-    <script src="js/app.js?v=31.8"></script>
+    <script src="js/data.js?v=31.9"></script>
+    <script src="js/app.js?v=32.1"></script>
     <script src="js/leave-request.js?v=31.8"></script>
-    <script src="js/late-arrival.js?v=31.8"></script>
-    <script src="js/table.js?v=31.8"></script>
+    <script src="js/late-arrival.js?v=32.1"></script>
+    <script src="js/table.js?v=32.1"></script>
     <script src="js/dashboard.js?v=31.8"></script>
     <script src="js/calendar.js?v=31.8"></script>
     <script src="js/teachers.js?v=31.8"></script>

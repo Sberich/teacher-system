@@ -331,6 +331,9 @@ const App = (() => {
                         if (typeof LeaveTable.resetFilters === 'function') LeaveTable.resetFilters();
                         LeaveTable.render();
                     }
+                    if (window.LateArrival) {
+                        if (typeof LateArrival.resetFilters === 'function') LateArrival.resetFilters();
+                    }
 
                     navigate('table');
                     showToast('ออกจากระบบแล้ว', 'info');
