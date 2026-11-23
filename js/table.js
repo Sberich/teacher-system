@@ -104,6 +104,14 @@ const LeaveTable = (() => {
         });
 
         initDatePicker();
+
+        const tableContainer = document.getElementById('leave-table-container');
+        if (tableContainer) {
+            tableContainer.addEventListener('mouseover', handleTooltipMouseOver);
+            tableContainer.addEventListener('mousemove', handleTooltipMouseMove);
+            tableContainer.addEventListener('mouseout', handleTooltipMouseOut);
+        }
+        window.addEventListener('scroll', hideCustomTooltip, { passive: true });
     }
 
     let noteDatePicker = null;
@@ -178,7 +186,11 @@ const LeaveTable = (() => {
 
         // Apply filters
         if (sectionFilter) {
-            teachers = teachers.filter(t => t.section === sectionFilter);
+            if (sectionFilter === 'ครูอัตราจ้าง') {
+                teachers = teachers.filter(t => (t.title || '').includes('ครูอัตราจ้าง') || t.section === 'ครูอัตราจ้าง');
+            } else {
+                teachers = teachers.filter(t => t.section === sectionFilter);
+            }
         }
         if (searchQuery) {
             teachers = teachers.filter(t => t.name.toLowerCase().includes(searchQuery));
@@ -267,7 +279,7 @@ const LeaveTable = (() => {
 
             html += `<tr class="teacher-row" data-teacher-id="${teacher.id}">`;
             html += `<td class="sticky-left col-order">${teacher.order}</td>`;
-            html += `<td class="sticky-left col-name" title="${escapeHtml(lastLeaveTooltip)}">
+            html += `<td class="sticky-left col-name" data-tooltip="${escapeHtml(lastLeaveTooltip)}">
                         ${escapeHtml(teacher.name)}
                      </td>`;
 
@@ -657,7 +669,13 @@ const LeaveTable = (() => {
     // --- Filtered Teachers helper ---
     function getFilteredTeachers() {
         let teachers = DataManager.getTeachers();
-        if (sectionFilter) teachers = teachers.filter(t => t.section === sectionFilter);
+        if (sectionFilter) {
+            if (sectionFilter === 'ครูอัตราจ้าง') {
+                teachers = teachers.filter(t => (t.title || '').includes('ครูอัตราจ้าง') || t.section === 'ครูอัตราจ้าง');
+            } else {
+                teachers = teachers.filter(t => t.section === sectionFilter);
+            }
+        }
         if (searchQuery) teachers = teachers.filter(t => t.name.toLowerCase().includes(searchQuery));
         return teachers;
     }
@@ -864,6 +882,91 @@ const LeaveTable = (() => {
     function resetFilters() {
         searchQuery = '';
         sectionFilter = '';
+    }
+
+    // --- Custom Floating Tooltip Logic ---
+    function createTooltipElement() {
+        let el = document.getElementById('table-custom-tooltip');
+        if (!el) {
+            el = document.createElement('div');
+            el.id = 'table-custom-tooltip';
+            el.className = 'table-custom-tooltip';
+            document.body.appendChild(el);
+        }
+        return el;
+    }
+
+    function handleTooltipMouseOver(e) {
+        const colName = e.target.closest('.col-name[data-tooltip]');
+        if (!colName) return;
+        const text = colName.getAttribute('data-tooltip');
+        if (!text) return;
+        showCustomTooltip(text, e);
+    }
+
+    function handleTooltipMouseMove(e) {
+        const colName = e.target.closest('.col-name[data-tooltip]');
+        if (!colName) {
+            hideCustomTooltip();
+            return;
+        }
+        positionCustomTooltip(e);
+    }
+
+    function handleTooltipMouseOut(e) {
+        const related = e.relatedTarget;
+        const colName = e.target.closest('.col-name[data-tooltip]');
+        if (colName && (!related || !colName.contains(related))) {
+            hideCustomTooltip();
+        }
+    }
+
+    function showCustomTooltip(text, e) {
+        const tooltip = createTooltipElement();
+        if (text === 'ยังไม่มีประวัติการลา') {
+            tooltip.innerHTML = '<span style="color:#10b981;display:flex;align-items:center;"><span class="material-icons-round" style="font-size:16px;">check_circle</span></span><span style="color:#94a3b8;font-weight:500;">ยังไม่มีประวัติการลา</span>';
+        } else {
+            let styledText = escapeHtml(text);
+            styledText = styledText.replace('ลาครั้งล่าสุด :', '<span style="color:#94a3b8;font-weight:400;">ลาครั้งล่าสุด :</span>');
+            styledText = styledText.replace('ลากิจ', '<span style="color:#fbbf24;font-weight:600;">ลากิจ</span>');
+            styledText = styledText.replace('ลาป่วย', '<span style="color:#f87171;font-weight:600;">ลาป่วย</span>');
+            styledText = styledText.replace('ลาคลอดบุตร', '<span style="color:#f472b6;font-weight:600;">ลาคลอดบุตร</span>');
+
+            tooltip.innerHTML = '<span style="color:#60a5fa;display:flex;align-items:center;"><span class="material-icons-round" style="font-size:16px;">history</span></span><span style="color:#f8fafc;font-weight:500;">' + styledText + '</span>';
+        }
+        tooltip.classList.add('visible');
+        positionCustomTooltip(e);
+    }
+
+    function positionCustomTooltip(e) {
+        const tooltip = document.getElementById('table-custom-tooltip');
+        if (!tooltip || !tooltip.classList.contains('visible')) return;
+
+        const pad = 12;
+        const width = tooltip.offsetWidth || 230;
+        const height = tooltip.offsetHeight || 36;
+
+        let left = e.clientX + 14;
+        let top = e.clientY - height - 8;
+
+        if (left + width > window.innerWidth - pad) {
+            left = e.clientX - width - 14;
+        }
+        if (left < pad) left = pad;
+
+        if (top < pad) {
+            top = e.clientY + 18;
+        }
+
+        tooltip.style.left = left + 'px';
+        tooltip.style.top = top + 'px';
+    }
+
+    function hideCustomTooltip() {
+        const tooltip = document.getElementById('table-custom-tooltip');
+        if (tooltip) {
+            tooltip.classList.remove('visible');
+        }
     }
 
     return { init, render, resetFilters };
