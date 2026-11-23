@@ -16,34 +16,6 @@ const LateArrival = (() => {
             .replace(/'/g, '&#039;');
     }
 
-    function populateSectionFilter() {
-        const filterSelect = document.getElementById('late-section-filter');
-        if (!filterSelect) return;
-        if (document.activeElement === filterSelect) return;
-        const sections = DataManager.getSections();
-        let html = '<option value="">ทุกหมวดหมู่/กลุ่ม</option>';
-        sections.forEach(s => {
-            html += `<option value="${escapeHtml(s)}" ${sectionFilter === s ? 'selected' : ''}>${escapeHtml(s)}</option>`;
-        });
-        filterSelect.innerHTML = html;
-    }
-
-    function matchesFilter(teacher) {
-        if (!teacher) return false;
-        if (sectionFilter) {
-            if (sectionFilter === 'ครูอัตราจ้าง') {
-                const isContract = (teacher.title || '').includes('ครูอัตราจ้าง') || teacher.section === 'ครูอัตราจ้าง';
-                if (!isContract) return false;
-            } else {
-                if (teacher.section !== sectionFilter) return false;
-            }
-        }
-        if (searchQuery) {
-            if (!teacher.name.toLowerCase().includes(searchQuery)) return false;
-        }
-        return true;
-    }
-
     function ensureHeaderControls() {
         const pageActions = document.querySelector('#page-late-arrival .page-actions');
         if (!pageActions) return;
@@ -103,28 +75,6 @@ const LateArrival = (() => {
             menu.appendChild(header);
             menu.appendChild(btnPrint);
             menu.appendChild(btnExport);
-
-            btnPrint.addEventListener('click', () => {
-                if (window.LeaveTable) {
-                    if (typeof LeaveTable.setFilters === 'function') {
-                        LeaveTable.setFilters(sectionFilter, searchQuery);
-                    }
-                    if (typeof LeaveTable.printTable === 'function') {
-                        LeaveTable.printTable();
-                    }
-                }
-            });
-
-            btnExport.addEventListener('click', () => {
-                if (window.LeaveTable) {
-                    if (typeof LeaveTable.setFilters === 'function') {
-                        LeaveTable.setFilters(sectionFilter, searchQuery);
-                    }
-                    if (typeof LeaveTable.exportCSV === 'function') {
-                        LeaveTable.exportCSV();
-                    }
-                }
-            });
         }
     }
 
@@ -153,6 +103,110 @@ const LateArrival = (() => {
         }
     }
 
+    function bindExportListeners() {
+        const btnPrint = document.getElementById('btn-print-late-table');
+        if (btnPrint && !btnPrint.dataset.bound) {
+            btnPrint.dataset.bound = 'true';
+            btnPrint.addEventListener('click', printLateTable);
+        }
+
+        const btnExport = document.getElementById('btn-export-late-csv');
+        if (btnExport && !btnExport.dataset.bound) {
+            btnExport.dataset.bound = 'true';
+            btnExport.addEventListener('click', exportLateCSV);
+        }
+
+        const btnExportJson = document.getElementById('btn-export-late-json');
+        if (btnExportJson && !btnExportJson.dataset.bound) {
+            btnExportJson.dataset.bound = 'true';
+            btnExportJson.addEventListener('click', exportLateJson);
+        }
+
+        const btnImportJson = document.getElementById('btn-import-late-json');
+        const fileImport = document.getElementById('import-late-file');
+        if (btnImportJson && fileImport && !btnImportJson.dataset.bound) {
+            btnImportJson.dataset.bound = 'true';
+            btnImportJson.addEventListener('click', () => fileImport.click());
+            fileImport.addEventListener('change', importLateJson);
+        }
+
+        const btnClear = document.getElementById('btn-clear-late-data');
+        if (btnClear && !btnClear.dataset.bound) {
+            btnClear.dataset.bound = 'true';
+            btnClear.addEventListener('click', clearLateData);
+        }
+
+        const btnPrintLeave = document.getElementById('btn-print-leave-from-late');
+        if (btnPrintLeave && !btnPrintLeave.dataset.bound) {
+            btnPrintLeave.dataset.bound = 'true';
+            btnPrintLeave.addEventListener('click', printLeaveTableFromLate);
+        }
+
+        const btnExportLeaveCSV = document.getElementById('btn-export-leave-csv-from-late');
+        if (btnExportLeaveCSV && !btnExportLeaveCSV.dataset.bound) {
+            btnExportLeaveCSV.dataset.bound = 'true';
+            btnExportLeaveCSV.addEventListener('click', exportLeaveCSVFromLate);
+        }
+    }
+
+    function printLeaveTableFromLate() {
+        const lt = window.LeaveTable || (typeof LeaveTable !== 'undefined' ? LeaveTable : null);
+        if (lt) {
+            if (typeof lt.setFilters === 'function') {
+                lt.setFilters(sectionFilter, searchQuery);
+            }
+            if (typeof lt.printTable === 'function') {
+                lt.printTable();
+            }
+        } else {
+            alert('ไม่พบโมดูล LeaveTable');
+        }
+        document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('show'));
+    }
+
+    function exportLeaveCSVFromLate() {
+        const lt = window.LeaveTable || (typeof LeaveTable !== 'undefined' ? LeaveTable : null);
+        if (lt) {
+            if (typeof lt.setFilters === 'function') {
+                lt.setFilters(sectionFilter, searchQuery);
+            }
+            if (typeof lt.exportCSV === 'function') {
+                lt.exportCSV();
+            }
+        } else {
+            alert('ไม่พบโมดูล LeaveTable');
+        }
+        document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('show'));
+    }
+
+    function populateSectionFilter() {
+        const filterSelect = document.getElementById('late-section-filter');
+        if (!filterSelect) return;
+        if (document.activeElement === filterSelect) return;
+        const sections = DataManager.getSections();
+        let html = '<option value="">ทุกหมวดหมู่/กลุ่ม</option>';
+        sections.forEach(s => {
+            html += `<option value="${escapeHtml(s)}" ${sectionFilter === s ? 'selected' : ''}>${escapeHtml(s)}</option>`;
+        });
+        filterSelect.innerHTML = html;
+    }
+
+    function matchesFilter(teacher) {
+        if (!teacher) return false;
+        if (sectionFilter) {
+            if (sectionFilter === 'ครูอัตราจ้าง') {
+                const isContract = (teacher.title || '').includes('ครูอัตราจ้าง') || teacher.section === 'ครูอัตราจ้าง';
+                if (!isContract) return false;
+            } else {
+                if (teacher.section !== sectionFilter) return false;
+            }
+        }
+        if (searchQuery) {
+            if (!teacher.name.toLowerCase().includes(searchQuery)) return false;
+        }
+        return true;
+    }
+
     function init() {
         const container = document.getElementById('late-arrival-container');
         if (!container) return;
@@ -160,55 +214,10 @@ const LateArrival = (() => {
         ensureHeaderControls();
         ensureExportMenuItems();
         bindControlListeners();
+        bindExportListeners();
         populateSectionFilter();
         renderForm();
         renderTable();
-
-        const btnPrint = document.getElementById('btn-print-late-table');
-        if (btnPrint) btnPrint.addEventListener('click', printLateTable);
-
-        const btnExport = document.getElementById('btn-export-late-csv');
-        if (btnExport) btnExport.addEventListener('click', exportLateCSV);
-
-        const btnExportJson = document.getElementById('btn-export-late-json');
-        if (btnExportJson) btnExportJson.addEventListener('click', exportLateJson);
-
-        const btnImportJson = document.getElementById('btn-import-late-json');
-        const fileImport = document.getElementById('import-late-file');
-        if (btnImportJson && fileImport) {
-            btnImportJson.addEventListener('click', () => fileImport.click());
-            fileImport.addEventListener('change', importLateJson);
-        }
-        const btnClear = document.getElementById('btn-clear-late-data');
-        if (btnClear) btnClear.addEventListener('click', clearLateData);
-
-        const btnPrintLeave = document.getElementById('btn-print-leave-from-late');
-        if (btnPrintLeave) {
-            btnPrintLeave.addEventListener('click', () => {
-                if (window.LeaveTable) {
-                    if (typeof LeaveTable.setFilters === 'function') {
-                        LeaveTable.setFilters(sectionFilter, searchQuery);
-                    }
-                    if (typeof LeaveTable.printTable === 'function') {
-                        LeaveTable.printTable();
-                    }
-                }
-            });
-        }
-
-        const btnExportLeaveCSV = document.getElementById('btn-export-leave-csv-from-late');
-        if (btnExportLeaveCSV) {
-            btnExportLeaveCSV.addEventListener('click', () => {
-                if (window.LeaveTable) {
-                    if (typeof LeaveTable.setFilters === 'function') {
-                        LeaveTable.setFilters(sectionFilter, searchQuery);
-                    }
-                    if (typeof LeaveTable.exportCSV === 'function') {
-                        LeaveTable.exportCSV();
-                    }
-                }
-            });
-        }
     }
 
     function updateTeacherSelect() {
@@ -403,7 +412,8 @@ const LateArrival = (() => {
         }
     }
 
-    function getFilteredLateRecords() {
+    // สมการเดิมของระบบมาสาย: พิมพ์คนที่มาสายทุกคน เรียงตามสมการเดิมทุกอย่าง (ไม่ผ่านตัวกรอง)
+    function getOriginalLateRecords() {
         const months = DataManager.getPeriodMonths();
         const lateArrivals = DataManager.getLateArrivals();
         const recordsByTeacher = {};
@@ -433,7 +443,7 @@ const LateArrival = (() => {
         let maxLate = 0;
 
         teachers.forEach(t => {
-            if (recordsByTeacher[t.id] && matchesFilter(t)) {
+            if (recordsByTeacher[t.id]) {
                 const records = recordsByTeacher[t.id].sort((a, b) => {
                     const aDate = a.date.split('/').reverse().join('');
                     const bDate = b.date.split('/').reverse().join('');
@@ -451,10 +461,9 @@ const LateArrival = (() => {
     }
 
     function printLateTable() {
-        const { data, maxLate } = getFilteredLateRecords();
+        const { data, maxLate } = getOriginalLateRecords();
         const months = DataManager.getPeriodMonths();
         const periodLabel = months.length > 0 ? DataManager.getThaiMonth(months[0].month) + ' ' + months[0].year + ' - ' + DataManager.getThaiMonth(months[months.length - 1].month) + ' ' + months[months.length - 1].year : '';
-        const sectionLabel = sectionFilter ? ` (กลุ่ม: ${sectionFilter})` : '';
 
         let html = `<!DOCTYPE html><html lang="th"><head><meta charset="UTF-8">
         <title>รายงานการมาสาย</title>
@@ -475,7 +484,7 @@ const LateArrival = (() => {
             }
         </style>
         </head><body>
-        <h2>รายงานการมาสายของบุคลากร${escapeHtml(sectionLabel)}</h2>
+        <h2>รายงานการมาสายของบุคลากร</h2>
         <div class="subtitle">รอบปีงบประมาณ: ${periodLabel}</div>
         <table>
             <thead>
@@ -519,12 +528,19 @@ const LateArrival = (() => {
         </body></html>`;
 
         const win = window.open('', '_blank');
-        win.document.write(html);
-        win.document.close();
+        if (win) {
+            win.document.write(html);
+            win.document.close();
+            setTimeout(() => win.print(), 500);
+        } else {
+            alert('เบราว์เซอร์บล็อกหน้าต่างพิมพ์ กรุณาอนุญาตป๊อปอัป (Pop-up) สำหรับเว็บไซต์นี้');
+        }
+
+        document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('show'));
     }
 
     function exportLateCSV() {
-        const { data, maxLate } = getFilteredLateRecords();
+        const { data, maxLate } = getOriginalLateRecords();
 
         let csv = '\uFEFF';
         let row1 = ['ลำดับ', 'ชื่อ-สกุล', 'กลุ่มงาน', 'รวม (ครั้ง)'];
@@ -564,12 +580,13 @@ const LateArrival = (() => {
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        const fileSec = sectionFilter ? `-${sectionFilter}` : '';
-        link.download = `late_arrival_report_${new Date().toISOString().split('T')[0]}${fileSec}.csv`;
+        link.download = `late_arrival_report_${new Date().toISOString().split('T')[0]}.csv`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
+
+        document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('show'));
     }
 
     function exportLateJson() {
@@ -641,6 +658,7 @@ const LateArrival = (() => {
             ensureHeaderControls();
             ensureExportMenuItems();
             bindControlListeners();
+            bindExportListeners();
             populateSectionFilter();
             renderForm();
             renderTable();

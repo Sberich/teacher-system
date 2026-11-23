@@ -799,9 +799,13 @@ const LeaveTable = (() => {
         html += '</tr></tbody></table></body></html>';
 
         const printWindow = window.open('', '_blank');
-        printWindow.document.write(html);
-        printWindow.document.close();
-        setTimeout(() => printWindow.print(), 500);
+        if (printWindow) {
+            printWindow.document.write(html);
+            printWindow.document.close();
+            setTimeout(() => printWindow.print(), 500);
+        } else {
+            alert('เบราว์เซอร์บล็อกหน้าต่างพิมพ์ กรุณาอนุญาตป๊อปอัป (Pop-up) สำหรับเว็บไซต์นี้');
+        }
 
         // Close dropdown
         document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('show'));
@@ -1002,3 +1006,5 @@ const LeaveTable = (() => {
 
     return { init, render, resetFilters, setFilters, printTable, exportCSV };
 })();
+
+window.LeaveTable = LeaveTable;
