@@ -108,10 +108,12 @@ const LeaveTable = (() => {
         const tableContainer = document.getElementById('leave-table-container');
         if (tableContainer) {
             tableContainer.addEventListener('mouseover', handleTooltipMouseOver);
-            tableContainer.addEventListener('mousemove', handleTooltipMouseMove);
             tableContainer.addEventListener('mouseout', handleTooltipMouseOut);
+            tableContainer.addEventListener('mouseleave', hideCustomTooltip);
+            tableContainer.addEventListener('scroll', hideCustomTooltip, { passive: true });
         }
         window.addEventListener('scroll', hideCustomTooltip, { passive: true });
+        document.addEventListener('mouseleave', hideCustomTooltip);
     }
 
     let noteDatePicker = null;
@@ -169,6 +171,7 @@ const LeaveTable = (() => {
     }
 
     function render() {
+        hideCustomTooltip();
         const container = document.getElementById('leave-table-container');
         const sectionSelect = document.getElementById('table-section-filter');
         const months = DataManager.getPeriodMonths();
@@ -933,16 +936,26 @@ const LeaveTable = (() => {
 
     function handleTooltipMouseOver(e) {
         const colName = e.target.closest('.col-name[data-tooltip]');
-        if (!colName) return;
+        if (!colName) {
+            hideCustomTooltip();
+            return;
+        }
         const text = colName.getAttribute('data-tooltip');
-        if (!text) return;
+        if (!text) {
+            hideCustomTooltip();
+            return;
+        }
         showCustomTooltip(text, colName);
     }
 
     function handleTooltipMouseOut(e) {
-        const related = e.relatedTarget;
         const colName = e.target.closest('.col-name[data-tooltip]');
-        if (colName && (!related || !colName.contains(related))) {
+        if (colName) {
+            const related = e.relatedTarget;
+            if (!related || !colName.contains(related)) {
+                hideCustomTooltip();
+            }
+        } else {
             hideCustomTooltip();
         }
     }
