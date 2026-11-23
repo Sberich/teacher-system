@@ -2295,7 +2295,7 @@ th.type-days {
     color: var(--text);
 }
 
-/ *     P r e m i u m     A b o u t     M o d a l     * /     
+/*  Premium  About  Modal  */  
 /* Late Admin Access Utilities */
 .late-admin-only {
     display: none !important;
@@ -2620,4 +2620,36 @@ input.form-control+input.form-control.flatpickr-alt-input,
 .toggle-switch input:disabled+.toggle-slider {
     opacity: 0.6;
     cursor: not-allowed;
+}
+
+/* --- Elegant Custom Tooltip for Table --- */
+.table-custom-tooltip {
+    position: fixed;
+    z-index: 99999;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(5px) scale(0.98);
+    transition: opacity 0.15s cubic-bezier(0.16, 1, 0.3, 1), transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.15s;
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(96, 165, 250, 0.35);
+    box-shadow: 0 12px 28px -4px rgba(0, 0, 0, 0.55), 0 0 15px rgba(59, 130, 246, 0.15);
+    border-radius: 9px;
+    padding: 7px 13px;
+    color: #f8fafc;
+    font-size: 0.85rem;
+    font-family: 'Prompt', 'Sarabun', sans-serif;
+    line-height: 1.45;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.table-custom-tooltip.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
 }
