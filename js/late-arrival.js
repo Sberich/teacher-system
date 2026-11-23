@@ -44,16 +44,94 @@ const LateArrival = (() => {
         return true;
     }
 
-    function init() {
-        const container = document.getElementById('late-arrival-container');
-        if (!container) return;
+    function ensureHeaderControls() {
+        const pageActions = document.querySelector('#page-late-arrival .page-actions');
+        if (!pageActions) return;
 
-        populateSectionFilter();
-        renderForm();
-        renderTable();
+        if (!document.getElementById('late-section-filter')) {
+            const dropdown = pageActions.querySelector('.dropdown');
 
+            const filterDiv = document.createElement('div');
+            filterDiv.className = 'form-group';
+            filterDiv.style.marginBottom = '0';
+            filterDiv.innerHTML = `<select id="late-section-filter" style="padding: 8px 12px; min-width: 140px;">
+                <option value="">ทุกหมวดหมู่/กลุ่ม</option>
+            </select>`;
+
+            const searchDiv = document.createElement('div');
+            searchDiv.className = 'search-box';
+            searchDiv.innerHTML = `<span class="material-icons-round">search</span>
+                <input type="text" id="late-search" placeholder="ค้นหาชื่อครู...">`;
+
+            if (dropdown) {
+                pageActions.insertBefore(searchDiv, dropdown);
+                pageActions.insertBefore(filterDiv, searchDiv);
+            } else {
+                pageActions.appendChild(filterDiv);
+                pageActions.appendChild(searchDiv);
+            }
+        }
+    }
+
+    function ensureExportMenuItems() {
+        const menu = document.querySelector('#page-late-arrival .dropdown-menu');
+        if (!menu) return;
+
+        if (!document.getElementById('btn-print-leave-from-late')) {
+            const divider = document.createElement('div');
+            divider.style.borderTop = '1px solid var(--border)';
+            divider.style.margin = '4px 0';
+
+            const header = document.createElement('div');
+            header.style.padding = '4px 12px';
+            header.style.fontSize = '0.75rem';
+            header.style.color = 'var(--text-muted)';
+            header.style.fontWeight = '600';
+            header.textContent = 'ตารางวันลา (หลัก)';
+
+            const btnPrint = document.createElement('button');
+            btnPrint.className = 'dropdown-item';
+            btnPrint.id = 'btn-print-leave-from-late';
+            btnPrint.innerHTML = '<span class="material-icons-round">print</span> พิมพ์ตารางวันลา';
+
+            const btnExport = document.createElement('button');
+            btnExport.className = 'dropdown-item';
+            btnExport.id = 'btn-export-leave-csv-from-late';
+            btnExport.innerHTML = '<span class="material-icons-round">download</span> ดาวน์โหลด CSV วันลา';
+
+            menu.appendChild(divider);
+            menu.appendChild(header);
+            menu.appendChild(btnPrint);
+            menu.appendChild(btnExport);
+
+            btnPrint.addEventListener('click', () => {
+                if (window.LeaveTable) {
+                    if (typeof LeaveTable.setFilters === 'function') {
+                        LeaveTable.setFilters(sectionFilter, searchQuery);
+                    }
+                    if (typeof LeaveTable.printTable === 'function') {
+                        LeaveTable.printTable();
+                    }
+                }
+            });
+
+            btnExport.addEventListener('click', () => {
+                if (window.LeaveTable) {
+                    if (typeof LeaveTable.setFilters === 'function') {
+                        LeaveTable.setFilters(sectionFilter, searchQuery);
+                    }
+                    if (typeof LeaveTable.exportCSV === 'function') {
+                        LeaveTable.exportCSV();
+                    }
+                }
+            });
+        }
+    }
+
+    function bindControlListeners() {
         const searchInput = document.getElementById('late-search');
-        if (searchInput) {
+        if (searchInput && !searchInput.dataset.bound) {
+            searchInput.dataset.bound = 'true';
             searchInput.addEventListener('input', (e) => {
                 searchQuery = e.target.value.trim().toLowerCase();
                 clearTimeout(searchTimeout);
@@ -65,13 +143,26 @@ const LateArrival = (() => {
         }
 
         const sectionSelect = document.getElementById('late-section-filter');
-        if (sectionSelect) {
+        if (sectionSelect && !sectionSelect.dataset.bound) {
+            sectionSelect.dataset.bound = 'true';
             sectionSelect.addEventListener('change', (e) => {
                 sectionFilter = e.target.value;
                 renderTable();
                 updateTeacherSelect();
             });
         }
+    }
+
+    function init() {
+        const container = document.getElementById('late-arrival-container');
+        if (!container) return;
+
+        ensureHeaderControls();
+        ensureExportMenuItems();
+        bindControlListeners();
+        populateSectionFilter();
+        renderForm();
+        renderTable();
 
         const btnPrint = document.getElementById('btn-print-late-table');
         if (btnPrint) btnPrint.addEventListener('click', printLateTable);
@@ -547,6 +638,9 @@ const LateArrival = (() => {
     return {
         init,
         render: () => {
+            ensureHeaderControls();
+            ensureExportMenuItems();
+            bindControlListeners();
             populateSectionFilter();
             renderForm();
             renderTable();

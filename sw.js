@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tla-cache-v181';
+const CACHE_NAME = 'tla-cache-v182';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
