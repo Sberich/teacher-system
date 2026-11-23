@@ -388,6 +388,9 @@ const DataManager = (() => {
     function getSections() {
         const teachers = getTeachers();
         const sections = [...new Set(teachers.map(t => t.section || 'ทั่วไป'))];
+        if (!sections.includes('ครูอัตราจ้าง')) {
+            sections.push('ครูอัตราจ้าง');
+        }
         return sections.sort();
     }
 

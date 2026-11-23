@@ -252,6 +252,9 @@ const LeaveTable = (() => {
             };
         });
 
+        const allLeaveRecords = DataManager.getLeaveRecords();
+        const allLeaveRequests = DataManager.getLeaveRequests();
+
         teachers.forEach(teacher => {
             const leaveData = DataManager.getTeacherLeaveForPeriod(teacher.id);
             const remark = getCombinedRemark(teacher.id);
@@ -260,9 +263,11 @@ const LeaveTable = (() => {
                 personal: { times: 0, days: 0 }
             };
 
+            const lastLeaveTooltip = getLastLeaveTooltip(teacher.id, allLeaveRecords, allLeaveRequests);
+
             html += `<tr class="teacher-row" data-teacher-id="${teacher.id}">`;
             html += `<td class="sticky-left col-order">${teacher.order}</td>`;
-            html += `<td class="sticky-left col-name" title="${escapeHtml(teacher.name)}">
+            html += `<td class="sticky-left col-name" title="${escapeHtml(lastLeaveTooltip)}">
                         ${escapeHtml(teacher.name)}
                      </td>`;
 
@@ -392,6 +397,114 @@ const LeaveTable = (() => {
 
     function escapeHtml(str) {
         return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    // Helper functions to get teacher's latest leave tooltip
+    function extractDaysFromNotes(notes) {
+        if (!notes) return [];
+        const matches = notes.match(/\b([1-9]|[12]\d|3[01])\b/g);
+        return matches ? matches.map(Number) : [];
+    }
+
+    function normalizeLeaveType(type) {
+        const t = (type || '').toLowerCase();
+        if (t === 'sick' || t === 'ป่วย') return 'ลาป่วย';
+        if (t === 'personal' || t === 'กิจส่วนตัว' || t === 'ลากิจ') return 'ลากิจ';
+        if (t === 'maternity' || t === 'คลอดบุตร') return 'ลาคลอดบุตร';
+        if (!type) return 'ลา';
+        return type.startsWith('ลา') ? type : 'ลา' + type;
+    }
+
+    function getLastLeaveTooltip(teacherId, allRecords, allRequests) {
+        const candidates = [];
+
+        (allRecords || []).forEach((r, idx) => {
+            if (r.teacherId !== teacherId) return;
+            if (!(r.days > 0 || r.times > 0)) return;
+
+            const beYear = r.year < 2500 ? r.year + 543 : r.year;
+            const month = r.month || 1;
+            const daysInNote = extractDaysFromNotes(r.notes);
+            const day = daysInNote.length > 0 ? Math.max(...daysInNote) : 1;
+            const score = beYear * 10000 + month * 100 + day;
+
+            candidates.push({
+                score,
+                idx,
+                type: normalizeLeaveType(r.type),
+                days: r.days || 1,
+                month,
+                year: beYear,
+                notes: (r.notes || '').trim()
+            });
+        });
+
+        (allRequests || []).forEach((req, idx) => {
+            if (req.teacherId !== teacherId || req.status !== 'approved') return;
+            if (!req.startDate) return;
+
+            const d = new Date(req.startDate);
+            if (isNaN(d.getTime())) return;
+
+            const y = d.getFullYear() < 2500 ? d.getFullYear() + 543 : d.getFullYear();
+            const m = d.getMonth() + 1;
+            const day = d.getDate();
+            const score = y * 10000 + m * 100 + day;
+
+            let noteStr = '';
+            const sMonth = DataManager.getThaiMonth(m) || '';
+            if (req.endDate && req.startDate !== req.endDate) {
+                const eD = new Date(req.endDate);
+                const eDay = eD.getDate();
+                const eMonth = DataManager.getThaiMonth(eD.getMonth() + 1) || '';
+                if (m === eD.getMonth() + 1) {
+                    noteStr = `${day}-${eDay} ${sMonth}`;
+                } else {
+                    noteStr = `${day} ${sMonth} - ${eDay} ${eMonth}`;
+                }
+            } else {
+                noteStr = `${day} ${sMonth}`;
+            }
+
+            candidates.push({
+                score,
+                idx: 100000 + idx,
+                type: normalizeLeaveType(req.type),
+                days: req.days || 1,
+                month: m,
+                year: y,
+                notes: noteStr
+            });
+        });
+
+        if (candidates.length === 0) {
+            return 'ยังไม่มีประวัติการลา';
+        }
+
+        candidates.sort((a, b) => b.score - a.score || b.idx - a.idx);
+        const best = candidates[0];
+
+        const shortYear = String(best.year).slice(-2);
+        const mName = DataManager.getThaiMonth(best.month) || '';
+
+        let datePart = '';
+        let cleanNotes = best.notes.replace(/^วันที่\s*/, '');
+
+        if (cleanNotes && /\d/.test(cleanNotes)) {
+            if (cleanNotes.includes(shortYear) || cleanNotes.includes(String(best.year))) {
+                datePart = `วันที่ ${cleanNotes}`;
+            } else {
+                datePart = `วันที่ ${cleanNotes} ${shortYear}`;
+            }
+        } else if (cleanNotes) {
+            datePart = `เดือน ${mName} ${shortYear} (${cleanNotes})`;
+        } else {
+            datePart = `เดือน ${mName} ${shortYear}`;
+        }
+
+        const daysPart = `จำนวน ${best.days} วัน`;
+
+        return `ลาครั้งล่าสุด : ${best.type} ${datePart} ${daysPart}`;
     }
 
     // --- Leave Modal ---
